@@ -1,8 +1,7 @@
 <mat-tab-group animationDuration="0">
-  <mat-tab label="Emissions">
-    <div highchartsChart [options]="chartOptions" class="chart"></div>
-  </mat-tab>
-  <mat-tab label="Finance">
-    <div highchartsChart [options]="chartOptions" class="chart"></div>
-  </mat-tab>
+  @for (option of options; track option.title!.text) {
+    <mat-tab [label]="option.title!.text!">
+      <div highchartsChart [options]="option" class="chart"></div>
+    </mat-tab>
+  }
 </mat-tab-group>

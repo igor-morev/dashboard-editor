@@ -1,19 +1,53 @@
 import { Type } from "@angular/core";
 import { Observable } from "rxjs";
 
-interface WidgetConfig {
+interface ApiSource {
+  apiUrl: string;
+  accesToken?: string;
+}
+
+interface WidgetConfigText {
   id: string;
-  title: string;
-  componentType: 'text' | 'list' | 'image' | 'bar-chart' | 'line-chart' | 'grid';
-  data: string | {
-    accesToken?: string;
-    url: string;
-    queryParams?: {};
-  } | [];
+  title?: string;
+  component: 'text',
+  api?: ApiSource;
+  data: string;
+}
+
+interface WidgetConfigList {
+  id: string;
+  title?: string;
+  component: 'list',
+  api?: ApiSource;
+  data: string[];
+}
+
+interface WidgetConfigImage {
+  id: string;
+  title?: string;
+  component: 'image',
+  api?: ApiSource;
+  data: string;
+}
+
+interface WidgetConfigBarChart {
+  id: string;
+  title?: string;
+  component: 'bar',
+  api?: ApiSource;
+  data: number[];
+}
+
+interface WidgetConfigGrid {
+  id: string;
+  title?: string;
+  component: 'grid',
+  api?: ApiSource;
+  data: [string[], Record<string, any>[]];
   filters?: {};
   sorting?: {};
-  toolbar?: WidgetConfig[];
 }
+type WidgetConfig = WidgetConfigText | WidgetConfigList | WidgetConfigImage | WidgetConfigBarChart | WidgetConfigGrid;
 
 export interface Widget {
   id: string;
