@@ -17,10 +17,10 @@ import {
   transferArrayItem,
   CdkDragPlaceholder,
 } from '@angular/cdk/drag-drop';
-
+import { GenericWidget } from '@app/widgets/components/widget/widget';
 @Component({
   selector: 'de-dashboard',
-  imports: [AsyncPipe, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragPlaceholder, Layout, LayoutItemComponent, NgComponentOutlet, MatIconModule, MatListModule],
+  imports: [AsyncPipe, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragPlaceholder, Layout, LayoutItemComponent, NgComponentOutlet, MatIconModule, MatListModule, GenericWidget],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -30,17 +30,49 @@ export class Dashboard {
 
   widgets: Widget[] = [
     {
-      id: 'overview',
-      title: 'Overview',
-    },
-    {
       id: 'analytics-widget',
       title: 'Analytics',
+      config: [
+        {
+          id: 'bar',
+          title: 'Emissions',
+          component: 'bar',
+          data: [1, 2, 3],
+          next: {
+            id: 't123124234',
+            title: 'txt',
+            component: 'text',
+            data: 'Some text'
+          }
+        },
+        {
+          id: 'line',
+          title: 'Finance',
+          component: 'line',
+          data: [1, 2, 3]
+        },
+        {
+          id: 'pie',
+          title: 'Medicine',
+          component: 'pie',
+          data: [2, 3, 4]
+        }
+      ],
     },
     {
-      id: 'registry',
-      title: 'Registry',
-    }
+      id: 'overview',
+      title: 'Overview',
+      config: {
+        id: 'overview',
+        title: 'title',
+        component: 'text',
+        data: 'Overview text',
+      }
+    },
+    // {
+    //   id: 'registry',
+    //   title: 'Registry',
+    // }
   ];
 
   layoutItems: LayoutItem[] = [];

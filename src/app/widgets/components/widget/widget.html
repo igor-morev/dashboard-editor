@@ -1,0 +1,34 @@
+@let widgetConfig = config();
+
+@if (isArray(widgetConfig)) {
+  <mat-tab-group animationDuration="0">
+    @for (configItem of widgetConfig; track configItem.id) {
+      <mat-tab [label]="configItem.title!">
+        <ng-container *ngTemplateOutlet="widgetTemplate; context: {
+          $implicit: configItem
+        }"></ng-container>
+
+        @if (configItem.next) {
+          <ng-container *ngTemplateOutlet="widgetTemplate; context: {
+            $implicit: configItem.next
+          }"></ng-container>
+        }
+      </mat-tab>
+    }
+  </mat-tab-group>
+} @else {
+  @if (widgetConfig) {
+    <ng-container *ngTemplateOutlet="widgetTemplate; context: {
+      $implicit: widgetConfig
+    }"></ng-container>
+  }
+}
+
+<ng-template #widgetTemplate [typedTemplate]="typeToken" let-item>
+  @if (item.component === 'bar' || item.component === 'line' || item.component === 'pie') {
+    <div highchartsChart [options]="getHighchartOption(item)" class="chart"></div>
+  } @else if (item.component === 'text') {
+    <p>{{item.data}}</p>
+  }
+</ng-template>
+
