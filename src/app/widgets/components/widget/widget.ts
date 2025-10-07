@@ -3,11 +3,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { WidgetConfig, WidgetConfigBarChart, WidgetConfigLineChart, WidgetConfigPieChart } from '@app/api/types/widget';
 import { HighchartsChartDirective } from 'highcharts-angular';
 import { TypedTemplateDirective } from './typed-template.directive';
-import { NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'de-widget',
-  imports: [TypedTemplateDirective, MatTabsModule, HighchartsChartDirective, NgTemplateOutlet],
+  imports: [AsyncPipe, TypedTemplateDirective, MatTabsModule, HighchartsChartDirective, NgTemplateOutlet, NgxSkeletonLoaderComponent, MatTableModule],
   templateUrl: './widget.html',
   styleUrl: './widget.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

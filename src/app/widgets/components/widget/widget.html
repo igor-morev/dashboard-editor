@@ -7,12 +7,6 @@
         <ng-container *ngTemplateOutlet="widgetTemplate; context: {
           $implicit: configItem
         }"></ng-container>
-
-        @if (configItem.next) {
-          <ng-container *ngTemplateOutlet="widgetTemplate; context: {
-            $implicit: configItem.next
-          }"></ng-container>
-        }
       </mat-tab>
     }
   </mat-tab-group>
@@ -28,7 +22,47 @@
   @if (item.component === 'bar' || item.component === 'line' || item.component === 'pie') {
     <div highchartsChart [options]="getHighchartOption(item)" class="chart"></div>
   } @else if (item.component === 'text') {
-    <p>{{item.data}}</p>
+    @if (item.api) {
+      @let response = item.api.response | async;
+
+      @if (response === null) {
+        <ngx-skeleton-loader count="1" appearance="line" size="50" />
+      } @else {
+        <p>{{response}}</p>
+      }
+    } @else {
+      <p>{{item.data}}</p>
+    }
+  } @else if (item.component === 'ul') {
+    <ul>
+      @for (listItem of item.data; track listItem) {
+        <li>{{listItem}}</li>
+      }
+    </ul>
+  } @else if (item.component === 'grid') {
+    @let columns = item.data![0];
+    @let rows = item.data![1];
+
+
+    <table mat-table [dataSource]="rows">
+       @for (column of columns; track column) {
+        <ng-container [matColumnDef]="column">
+          <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+          <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+        </ng-container>
+       }
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+  } @else if (item.component === 'image') {
+    <img [src]="item.data">
+  }
+
+  @if (item.next) {
+    <ng-container *ngTemplateOutlet="widgetTemplate; context: {
+      $implicit: item.next
+    }"></ng-container>
   }
 </ng-template>
 

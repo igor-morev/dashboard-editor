@@ -6,6 +6,10 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   @include mat.theme((
     color: (
@@ -33,4 +37,14 @@ body {
   // Reset the user agent margin.
   margin: 0;
   overflow: hidden;
+}
+
+img {
+  max-width: 70%;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+table {
+  margin-bottom: 1rem;
 }

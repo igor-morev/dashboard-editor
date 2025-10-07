@@ -1,57 +1,46 @@
 import { Type } from "@angular/core";
 import { Observable } from "rxjs";
 
-interface ApiSource {
+interface ApiSource<T> {
   apiUrl: string;
+  response: Observable<T | null>
   accesToken?: string;
 }
 
-interface WidgetConfigBase {
+interface WidgetConfigBase<T> {
   id: string;
   title?: string;
   next?: WidgetConfig;
+  api?: ApiSource<T>;
+  data?: T;
 }
 
-interface WidgetConfigText extends WidgetConfigBase {
+interface WidgetConfigText extends WidgetConfigBase<string> {
   component: 'text',
-  api?: ApiSource;
-  data: string;
 }
 
-interface WidgetConfigList extends WidgetConfigBase {
-  component: 'list',
-  api?: ApiSource;
-  data: string[];
+interface WidgetConfigList extends WidgetConfigBase<string[]> {
+  component: 'ul',
 }
 
-interface WidgetConfigImage extends WidgetConfigBase {
+interface WidgetConfigImage extends WidgetConfigBase<string> {
   component: 'image',
-  api?: ApiSource;
-  data: string;
 }
 
-export interface WidgetConfigBarChart extends WidgetConfigBase {
+export interface WidgetConfigBarChart extends WidgetConfigBase<number[]> {
   component: 'bar',
-  api?: ApiSource;
-  data: number[];
 }
 
-export interface WidgetConfigLineChart extends WidgetConfigBase {
+export interface WidgetConfigLineChart extends WidgetConfigBase<number[]> {
   component: 'line',
-  api?: ApiSource;
-  data: number[];
 }
 
-export interface WidgetConfigPieChart extends WidgetConfigBase {
+export interface WidgetConfigPieChart extends WidgetConfigBase<number[]> {
   component: 'pie',
-  api?: ApiSource;
-  data: number[];
 }
 
-interface WidgetConfigGrid extends WidgetConfigBase {
+interface WidgetConfigGrid extends WidgetConfigBase<[string[], Record<string, any>[]]> {
   component: 'grid',
-  api?: ApiSource;
-  data: [string[], Record<string, any>[]];
   filters?: {};
   sorting?: {};
 }
