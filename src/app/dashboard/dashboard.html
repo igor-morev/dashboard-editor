@@ -6,25 +6,28 @@
       #layoutList="cdkDropList"
       autoScrollStep="100"
       [cdkDropListData]="layoutItems"
-      (cdkDropListDropped)="dropWidget($event)">
-      @if (layoutItems.length) {
-        @for (item of layoutItems; track item.id) {
-          <de-layout-item
-            cdkDrag
-            cdkDragBoundary=".workspace"
-            [item]="item.widgetRef.title"
-            (closeEvent)="removeLayoutItem(item)"
-            >
-            <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+      (cdkDropListDropped)="dropWidget($event)"
+      (cdkDropListEntered)="onLayoutEnter()"
+      (cdkDropListExited)="onLayoutExit()"
+      >
 
-            <de-widget [config]="item.widgetRef.config"/>
-  
-          </de-layout-item>
-        }
-      } @else {
-        Looks like you don't have any widgets yet. Please, proceed and start dragging new from the toolbar on your right
+      @if (!isUnderLayout && this.widgets.length > 0) {
+        <div class="example-custom-placeholder">
+          Drag a new widget here
+        </div>
       }
-      
+      @for (item of layoutItems; track item.id) {
+        <de-layout-item
+          cdkDrag
+          cdkDragBoundary=".workspace"
+          [item]="item.widgetRef.title"
+          (cdkDragStarted)="onLayoutDragStarted()"
+          (closeEvent)="removeLayoutItem(item)"
+          >
+          <de-widget [config]="item.widgetRef.config"/>
+          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+        </de-layout-item>
+      }
     </de-layout>
   </div>
   <div class="toolbar">

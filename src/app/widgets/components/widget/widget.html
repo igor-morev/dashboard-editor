@@ -4,9 +4,12 @@
   <mat-tab-group animationDuration="0">
     @for (configItem of widgetConfig; track configItem.id) {
       <mat-tab [label]="configItem.title!">
-        <ng-container *ngTemplateOutlet="widgetTemplate; context: {
-          $implicit: configItem
-        }"></ng-container>
+        <ng-template matTabContent>
+          <ng-container *ngTemplateOutlet="widgetTemplate; context: {
+            $implicit: configItem
+          }"></ng-container>
+        </ng-template>
+        
       </mat-tab>
     }
   </mat-tab-group>
@@ -20,13 +23,24 @@
 
 <ng-template #widgetTemplate [typedTemplate]="typeToken" let-item>
   @if (item.component === 'bar' || item.component === 'line' || item.component === 'pie') {
-    <div highchartsChart [options]="getHighchartOption(item)" class="chart"></div>
+    @if (item.api) {
+      @let response = item.api.response | async;
+
+      @if (response === null) { 
+        <ngx-skeleton-loader count="8" appearance="line" />
+      } @else {
+        <div highchartsChart [options]="getHighchartOption(item, response)" class="chart"></div>
+      }
+
+    } @else {
+      <div highchartsChart [options]="getHighchartOption(item)" class="chart"></div>
+    }
   } @else if (item.component === 'text') {
     @if (item.api) {
       @let response = item.api.response | async;
 
       @if (response === null) {
-        <ngx-skeleton-loader count="1" appearance="line" size="50" />
+        <ngx-skeleton-loader count="2" appearance="line" />
       } @else {
         <p>{{response}}</p>
       }

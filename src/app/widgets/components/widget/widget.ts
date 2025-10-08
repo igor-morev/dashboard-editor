@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { WidgetConfig, WidgetConfigBarChart, WidgetConfigLineChart, WidgetConfigPieChart } from '@app/api/types/widget';
+import { WidgetConfig, WidgetConfigChart} from '@app/api/types/widget';
 import { HighchartsChartDirective } from 'highcharts-angular';
 import { TypedTemplateDirective } from './typed-template.directive';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
@@ -24,7 +24,7 @@ export class GenericWidget {
 
   isArray = Array.isArray;
 
-  getHighchartOption(config: WidgetConfigBarChart | WidgetConfigLineChart | WidgetConfigPieChart): Highcharts.Options {
+  getHighchartOption(config: WidgetConfigChart, serverData?: WidgetConfigChart['data']): Highcharts.Options {
     return {
       title: {
         text: config.title,
@@ -34,11 +34,11 @@ export class GenericWidget {
       },
       series: [
         {
-          data: config.data,
+          data: serverData ? serverData : config.data,
           type: config.component,
         },
         {
-          data: config.data,
+          data: serverData ? serverData : config.data,
           type: config.component,
         },
       ],

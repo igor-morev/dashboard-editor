@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { Widget } from '@app/api/types/widget';
 import { Layout } from '@app/layout/layout';
 import { LayoutItem } from '@app/layout/layout-item';
 import { LayoutItemComponent } from '@app/layout/layout-item/layout-item';
-import { WIDGETS_REGISTRY_MAP } from '@app/widgets/widgets-map.token';
 
 import {
   CdkDragDrop,
@@ -26,7 +25,7 @@ import { delay, of, startWith } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard {
-  #widgetsRegistryMap = inject(WIDGETS_REGISTRY_MAP);
+  isUnderLayout = false;
 
   widgets: Widget[] = [
     {
@@ -37,7 +36,13 @@ export class Dashboard {
           id: 'bar',
           title: 'Emissions',
           component: 'bar',
-          data: [1, 2, 3],
+          api: {
+            apiUrl: 'test',
+            response: of([1, 2, 3]).pipe(
+              delay(300),
+              startWith(null)
+            )
+          },
           next: {
             id: 't123124234',
             title: 'txt',
@@ -49,13 +54,46 @@ export class Dashboard {
           id: 'line',
           title: 'Finance',
           component: 'line',
-          data: [1, 2, 3]
+          api: {
+            apiUrl: 'test',
+            response: of([44, 66, 2]).pipe(
+              delay(200),
+              startWith(null)
+            )
+          }
         },
         {
           id: 'pie',
           title: 'Medicine',
           component: 'pie',
-          data: [2, 3, 4]
+          api: {
+            apiUrl: 'test',
+            response: of([
+              {
+                name: 'Water',
+                y: 55.02
+            },
+            {
+                name: 'Fat',
+                y: 26.71
+            },
+            {
+                name: 'Carbohydrates',
+                y: 1.09
+            },
+            {
+                name: 'Protein',
+                y: 15.5
+            },
+            {
+                name: 'Ash',
+                y: 1.68
+            }
+            ]).pipe(
+              delay(300),
+              startWith(null)
+            )
+          }
         }
       ],
     },
@@ -118,11 +156,9 @@ export class Dashboard {
 
   layoutItems: LayoutItem[] = [];
 
-  getWidget(id: string) {
-    return this.#widgetsRegistryMap[id];
-  }
-
   dropWidget(event: CdkDragDrop<LayoutItem[], Widget[], Widget>) {    
+    this.isUnderLayout = false;
+
     if (event.previousContainer.id === event.container.id) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -146,7 +182,7 @@ export class Dashboard {
 
       event.container.data[event.currentIndex] = newLayoutItem;
 
-      this.removeWidgetItem(event.item.data);
+      this.#removeWidgetItem(event.item.data);
     }
     
   }
@@ -156,7 +192,19 @@ export class Dashboard {
     this.widgets.push(item.widgetRef);
   }
 
-  removeWidgetItem(item: Widget) {
+  #removeWidgetItem(item: Widget) {
     this.widgets = this.widgets.filter(el => el.id !== item.id);
+  }
+
+  onLayoutEnter() {
+    this.isUnderLayout = true;
+  }
+
+  onLayoutExit() {
+    this.isUnderLayout = false;
+  }
+
+  onLayoutDragStarted() {
+    this.isUnderLayout = true;
   }
 }

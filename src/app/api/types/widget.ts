@@ -1,4 +1,5 @@
 import { Type } from "@angular/core";
+import { PointOptionsObject } from "highcharts";
 import { Observable } from "rxjs";
 
 interface ApiSource<T> {
@@ -35,7 +36,7 @@ export interface WidgetConfigLineChart extends WidgetConfigBase<number[]> {
   component: 'line',
 }
 
-export interface WidgetConfigPieChart extends WidgetConfigBase<number[]> {
+export interface WidgetConfigPieChart extends WidgetConfigBase<(number | Pick<PointOptionsObject, 'name' | 'y'>)[]> {
   component: 'pie',
 }
 
@@ -45,13 +46,13 @@ interface WidgetConfigGrid extends WidgetConfigBase<[string[], Record<string, an
   sorting?: {};
 }
 
+export type WidgetConfigChart = WidgetConfigBarChart | WidgetConfigLineChart | WidgetConfigPieChart;
+
 export type WidgetConfig = 
   WidgetConfigText | 
   WidgetConfigList | 
   WidgetConfigImage | 
-  WidgetConfigBarChart | 
-  WidgetConfigLineChart | 
-  WidgetConfigPieChart | 
+  WidgetConfigChart | 
   WidgetConfigGrid;
 
 export interface Widget {
