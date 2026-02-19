@@ -1,0 +1,29 @@
+@switch (layer().widgetReference.widgetType) {
+  @case ('section') {
+    <section [class]="layer().widgetReference.defaultWidgetProperties.class">
+      @if (layer().children) {
+        <ng-container *ngTemplateOutlet="layersTemplate(); context: {
+          $implicit: layer().children
+        }"></ng-container>
+       }
+    </section>
+  }
+
+  @case ('text') {
+    <p [class]="layer().widgetReference.defaultWidgetProperties.class">{{layer().widgetReference.renderContent}}</p>
+  }
+
+  @case ('image') {
+    <img [class]="layer().widgetReference.defaultWidgetProperties.class" [src]="layer().widgetReference.renderContent" />
+  }
+
+  @default {
+    <div [class]="layer().widgetReference.defaultWidgetProperties.class">
+      @if (layer().children) {
+        <ng-container *ngTemplateOutlet="layersTemplate(); context: {
+          $implicit: layer().children
+        }"></ng-container>
+       }
+      </div>
+  }
+}

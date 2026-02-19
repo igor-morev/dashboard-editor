@@ -1,0 +1,95 @@
+<div class="h-screen w-screen flex">
+  <div class="left-panel w-68 h-full flex flex-col bg-white shadow-md rounded-lg">
+    <div>
+      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">Toolbar</div>
+      <div class="py-2 px-4">
+        @for (widget of widgets; track widget.id) {
+          <div (click)="moveWidgetOnScaffold(widget)">{{ widget.widgetName }}</div>
+        }
+        <!-- <div>Scaffold</div>
+        <div>Container</div>
+        <div>Section</div>
+        <div>Row</div>
+        <div>Column</div>
+        <div>Heading</div>
+        <div>Text</div>
+        <div>List</div>
+        <div>Icon</div>
+        <div>Image</div> -->
+      </div>
+    </div>
+    <div>
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid">Pages</div>
+      <div class="py-2 px-4">
+        <div>Page 1</div>
+        <div>Page 2</div>
+      </div>
+    </div>
+    <div>
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid">Layers</div>
+      <div class="py-2 px-4">
+        <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
+          $implicit: appState.appViewSchema.layers
+        }"></ng-container>
+
+        <ng-template #layersTreeTemplate let-layers>
+          @if (layers.length > 0) {
+            <ul class="w-full list-inside">
+              @for (layer of layers; track layer.id) {
+                <li (click)="selectLayerFromTree($event, layer)" class="pl-2">
+                  @if (layer.children) {
+                    <span class="block layer" [class.selected]="layer.id === appState.selectedLayer?.id">{{layer.widgetReference.widgetName}}</span>
+                    <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
+                      $implicit: layer.children
+                    }"></ng-container>
+                  }
+                </li>
+              }
+            </ul>
+          }
+          
+          
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  
+  <div class="viewport flex-1 h-full">
+    <div class="h-full w-full bg-gray-100 flex items-center justify-center pt-10 pb-10">
+      <div data-scaffold class="app-scaffold border border-gray-300 border-solid w-md h-full overflow-auto" (click)="selectLayerFromScaffold($event)" (contextmenu)="openLayerContextMenu($event)">
+        <ng-container *ngTemplateOutlet="layersTemplate; context: {
+          $implicit: appState.appViewSchema.layers
+        }"></ng-container>
+
+        <ng-template #layersTemplate let-layers>
+          @for (layer of layers; track layer.id) {
+            <de-layer [layer]="layer" [layersTemplate]="layersTemplate"/>
+          }
+        </ng-template>
+      </div>
+    </div>
+    
+  </div>
+  @if (appState.selectedLayer) {
+
+  <div class="property-panel w-68 h-full flex flex-col bg-white shadow-md rounded-lg">
+      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">{{appState.selectedLayer.widgetReference.widgetName}}</div>
+      <div class="py-2 px-4">
+        <div>
+          <div>Class</div>
+          <input type="text" class="border border-gray-300 rounded-md w-full" [(ngModel)]="appState.selectedLayer.widgetReference.defaultWidgetProperties.class" />
+        </div>
+      
+        <!-- <div>Border</div>
+        <div>Padding</div>
+        <div>Margin</div>
+        <div>Width</div>
+        <div>Height</div>
+        <div>Color</div>
+        <div>Background</div> -->
+      </div>
+    
+  </div>
+}
+
+</div>

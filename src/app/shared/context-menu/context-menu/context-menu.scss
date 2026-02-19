@@ -1,0 +1,6 @@
+@use 'tailwindcss';
+
+
+:host {
+  @apply w-full bg-white border border-gray-300 rounded w-full z-50;
+}

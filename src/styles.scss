@@ -5,6 +5,10 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use 'tailwindcss';
+
+@import '@angular/cdk/overlay-prebuilt.css';
+
 
 * {
   box-sizing: border-box;
@@ -17,8 +21,11 @@ html {
       tertiary: mat.$blue-palette,
     ),
     typography: Roboto,
-    density: 0,
+    density: -4,
   ));
+
+  // @include mat.all-component-themes(mat.$azure-palette);
+
 }
 
 body {
@@ -37,14 +44,4 @@ body {
   // Reset the user agent margin.
   margin: 0;
   overflow: hidden;
-}
-
-img {
-  max-width: 70%;
-  max-height: 200px;
-  object-fit: cover;
-}
-
-table {
-  margin-bottom: 1rem;
 }

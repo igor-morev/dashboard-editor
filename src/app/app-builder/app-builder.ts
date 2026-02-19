@@ -1,0 +1,237 @@
+import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
+import { AppState, Layer, Widget } from './types/app-builder.type';
+import { NgTemplateOutlet } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ContextMenu } from '@app/shared/context-menu/context-menu';
+import { ContextMenuComponent } from '@app/shared';
+import { LayerComponent } from './layer/layer';
+
+function generateUniqueId() {
+  return 'layer-' + Math.random().toString(36).substr(2, 9);
+}
+
+@Component({
+  selector: 'de-app-builder',
+  imports: [NgTemplateOutlet, FormsModule, LayerComponent],
+  templateUrl: './app-builder.html',
+  styleUrl: './app-builder.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AppBuilder {
+  private contextMenu = inject(ContextMenu);
+  appState: AppState = {
+    pages: [
+      {
+        id: 'page-1',
+        pageName: 'Home Page'
+      }
+    ],
+    selectedPage: {
+      id: 'page-1',
+      pageName: 'Home Page'
+    },
+    selectedLayer: null,
+    appViewSchema: {
+      device: 'sm',
+      layers: [],
+      layersMap: {}
+    }
+  };
+
+  widgets: Widget[] = [
+    {
+      id: 'container-widget',
+      widgetName: 'Container',
+      widgetType: 'container',
+      renderContent: 'div',
+      canNotBeAddedInside: (widget: Widget) => {
+        return widget.widgetType === 'container';
+      },
+      defaultWidgetProperties: {
+        class: 'pl-2 pr-2 bg-blue-300 min-h-48',
+      }
+    },
+    {
+      id: 'section-widget',
+      widgetName: 'Section',
+      widgetType: 'section',
+      renderContent: 'div',
+      canNotBeAddedInside: (widget: Widget) => {
+        return widget.widgetType === 'section';
+      },
+      defaultWidgetProperties: {
+        class: 'min-h-48 bg-gray-300',
+      }
+    },
+    {
+      id: 'row-widget',
+      widgetName: 'Row',
+      widgetType: 'row',
+      renderContent: 'div',
+      canNotBeAddedInside: (widget: Widget) => {
+        return widget.widgetType === 'row' // TBD;
+      },
+      defaultWidgetProperties: {
+        class: 'min-h-48 bg-red-300 flex gap-x-2',
+      }
+    },
+    {
+      id: 'column-widget',
+      widgetName: 'Column',
+      widgetType: 'column',
+      renderContent: 'div',
+      canNotBeAddedInside: (widget: Widget) => {
+        return widget.widgetType === 'column' // TBD;
+      },
+      defaultWidgetProperties: {
+        class: 'min-h-48 bg-green-300 grow pl-2 pr-2',
+      }
+    },
+    {
+      id: 'text-widget',
+      widgetName: 'Text',
+      widgetType: 'text',
+      renderContent: 'Some text',
+      canNotBeAddedInside: (widget: Widget) => {
+        return widget.widgetType === 'text' || widget.widgetType === 'container' || widget.widgetType === 'section';
+      },
+      defaultWidgetProperties: {
+        class: '',
+      }
+    },
+    {
+      id: 'image-widget',
+      widgetName: 'Image',
+      widgetType: 'image',
+      renderContent: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
+      canNotBeAddedInside: (widget: Widget) => {
+        return true;
+      },
+      defaultWidgetProperties: {
+        class: 'min-h-48',
+      }
+    },
+  ];
+
+  moveWidgetOnScaffold(widget: Widget) {
+    this.createLayer(widget);
+  }
+
+  private createLayer(widget: Widget) {
+    console.log('Creating layer for widget', widget);
+    if (this.appState.selectedLayer && this.appState.selectedLayer.widgetReference.canNotBeAddedInside && this.appState.selectedLayer.widgetReference.canNotBeAddedInside(widget)) {
+      return;
+    }
+
+    const newLayer: Layer = {
+      id: generateUniqueId(),
+      sourceWidgetId: widget.id,
+      widgetReference: widget,
+      layerProperties: { ...widget.defaultWidgetProperties },
+      children: []
+    };
+
+    this.appState.appViewSchema.layersMap[newLayer.id] = newLayer;
+
+    if (this.appState.selectedLayer) {
+      this.appState = {
+        ...this.appState,
+        appViewSchema: {
+          ...this.appState.appViewSchema,
+          layers: this.insertLayerInSchema(this.appState.appViewSchema.layers, this.appState.selectedLayer.id, newLayer)
+        }
+      };
+    } else {
+      this.appState = {
+        ...this.appState,
+        appViewSchema: {
+          ...this.appState.appViewSchema,
+          layers: [...this.appState.appViewSchema.layers, newLayer]
+        }
+      };
+    }
+
+    // this.selectLayer(newLayer);
+
+    console.log('app state',  this.appState);
+  }
+
+
+  private convertBgPropertyToTailwindClass(propertyKey: string, propertyValue: string): string {
+    return `${propertyKey}-${propertyValue}`;
+  }
+
+  private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
+    return layers.map(layer => {
+      if (layer.id === destinationId) {
+        return {
+          ...layer,
+          children: [...layer.children, newLayer]
+        };
+      } else if (layer.children.length > 0) {
+        return {
+          ...layer,
+          children: this.insertLayerInSchema(layer.children, destinationId, newLayer)
+        };
+      } else {
+        return layer;
+      }
+    });
+  }
+
+  selectLayerFromTree(event: Event, layer: Layer) {
+    event.stopPropagation();
+
+    this.selectLayer(layer);
+  }
+
+  selectLayerFromScaffold(event: MouseEvent) {
+    const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
+    
+    if (id) {
+      this.selectLayer(this.appState.appViewSchema.layersMap[id]);
+    }
+  }
+
+  openLayerContextMenu(event: MouseEvent) {
+    const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
+
+    if (!id) {
+      return;
+    }
+    
+    const ref = this.contextMenu.open<ContextMenuComponent, 'delete'>(event, ContextMenuComponent, {
+      id,
+    });
+
+    ref.afterClosed().subscribe(result => {
+      console.log(result);
+      
+      if (result === 'delete') {
+        this.removeLayer();
+      }
+    });
+  }
+
+  removeLayer() {
+
+  }
+
+  private selectLayer(layer: Layer) {
+    console.log('Selected layer:', layer);
+    this.appState.selectedLayer = layer;
+  }
+
+  private clickOutside() {
+    // this.appState.selectedLayer = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent) {
+    const clickedInsideLayer = (event.target as HTMLElement).closest('[data-scaffold]');
+
+    if (!clickedInsideLayer) {
+      this.clickOutside();
+    }
+  }
+}
