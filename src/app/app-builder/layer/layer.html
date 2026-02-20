@@ -1,29 +1,39 @@
 @switch (layer().widgetReference.widgetType) {
   @case ('section') {
-    <section [class]="layer().widgetReference.defaultWidgetProperties.class">
-      @if (layer().children) {
-        <ng-container *ngTemplateOutlet="layersTemplate(); context: {
-          $implicit: layer().children
-        }"></ng-container>
-       }
-    </section>
+    <de-layer-content [selected]="selected()">
+      <section [class]="layer().widgetReference.defaultWidgetProperties.class">
+        @if (layer().children) {
+          <ng-container *ngTemplateOutlet="layersTemplate(); context: {
+            $implicit: layer().children
+          }"></ng-container>
+         }
+      </section>
+    </de-layer-content>
   }
 
   @case ('text') {
-    <p [class]="layer().widgetReference.defaultWidgetProperties.class">{{layer().widgetReference.renderContent}}</p>
+    <de-layer-content [selected]="selected()">
+      <p [class]="layer().widgetReference.defaultWidgetProperties.class">{{layer().widgetReference.renderContent}}</p>
+    </de-layer-content>
   }
 
   @case ('image') {
-    <img [class]="layer().widgetReference.defaultWidgetProperties.class" [src]="layer().widgetReference.renderContent" />
+    <de-layer-content [selected]="selected()">
+      <img [class]="layer().widgetReference.defaultWidgetProperties.class" [src]="layer().widgetReference.renderContent" />
+    </de-layer-content>
   }
 
   @default {
-    <div [class]="layer().widgetReference.defaultWidgetProperties.class">
-      @if (layer().children) {
-        <ng-container *ngTemplateOutlet="layersTemplate(); context: {
-          $implicit: layer().children
-        }"></ng-container>
-       }
-      </div>
+    <de-layer-content [selected]="selected()">
+      <div [class]="layer().widgetReference.defaultWidgetProperties.class">
+        @if (layer().children) {
+          <ng-container *ngTemplateOutlet="layersTemplate(); context: {
+            $implicit: layer().children,
+          }"></ng-container>
+         }
+        </div>
+    </de-layer-content>
+    
+    
   }
 }

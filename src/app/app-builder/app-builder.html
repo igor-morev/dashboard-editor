@@ -1,7 +1,7 @@
 <div class="h-screen w-screen flex">
-  <div class="left-panel w-68 h-full flex flex-col bg-white shadow-md rounded-lg">
-    <div>
-      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">Toolbar</div>
+  <div class="left-panel w-68 h-full bg-white grid grid-rows-[200px_100px_2fr] border-0 border-r border-gray-300 border-solid">
+    <div class="overflow-auto">
+      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
       <div class="py-2 px-4">
         @for (widget of widgets; track widget.id) {
           <div (click)="moveWidgetOnScaffold(widget)">{{ widget.widgetName }}</div>
@@ -18,15 +18,15 @@
         <div>Image</div> -->
       </div>
     </div>
-    <div>
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid">Pages</div>
-      <div class="py-2 px-4">
+    <div class="overflow-auto">
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Pages</div>
+      <div class="py-2 px-4 overflow-auto ">
         <div>Page 1</div>
         <div>Page 2</div>
       </div>
     </div>
-    <div>
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid">Layers</div>
+    <div class="overflow-auto">
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Layers</div>
       <div class="py-2 px-4">
         <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
           $implicit: appState.appViewSchema.layers
@@ -38,9 +38,11 @@
               @for (layer of layers; track layer.id) {
                 <li (click)="selectLayerFromTree($event, layer)" class="pl-2">
                   @if (layer.children) {
-                    <span class="block layer" [class.selected]="layer.id === appState.selectedLayer?.id">{{layer.widgetReference.widgetName}}</span>
+                    <span class="block" [ngClass]="{
+                      'text-blue-500': layer.id === appState.selectedLayer?.id
+                    }">{{layer.widgetReference.widgetName}}</span>
                     <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
-                      $implicit: layer.children
+                      $implicit: layer.children,
                     }"></ng-container>
                   }
                 </li>
@@ -54,25 +56,22 @@
     </div>
   </div>
   
-  <div class="viewport flex-1 h-full">
-    <div class="h-full w-full bg-gray-100 flex items-center justify-center pt-10 pb-10">
-      <div data-scaffold class="app-scaffold border border-gray-300 border-solid w-md h-full overflow-auto" (click)="selectLayerFromScaffold($event)" (contextmenu)="openLayerContextMenu($event)">
-        <ng-container *ngTemplateOutlet="layersTemplate; context: {
-          $implicit: appState.appViewSchema.layers
-        }"></ng-container>
+  <div class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto">
+    <div data-scaffold class="app-scaffold w-md bg-white min-h-full rounded-md shadow-md mr-auto ml-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
+      <ng-container *ngTemplateOutlet="layersTemplate; context: {
+        $implicit: appState.appViewSchema.layers
+      }"></ng-container>
 
-        <ng-template #layersTemplate let-layers>
-          @for (layer of layers; track layer.id) {
-            <de-layer [layer]="layer" [layersTemplate]="layersTemplate"/>
-          }
-        </ng-template>
-      </div>
+      <ng-template #layersTemplate let-layers>
+        @for (layer of layers; track layer.id) {
+          <de-layer [layer]="layer" [selected]="layer.id === appState.selectedLayer?.id" [layersTemplate]="layersTemplate"/>
+        }
+      </ng-template>
     </div>
     
   </div>
-  @if (appState.selectedLayer) {
-
-  <div class="property-panel w-68 h-full flex flex-col bg-white shadow-md rounded-lg">
+  <div class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid">
+    @if (appState.selectedLayer) {
       <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">{{appState.selectedLayer.widgetReference.widgetName}}</div>
       <div class="py-2 px-4">
         <div>
@@ -88,8 +87,9 @@
         <div>Color</div>
         <div>Background</div> -->
       </div>
+    }
     
-  </div>
-}
+  
+</div>
 
 </div>

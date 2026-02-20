@@ -1,9 +1,3 @@
 :host {
   @apply h-screen w-screen flex flex-col;
 }
-
-.layer {
-  &:hover, &.selected {
-    border: 1px inset blueviolet;
-  }
-}

@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
         extendsFromRoot: true,
         height: '30px',
       },
-    })
+    }),
   ]
 };

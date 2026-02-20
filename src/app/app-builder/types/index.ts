@@ -1,79 +1,81 @@
-// interface WidgetsList {
-//   widgets: Widget[];
+import { AppState, Layer, Widget } from "./app-builder.type";
 
-//   loadWidgets(): void;
-// }
+interface WidgetsList {
+  widgets: Widget[];
 
-// interface PagesList {
-//   pages: AppState['pages'];
-//   selectedPage: AppState['selectedPage'];
+  loadWidgets(): void;
+}
 
-//   selectPage(pageId: string): void;
-//   createPage(pageName: string): void;
-//   removePage(pageId: string): void;
-//   updatePage(pageId: string, properties: Partial<AppState['selectedPage']>): void;
-// }
+interface PagesList {
+  pages: AppState['pages'];
+  selectedPage: AppState['selectedPage'];
 
-// // TBD: we might want to have a separate state manager for layers, to handle the complexity of undo/redo and history management, and keep the AppState simpler.
-// interface AppBuilderStateManager {
-//   appState: AppState;
-//   historyState: any[];
+  selectPage(pageId: string): void;
+  createPage(pageName: string): void;
+  removePage(pageId: string): void;
+  updatePage(pageId: string, properties: Partial<AppState['selectedPage']>): void;
+}
 
-//   updateState(newState: Partial<AppState>): void;
-//   saveLayerState(layer: Layer): void;
-//   updateLayersState(layers: Layer[]): void;
+// TBD: we might want to have a separate state manager for layers, to handle the complexity of undo/redo and history management, and keep the AppState simpler.
+interface AppBuilderStateManager {
+  appState: AppState;
+  historyState: any[];
 
-//   updateSelectedLayerState(properties: Partial<Layer['layerProperties']>): void;
+  updateState(newState: Partial<AppState>): void;
+  saveLayerState(layer: Layer): void;
+  updateLayersState(layers: Layer[]): void;
 
-//   undo(): void;
-//   redo(): void;
-// }
+  updateSelectedLayerState(properties: Partial<Layer['layerProperties']>): void;
 
-// interface LayerBuilderService {
-//   appBuilderStateManager: AppBuilderStateManager;
-//   layers: Layer[];
+  undo(): void;
+  redo(): void;
+}
 
-//   createLayer(widget: Widget): void;
-//   selectLayer(layer: Layer): void;
-//   highlightLayer(layer: Layer): void;
-//   updateLayer(layer: Layer, properties: Partial<Layer['layerProperties']>): void;
-//   copyLayer(layer: Layer): void;
-//   pasteLayer(destinationLayer: Layer): void;
-//   removeLayer(layer: Layer): void;
-// }
+interface LayerBuilderService {
+  appBuilderStateManager: AppBuilderStateManager;
+  layers: Layer[];
 
-// interface Scaffold {
-//   layers: Layer[];
+  createLayer(widget: Widget): void;
+  selectLayer(layer: Layer): void;
+  highlightLayer(layer: Layer): void;
+  updateLayer(layer: Layer, properties: Partial<Layer['layerProperties']>): void;
+  copyLayer(layer: Layer): void;
+  pasteLayer(destinationLayer: Layer): void;
+  removeLayer(layer: Layer): void;
+}
 
-//   renderLayer(layer: Layer): string;
-//   selectLayer(layer: Layer): void;
-//   highlightLayer(layer: Layer): void;
-// }
+interface Scaffold {
+  layers: Layer[];
+
+  renderLayer(layer: Layer): string;
+  selectLayer(layer: Layer): void;
+  highlightLayer(layer: Layer): void;
+}
 
 
-// interface LayerPropertiesConverter {
-//   convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string;
-// }
+interface LayerPropertiesConverter {
+  convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string;
+}
 
-// // example implementation of LayerPropertiesConverter that converts layer properties to Tailwind CSS classes
-// class TailwindLayerPropertiesConverter implements LayerPropertiesConverter {
-//   convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string {
-//     // This is a very basic implementation. You would need to expand this to cover all the properties you want to support.
-//     let classes = layerProperties.class || '';
+// example implementation of LayerPropertiesConverter that converts layer properties to Tailwind CSS classes
+class TailwindLayerPropertiesConverter implements LayerPropertiesConverter {
+  convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string {
+    // This is a very basic implementation. You would need to expand this to cover all the properties you want to support.
+    let classes = layerProperties.class || '';
     
-//     if (layerProperties.styles?.backgroundColor) {
-//       classes += ` bg-${layerProperties.styles.backgroundColor}`;
-//     }
+    if (layerProperties.styles?.backgroundColor) {
+      classes += ` bg-${layerProperties.styles.backgroundColor}`;
+    }
 
-//     return classes.trim();
-//   }
-// }
+    return classes.trim();
+  }
+}
 
-// interface LayerTree {
-//   layers: Layer[];
-//   layersBuilder: LayerBuilderService;
+interface LayerTree {
+  layers: Layer[];
+  layersBuilder: LayerBuilderService;
 
-//   selectLayer(layer: Layer): void;
-//   highlightLayer(layer: Layer): void;
-//   removeLayer(layer: Layer): void;
-// }
+  selectLayer(layer: Layer): void;
+  highlightLayer(layer: Layer): void;
+  removeLayer(layer: Layer): void;
+}

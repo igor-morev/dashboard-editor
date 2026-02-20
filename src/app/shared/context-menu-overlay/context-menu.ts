@@ -4,25 +4,25 @@ import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Observable, Subject } from 'rxjs';
 
-interface DeContextMenu<C = any, R = any> {
-  open: (event: MouseEvent, componentType: Type<C>) => {
-    afterClosed: () => Observable<R>
-  };
-  closeMenu: (option: R) => void;
-}
-
-export const CONTEXT_MENU_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
+export const CONTEXT_MENU_OVERLAY_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContextMenu<C, R> implements DeContextMenu<C, R> {
+export class ContextMenuOverlay {
   private overlay = inject(Overlay);
   private overlayRef: OverlayRef | null = null;
   private injector = inject(Injector);
-  closeSubject: Subject<R> = new Subject<R>();
 
-  open<C, R>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>) {
+  private closeSubject: Subject<unknown> = new Subject<unknown>();
+
+  afterClosed(): Observable<any> {
+    return this.closeSubject;
+  }
+
+  open<C, R>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): {
+    afterClosed: () => Observable<R>;
+  } {
     event.preventDefault();
 
     this.clearRef();
@@ -60,23 +60,24 @@ export class ContextMenu<C, R> implements DeContextMenu<C, R> {
 
     const injector = Injector.create({
       providers: [{
-        provide: CONTEXT_MENU_DATA,
+        provide: CONTEXT_MENU_OVERLAY_DATA,
         useValue: data
       }], parent: this.injector,
     });
     
     const portal = new ComponentPortal(componentType, null, injector);
+    
 
     // this.overlayRef.outsidePointerEvents().subscribe((value) => {
-    //   this.close();
+    //   this.closeMenu(null);
     // });
 
   
     this.overlayRef.attach(portal);  
 
-    return {
-      afterClosed: () => this.closeSubject.asObservable() as unknown as Observable<R>
-    };  
+    console.log(this.closeSubject.observers.length);
+
+    return this;  
   }
 
   private clearRef() {
@@ -86,9 +87,10 @@ export class ContextMenu<C, R> implements DeContextMenu<C, R> {
     }
   }
 
-  closeMenu(result: R) {
+  closeMenu(result: any) {
+    console.log('close menu with result');
     this.clearRef();
 
-    this.closeSubject.next(result);
+    this.closeSubject.next(result);  
   }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {MatListModule} from '@angular/material/list';
-import { CONTEXT_MENU_DATA, ContextMenu } from '../context-menu';
+import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlay } from '@app/shared/context-menu-overlay';
 
 @Component({
   selector: 'de-context-menu',
@@ -9,15 +9,15 @@ import { CONTEXT_MENU_DATA, ContextMenu } from '../context-menu';
   styleUrl: './context-menu.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContextMenuComponent {
-  private data = inject(CONTEXT_MENU_DATA);
-  private contextMenu = inject(ContextMenu<ContextMenuComponent, 'delete' | 'copy' | 'paste'>);
+export class ContextMenu {
+  private data = inject(CONTEXT_MENU_OVERLAY_DATA);
+  private contextMenuOverlay = inject(ContextMenuOverlay);
 
   ngOnInit() {
     console.log(this.data);
   }
 
   action(task: 'delete' | 'copy' | 'paste') {
-    this.contextMenu.closeMenu(task);
+    this.contextMenuOverlay.closeMenu(task);
   }
 }

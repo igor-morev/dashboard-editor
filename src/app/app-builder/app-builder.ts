@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject } from '@angular/core';
 import { AppState, Layer, Widget } from './types/app-builder.type';
-import { NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ContextMenu } from '@app/shared/context-menu/context-menu';
-import { ContextMenuComponent } from '@app/shared';
 import { LayerComponent } from './layer/layer';
+import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
+import { ContextMenu } from './context-menu/context-menu';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 function generateUniqueId() {
   return 'layer-' + Math.random().toString(36).substr(2, 9);
@@ -12,13 +13,15 @@ function generateUniqueId() {
 
 @Component({
   selector: 'de-app-builder',
-  imports: [NgTemplateOutlet, FormsModule, LayerComponent],
+  imports: [NgTemplateOutlet, FormsModule, LayerComponent, NgClass],
   templateUrl: './app-builder.html',
   styleUrl: './app-builder.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppBuilder {
-  private contextMenu = inject(ContextMenu);
+  private destroyRef = inject(DestroyRef);
+
+  private contextMenuOverlay = inject(ContextMenuOverlay);
   appState: AppState = {
     pages: [
       {
@@ -133,6 +136,8 @@ export class AppBuilder {
 
     this.appState.appViewSchema.layersMap[newLayer.id] = newLayer;
 
+    console.log(this.appState.appViewSchema.layersMap);
+
     if (this.appState.selectedLayer) {
       this.appState = {
         ...this.appState,
@@ -185,7 +190,9 @@ export class AppBuilder {
     this.selectLayer(layer);
   }
 
-  selectLayerFromScaffold(event: MouseEvent) {
+  clickOnLayerFromScaffold(event: MouseEvent) {
+    event.stopPropagation();
+
     const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
     
     if (id) {
@@ -193,18 +200,22 @@ export class AppBuilder {
     }
   }
 
-  openLayerContextMenu(event: MouseEvent) {
+  contextMenuOnLayerFromScaffold(event: MouseEvent) {
     const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
 
     if (!id) {
       return;
     }
+
+    this.selectLayer(this.appState.appViewSchema.layersMap[id]);
     
-    const ref = this.contextMenu.open<ContextMenuComponent, 'delete'>(event, ContextMenuComponent, {
+    const ref = this.contextMenuOverlay.open<ContextMenu, 'delete' | 'copy' | 'paste'>(event, ContextMenu, {
       id,
     });
 
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().pipe(
+      // takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {
       console.log(result);
       
       if (result === 'delete') {
@@ -214,12 +225,53 @@ export class AppBuilder {
   }
 
   removeLayer() {
+    if (!this.appState.selectedLayer) {
+      console.warn('No layer selected for deletion');
+      return;
+    } 
+    this.appState = {
+      ...this.appState,
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: this.removeLayerInSchema(this.appState.appViewSchema.layers, this.appState.selectedLayer.id),
+        layersMap: Object.keys(this.appState.appViewSchema.layersMap).reduce((result, key) => {
+          if (key !== this.appState.selectedLayer!.id) {
+            return {
+              ...result,
+              [key]: this.appState.appViewSchema.layersMap[key]
+            };
+          } else {
+            return result;
+          }
+        }, {}) 
+      }
+    };
 
+    this.unselectLayer();
+    
+    console.log('app state after delete',  this.appState);
+
+  }
+
+  private removeLayerInSchema(layers: Layer[], forDeleteId: string): Layer[] {
+    return layers.reduce((result: Layer[], layer) => {
+      if (layer.id === forDeleteId) {
+        return result;
+      } else if (layer.children.length > 0) {
+        return [...result, { ...layer, children: this.removeLayerInSchema(layer.children, forDeleteId) }];
+      } else {
+        return [...result, layer];
+      }
+    }, []);
   }
 
   private selectLayer(layer: Layer) {
     console.log('Selected layer:', layer);
     this.appState.selectedLayer = layer;
+  }
+
+  private unselectLayer() {
+    this.appState.selectedLayer = null;
   }
 
   private clickOutside() {

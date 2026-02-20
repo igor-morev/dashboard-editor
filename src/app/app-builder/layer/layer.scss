@@ -1,7 +1,5 @@
+@use 'tailwindcss';
+
 :host {
-  @apply w-full;
-  
-  &:hover, &.selected {
-    
-  }
+  @apply w-full cursor-pointer;
 }
