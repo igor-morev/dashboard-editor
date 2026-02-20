@@ -57,7 +57,7 @@
   </div>
   
   <div class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto">
-    <div data-scaffold class="app-scaffold w-md bg-white min-h-full rounded-md shadow-md mr-auto ml-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
+    <div data-scaffold class="w-md bg-white min-h-full shadow-md mr-auto ml-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
       <ng-container *ngTemplateOutlet="layersTemplate; context: {
         $implicit: appState.appViewSchema.layers
       }"></ng-container>

@@ -1,8 +1,7 @@
-import { inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
+import { ComponentRef, inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
 
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
-import { Observable, Subject } from 'rxjs';
+import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 
 export const CONTEXT_MENU_OVERLAY_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
 
@@ -14,15 +13,7 @@ export class ContextMenuOverlay {
   private overlayRef: OverlayRef | null = null;
   private injector = inject(Injector);
 
-  private closeSubject: Subject<unknown> = new Subject<unknown>();
-
-  afterClosed(): Observable<any> {
-    return this.closeSubject;
-  }
-
-  open<C, R>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): {
-    afterClosed: () => Observable<R>;
-  } {
+  open<C>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): ComponentRef<C> {
     event.preventDefault();
 
     this.clearRef();
@@ -73,11 +64,7 @@ export class ContextMenuOverlay {
     // });
 
   
-    this.overlayRef.attach(portal);  
-
-    console.log(this.closeSubject.observers.length);
-
-    return this;  
+    return this.overlayRef.attach(portal);  
   }
 
   private clearRef() {
@@ -87,10 +74,7 @@ export class ContextMenuOverlay {
     }
   }
 
-  closeMenu(result: any) {
-    console.log('close menu with result');
+  closeMenu() {
     this.clearRef();
-
-    this.closeSubject.next(result);  
   }
 }

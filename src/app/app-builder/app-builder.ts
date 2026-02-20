@@ -4,11 +4,31 @@ import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LayerComponent } from './layer/layer';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
-import { ContextMenu } from './context-menu/context-menu';
+import { EditorContextMenu } from './context-menu/context-menu';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 function generateUniqueId() {
   return 'layer-' + Math.random().toString(36).substr(2, 9);
+}
+
+function layer(id: string): Layer {
+  return {
+    id,
+    sourceWidgetId: 'scaffold-widget',
+    widgetReference: {
+      id: 'scaffold-widget',
+      widgetName: 'Scaffold',
+      widgetType: 'scaffold',
+      renderContent: 'div',
+      defaultWidgetProperties: {
+        class: '',
+      }
+    },
+    layerProperties: {
+      class: '',
+    },
+    children: []
+}
 }
 
 @Component({
@@ -33,11 +53,15 @@ export class AppBuilder {
       id: 'page-1',
       pageName: 'Home Page'
     },
-    selectedLayer: null,
+    selectedLayer: layer('scaffold'),
     appViewSchema: {
       device: 'sm',
-      layers: [],
-      layersMap: {}
+      layers: [
+        layer('scaffold')
+      ],
+      layersMap: {
+        'scaffold': layer('scaffold')
+      }
     }
   };
 
@@ -209,15 +233,13 @@ export class AppBuilder {
 
     this.selectLayer(this.appState.appViewSchema.layersMap[id]);
     
-    const ref = this.contextMenuOverlay.open<ContextMenu, 'delete' | 'copy' | 'paste'>(event, ContextMenu, {
+    const ref = this.contextMenuOverlay.open(event, EditorContextMenu, {
       id,
     });
 
-    ref.afterClosed().pipe(
-      // takeUntilDestroyed(this.destroyRef)
-    ).subscribe(result => {
-      console.log(result);
-      
+    ref.instance.afterClosed.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {      
       if (result === 'delete') {
         this.removeLayer();
       }

@@ -54,7 +54,7 @@ type TailwindWidgetProperties = Partial<{
 export interface Widget {
   id: string;
   widgetName: string;
-  widgetType: 'container' | 'section' | 'column' | 'row' | 'text' | 'image';
+  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'image';
   renderContent: string;
   defaultWidgetProperties: WidgetProperties;
   canNotBeAddedInside?: (widget: Widget) => boolean;
@@ -84,3 +84,5 @@ export interface AppState {
     layersMap: Record<string, Layer>;
   }
 }
+
+export type EditorCommand = 'delete' | 'copy' | 'paste';

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import {MatListModule} from '@angular/material/list';
 import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlay } from '@app/shared/context-menu-overlay';
+import { EditorCommand } from '../types/app-builder.type';
 
 @Component({
   selector: 'de-context-menu',
@@ -9,15 +10,18 @@ import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlay } from '@app/shared/conte
   styleUrl: './context-menu.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContextMenu {
+export class EditorContextMenu {
   private data = inject(CONTEXT_MENU_OVERLAY_DATA);
   private contextMenuOverlay = inject(ContextMenuOverlay);
+
+  @Output() afterClosed = new EventEmitter<EditorCommand>()
 
   ngOnInit() {
     console.log(this.data);
   }
 
-  action(task: 'delete' | 'copy' | 'paste') {
-    this.contextMenuOverlay.closeMenu(task);
+  action(command: EditorCommand) {
+    this.contextMenuOverlay.closeMenu();
+    this.afterClosed.emit(command);
   }
 }
