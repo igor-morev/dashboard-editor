@@ -16,26 +16,55 @@ type Spaces = {
 type ColorName = 'red' | 'blue' | 'green' | 'yellow' | 'gray' | 'purple' | 'pink' | 'indigo' | 'teal' | 'cyan';
 type ColorRange = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
-type WidgetProperties = Partial<{
+type WidgetPropertyConfig = Partial<{
   styles: {
     backgroundColor: {
-      name: ColorName;
-      range: ColorRange;
       nameOptions: ColorName[];
       rangeOptions: ColorRange[];
     };
     color: {
-      name: ColorName;
-      range: ColorRange;
       nameOptions: ColorName[];
       rangeOptions: ColorRange[];
     };
     border: {
       color: {
-        name: ColorName;
-        range: ColorRange;
         nameOptions: ColorName[];
         rangeOptions: ColorRange[];
+      },
+      radius: {
+        visible: boolean;
+      };
+      width: {
+        visible: boolean;
+      };
+      style: {
+        visible: boolean;
+      };
+    },
+    padding: {
+      visible: boolean;
+    };
+    margin: {
+      visible: boolean;
+    }; 
+  },
+  class: string;
+}>;
+
+export type WidgetPropertyModel = Partial<{
+  styles: {
+    backgroundColor: {
+      name: ColorName;
+      range: ColorRange;
+    };
+    color: {
+      name: ColorName;
+      range: ColorRange;
+    };
+    border: {
+      color: {
+        name: ColorName;
+        range: ColorRange;
       },
       radius: 0 | 1 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32;
       width: 0 | 1 | 2 | 4 | 8;
@@ -54,9 +83,10 @@ type TailwindWidgetProperties = Partial<{
 export interface Widget {
   id: string;
   widgetName: string;
-  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'image';
+  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'heading' | 'image' | 'icon';
   renderContent: string;
-  defaultWidgetProperties: WidgetProperties;
+  propertyConfig?: WidgetPropertyConfig;
+  defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
   canHaveChildren?: boolean;
 }
@@ -68,16 +98,17 @@ export interface Page {
 
 export interface Layer {
   id: string;
+  parentId: string | null;
   sourceWidgetId: string;
   widgetReference: Widget;
-  layerProperties: WidgetProperties;
+  layerPropertyModel: WidgetPropertyModel;
   children: Layer[];
 }
 
 export interface AppState {
   pages: Page[];
   selectedPage: Page;
-  selectedLayer: Layer | null;
+  selectedLayer: Layer;
   appViewSchema: {
     device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
     layers: Layer[];

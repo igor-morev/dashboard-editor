@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ContentChild, Host, HostBinding, input, signal, TemplateRef } from '@angular/core';
-import { Layer } from '../types/app-builder.type';
+import { Layer } from '../../types/application-editor.type';
 import { NgTemplateOutlet } from '@angular/common';
 import { LayerContent } from './layer-content/layer-content';
 

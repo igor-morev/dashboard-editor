@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppBuilder } from './app-builder';
+import { LayerPropertyBuilder } from './layer-property-builder';
 
-describe('AppBuilder', () => {
-  let component: AppBuilder;
-  let fixture: ComponentFixture<AppBuilder>;
+describe('LayerPropertyBuilder', () => {
+  let component: LayerPropertyBuilder;
+  let fixture: ComponentFixture<LayerPropertyBuilder>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppBuilder]
+      imports: [LayerPropertyBuilder]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppBuilder);
+    fixture = TestBed.createComponent(LayerPropertyBuilder);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

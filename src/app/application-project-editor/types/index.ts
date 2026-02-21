@@ -1,4 +1,4 @@
-import { AppState, Layer, Widget } from "./app-builder.type";
+import { AppState, Layer, Widget, WidgetPropertyModel } from "./application-editor.type";
 
 interface WidgetsList {
   widgets: Widget[];
@@ -19,13 +19,13 @@ interface PagesList {
 // TBD: we might want to have a separate state manager for layers, to handle the complexity of undo/redo and history management, and keep the AppState simpler.
 interface AppBuilderStateManager {
   appState: AppState;
-  historyState: any[];
+  historyState: AppState[];
 
   updateState(newState: Partial<AppState>): void;
   saveLayerState(layer: Layer): void;
   updateLayersState(layers: Layer[]): void;
 
-  updateSelectedLayerState(properties: Partial<Layer['layerProperties']>): void;
+  updateSelectedLayerState(properties: Partial<Layer['layerPropertyModel']>): void;
 
   undo(): void;
   redo(): void;
@@ -38,7 +38,7 @@ interface LayerBuilderService {
   createLayer(widget: Widget): void;
   selectLayer(layer: Layer): void;
   highlightLayer(layer: Layer): void;
-  updateLayer(layer: Layer, properties: Partial<Layer['layerProperties']>): void;
+  updateLayer(layer: Layer, properties: Partial<Layer['layerPropertyModel']>): void;
   copyLayer(layer: Layer): void;
   pasteLayer(destinationLayer: Layer): void;
   removeLayer(layer: Layer): void;
@@ -53,22 +53,8 @@ interface Scaffold {
 }
 
 
-interface LayerPropertiesConverter {
-  convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string;
-}
-
-// example implementation of LayerPropertiesConverter that converts layer properties to Tailwind CSS classes
-class TailwindLayerPropertiesConverter implements LayerPropertiesConverter {
-  convertToScaffoldClasses(layerProperties: Layer['layerProperties']): string {
-    // This is a very basic implementation. You would need to expand this to cover all the properties you want to support.
-    let classes = layerProperties.class || '';
-    
-    if (layerProperties.styles?.backgroundColor) {
-      classes += ` bg-${layerProperties.styles.backgroundColor}`;
-    }
-
-    return classes.trim();
-  }
+export interface ILayerPropertyConverter {
+  convertToScaffoldClasses(propertyModel: WidgetPropertyModel): string;
 }
 
 interface LayerTree {

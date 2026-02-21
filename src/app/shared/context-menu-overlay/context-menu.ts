@@ -5,12 +5,30 @@ import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 
 export const CONTEXT_MENU_OVERLAY_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
 
+// TBD
+@Injectable()
+export class ContextMenuOverlayRef {
+  constructor(private overlayRef: OverlayRef) {}
+
+  afterClosed() {
+
+  }
+
+  close() {
+    this.overlayRef.dispose();
+  }
+
+  outsidePointerEvents() {
+    return this.overlayRef.outsidePointerEvents();
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ContextMenuOverlay {
   private overlay = inject(Overlay);
-  private overlayRef: OverlayRef | null = null;
+  public overlayRef: OverlayRef | null = null;
   private injector = inject(Injector);
 
   open<C>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): ComponentRef<C> {

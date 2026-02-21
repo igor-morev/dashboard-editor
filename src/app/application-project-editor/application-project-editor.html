@@ -6,40 +6,35 @@
         @for (widget of widgets; track widget.id) {
           <div (click)="moveWidgetOnScaffold(widget)">{{ widget.widgetName }}</div>
         }
-        <!-- <div>Scaffold</div>
-        <div>Container</div>
-        <div>Section</div>
-        <div>Row</div>
-        <div>Column</div>
-        <div>Heading</div>
-        <div>Text</div>
-        <div>List</div>
-        <div>Icon</div>
-        <div>Image</div> -->
       </div>
     </div>
     <div class="overflow-auto">
       <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Pages</div>
       <div class="py-2 px-4 overflow-auto ">
-        <div>Page 1</div>
-        <div>Page 2</div>
+        <ul>
+          @for (page of pages; track page.id) {
+            <li>
+              <a [routerLink]="['page', page.id]" routerLinkActive="text-blue-500">{{page.pageName}}</a>
+          </li>
+          }
+        </ul>
       </div>
     </div>
     <div class="overflow-auto">
       <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Layers</div>
       <div class="py-2 px-4">
         <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
-          $implicit: appState.appViewSchema.layers
+          $implicit: layers
         }"></ng-container>
 
-        <ng-template #layersTreeTemplate let-layers>
-          @if (layers.length > 0) {
+        <ng-template #layersTreeTemplate let-layerTree>
+          @if (layerTree.length > 0) {
             <ul class="w-full list-inside">
-              @for (layer of layers; track layer.id) {
+              @for (layer of layerTree; track layer.id) {
                 <li (click)="selectLayerFromTree($event, layer)" class="pl-2">
                   @if (layer.children) {
                     <span class="block" [ngClass]="{
-                      'text-blue-500': layer.id === appState.selectedLayer?.id
+                      'text-blue-500': layer.id === selectedLayer.id
                     }">{{layer.widgetReference.widgetName}}</span>
                     <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
                       $implicit: layer.children,
@@ -56,27 +51,17 @@
     </div>
   </div>
   
-  <div class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto">
-    <div data-scaffold class="w-md bg-white min-h-full shadow-md mr-auto ml-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
-      <ng-container *ngTemplateOutlet="layersTemplate; context: {
-        $implicit: appState.appViewSchema.layers
-      }"></ng-container>
-
-      <ng-template #layersTemplate let-layers>
-        @for (layer of layers; track layer.id) {
-          <de-layer [layer]="layer" [selected]="layer.id === appState.selectedLayer?.id" [layersTemplate]="layersTemplate"/>
-        }
-      </ng-template>
-    </div>
-    
+  <!--Route outlet-->
+  <div class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
+    <router-outlet></router-outlet>
   </div>
   <div class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid">
-    @if (appState.selectedLayer) {
-      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">{{appState.selectedLayer.widgetReference.widgetName}}</div>
+    @if (selectedLayer) {
+      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">{{selectedLayer.widgetReference.widgetName}}</div>
       <div class="py-2 px-4">
         <div>
           <div>Class</div>
-          <input type="text" class="border border-gray-300 rounded-md w-full" [(ngModel)]="appState.selectedLayer.widgetReference.defaultWidgetProperties.class" />
+          <input type="text" class="border border-gray-300 rounded-md w-full" [(ngModel)]="selectedLayer.widgetReference.defaultWidgetPropertyModel.class" />
         </div>
       
         <!-- <div>Border</div>
@@ -90,6 +75,6 @@
     }
     
   
-</div>
+  </div>
 
 </div>

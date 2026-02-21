@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppBuilderView } from './app-builder-view';
+import { ScaffoldOutlet } from './scaffold-outlet';
 
-describe('AppBuilderView', () => {
-  let component: AppBuilderView;
-  let fixture: ComponentFixture<AppBuilderView>;
+describe('ScaffoldOutlet', () => {
+  let component: ScaffoldOutlet;
+  let fixture: ComponentFixture<ScaffoldOutlet>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppBuilderView]
+      imports: [ScaffoldOutlet]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppBuilderView);
+    fixture = TestBed.createComponent(ScaffoldOutlet);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

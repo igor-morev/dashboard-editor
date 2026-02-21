@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LayerContent } from './layer-content';
+import { ApplicationProjectEditor } from './application-project-editor';
 
-describe('LayerContent', () => {
-  let component: LayerContent;
-  let fixture: ComponentFixture<LayerContent>;
+describe('ApplicationProjectEditor', () => {
+  let component: ApplicationProjectEditor;
+  let fixture: ComponentFixture<ApplicationProjectEditor>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LayerContent]
+      imports: [ApplicationProjectEditor]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LayerContent);
+    fixture = TestBed.createComponent(ApplicationProjectEditor);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
