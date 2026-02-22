@@ -1,25 +1,34 @@
-import { ComponentRef, inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
+import { DestroyRef, inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
 
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
-import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 
 export const CONTEXT_MENU_OVERLAY_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
-
-// TBD
 @Injectable()
-export class ContextMenuOverlayRef {
-  constructor(private overlayRef: OverlayRef) {}
+export class ContextMenuOverlayRef<R> {
+  private destroyRef = inject(DestroyRef);
+  private contextMenuOverlay = inject(ContextMenuOverlay);
+  private closedSubject = new Subject<R | null>();
+
+  readonly overlayRef = this.contextMenuOverlay.overlayRef;
 
   afterClosed() {
-
+    return this.closedSubject.asObservable();
   }
 
-  close() {
-    this.overlayRef.dispose();
+  listenClickOutside() {
+    this.contextMenuOverlay.overlayRef?.outsidePointerEvents().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+        this.closeMenu(null);
+    })
   }
 
-  outsidePointerEvents() {
-    return this.overlayRef.outsidePointerEvents();
+  closeMenu(result: R | null) {
+    this.contextMenuOverlay.closeMenu();
+    this.closedSubject.next(result);
   }
 }
 
@@ -31,7 +40,7 @@ export class ContextMenuOverlay {
   public overlayRef: OverlayRef | null = null;
   private injector = inject(Injector);
 
-  open<C>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): ComponentRef<C> {
+  open<C, R>(event: MouseEvent, componentType: Type<C>, data?: Record<string, any>): ContextMenuOverlayRef<R> {
     event.preventDefault();
 
     this.clearRef();
@@ -68,21 +77,24 @@ export class ContextMenuOverlay {
     this.overlayRef = this.overlay.create({ positionStrategy, minWidth: 250 });
 
     const injector = Injector.create({
-      providers: [{
-        provide: CONTEXT_MENU_OVERLAY_DATA,
-        useValue: data
-      }], parent: this.injector,
+      providers: [
+        {
+          provide: CONTEXT_MENU_OVERLAY_DATA,
+          useValue: data
+        },
+        {
+          provide: ContextMenuOverlayRef,
+          useClass: ContextMenuOverlayRef,
+        }
+      ],
+      parent: this.injector
     });
     
     const portal = new ComponentPortal(componentType, null, injector);
-    
-
-    // this.overlayRef.outsidePointerEvents().subscribe((value) => {
-    //   this.closeMenu(null);
-    // });
-
   
-    return this.overlayRef.attach(portal);  
+    this.overlayRef.attach(portal);
+
+    return injector.get<ContextMenuOverlayRef<R>>(ContextMenuOverlayRef<R>);
   }
 
   private clearRef() {

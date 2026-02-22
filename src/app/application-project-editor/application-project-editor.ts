@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject } from '@angular/core';
-import { Layer, Widget } from './types/application-editor.type';
+import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
@@ -122,11 +122,11 @@ export class ApplicationProjectEditor {
 
     this.selectLayer(this.appState.appViewSchema.layersMap[id]);
     
-    const ref = this.contextMenuOverlay.open(event, EditorContextMenu, {
+    const overlayRef = this.contextMenuOverlay.open<EditorContextMenu, EditorCommand>(event, EditorContextMenu, {
       id,
     });
 
-    ref.instance.afterClosed.pipe(
+    overlayRef.afterClosed().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(result => {      
       if (result === 'delete') {
