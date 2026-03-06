@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+} from '@angular/core';
 import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,11 +13,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { generateUniqueId } from './utils/editor';
 import { ApplicationEditorState } from './state/application-editor-state';
-import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
 
 @Component({
   selector: 'de-application-project-editor',
-  imports: [NgTemplateOutlet, FormsModule, NgClass, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [
+    NgTemplateOutlet,
+    FormsModule,
+    NgClass,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    LayerPropertyBuilder,
+  ],
   templateUrl: './application-project-editor.html',
   styleUrl: './application-project-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +34,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
 export class ApplicationProjectEditor {
   private destroyRef = inject(DestroyRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
-  private state = inject(ApplicationEditorState);
+  private readonly state = inject(ApplicationEditorState);
 
   get appState() {
     return this.state.appState;
@@ -47,7 +62,11 @@ export class ApplicationProjectEditor {
 
   private createLayer(widget: Widget) {
     console.log('Creating layer for widget', widget);
-    if (this.selectedLayer && this.selectedLayer.widgetReference.canNotBeAddedInside && this.selectedLayer.widgetReference.canNotBeAddedInside(widget)) {
+    if (
+      this.selectedLayer &&
+      this.selectedLayer.widgetReference.canNotBeAddedInside &&
+      this.selectedLayer.widgetReference.canNotBeAddedInside(widget)
+    ) {
       return;
     }
 
@@ -57,39 +76,42 @@ export class ApplicationProjectEditor {
       sourceWidgetId: widget.id,
       widgetReference: widget,
       layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
-      children: []
+      children: [],
     };
-
-    this.appState.appViewSchema.layersMap[newLayer.id] = newLayer;
 
     this.state.updateAppState({
       appViewSchema: {
         ...this.appState.appViewSchema,
-        layers: this.insertLayerInSchema(this.appState.appViewSchema.layers, this.selectedLayer.id, newLayer)
-      }
+        layersMap: {
+          ...this.appState.appViewSchema.layersMap,
+          [newLayer.id]: newLayer,
+        },
+        layers: this.insertLayerInSchema(
+          this.appState.appViewSchema.layers,
+          this.selectedLayer.id,
+          newLayer,
+        ),
+      },
     });
 
     // this.selectLayer(newLayer);
-
-    console.log('app state',  this.appState);
   }
-
 
   private convertBgPropertyToTailwindClass(propertyKey: string, propertyValue: string): string {
     return `${propertyKey}-${propertyValue}`;
   }
 
   private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
-    return layers.map(layer => {
+    return layers.map((layer) => {
       if (layer.id === destinationId) {
         return {
           ...layer,
-          children: [...layer.children, newLayer]
+          children: [...layer.children, newLayer],
         };
       } else if (layer.children.length > 0) {
         return {
           ...layer,
-          children: this.insertLayerInSchema(layer.children, destinationId, newLayer)
+          children: this.insertLayerInSchema(layer.children, destinationId, newLayer),
         };
       } else {
         return layer;
@@ -106,40 +128,49 @@ export class ApplicationProjectEditor {
   clickOnLayerFromScaffold(event: MouseEvent) {
     event.stopPropagation();
 
-    const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
-    
+    const id = (event!.target! as HTMLElement)
+      .closest('[data-layer-id]')
+      ?.getAttribute('data-layer-id');
+
     if (id) {
       this.selectLayer(this.appState.appViewSchema.layersMap[id]);
     }
   }
 
   contextMenuOnLayerFromScaffold(event: MouseEvent) {
-    const id = (event!.target! as HTMLElement).closest('[data-layer-id]')?.getAttribute('data-layer-id');
+    const id = (event!.target! as HTMLElement)
+      .closest('[data-layer-id]')
+      ?.getAttribute('data-layer-id');
 
     if (!id) {
       return;
     }
 
     this.selectLayer(this.appState.appViewSchema.layersMap[id]);
-    
-    const overlayRef = this.contextMenuOverlay.open<EditorContextMenu, EditorCommand>(event, EditorContextMenu, {
-      id,
-    });
 
-    overlayRef.afterClosed().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(result => {      
-      if (result === 'delete') {
-        this.removeLayer();
-      }
-    });
+    const overlayRef = this.contextMenuOverlay.open<EditorContextMenu, EditorCommand>(
+      event,
+      EditorContextMenu,
+      {
+        id,
+      },
+    );
+
+    overlayRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result === 'delete') {
+          this.removeLayer();
+        }
+      });
   }
 
   private removeLayer() {
     if (!this.selectedLayer) {
       console.warn('No layer selected for deletion');
       return;
-    } 
+    }
 
     this.state.updateAppState({
       appViewSchema: {
@@ -149,19 +180,18 @@ export class ApplicationProjectEditor {
           if (key !== this.selectedLayer.id) {
             return {
               ...result,
-              [key]: this.appState.appViewSchema.layersMap[key]
+              [key]: this.appState.appViewSchema.layersMap[key],
             };
           } else {
             return result;
           }
-        }, {}) 
-      }
-    })
+        }, {}),
+      },
+    });
 
     this.selectParentLayer();
-    
-    console.log('app state after delete',  this.appState);
 
+    console.log('app state after delete', this.appState);
   }
 
   private selectParentLayer() {
@@ -175,7 +205,10 @@ export class ApplicationProjectEditor {
       if (layer.id === forDeleteId) {
         return result;
       } else if (layer.children.length > 0) {
-        return [...result, { ...layer, children: this.removeLayerInSchema(layer.children, forDeleteId) }];
+        return [
+          ...result,
+          { ...layer, children: this.removeLayerInSchema(layer.children, forDeleteId) },
+        ];
       } else {
         return [...result, layer];
       }
@@ -186,27 +219,22 @@ export class ApplicationProjectEditor {
     if (this.selectedLayer && this.selectedLayer.id === layer.id) {
       return;
     }
-    
+
     console.log('Selected layer:', layer);
 
-    this.state.updateAppState(
-      {
-        selectedLayer: layer
-      }
-    )
+    this.state.updateAppState({
+      selectedLayer: layer,
+    });
   }
 
   // private unselectLayer() {
   //   this.appState.selectedLayer = null;
   // }
 
-  selectPage(page: {
-    id: string;
-    pageName: string;
-  }) {
+  selectPage(page: { id: string; pageName: string }) {
     if (page) {
       this.state.updateAppState({
-        selectedPage: page
+        selectedPage: page,
       });
     }
   }

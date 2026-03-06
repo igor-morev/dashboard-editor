@@ -8,9 +8,8 @@ describe('ScaffoldOutlet', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScaffoldOutlet]
-    })
-    .compileComponents();
+      imports: [ScaffoldOutlet],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ScaffoldOutlet);
     component = fixture.componentInstance;

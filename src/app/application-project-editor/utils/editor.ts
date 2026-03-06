@@ -1,4 +1,4 @@
-import { Layer } from "../types/application-editor.type";
+import { Layer } from '../types/application-editor.type';
 
 export function generateUniqueId() {
   return 'layer-' + Math.random().toString(36).substr(2, 9);
@@ -14,11 +14,11 @@ export function layer(id: string, parentId = null): Layer {
       widgetName: 'Scaffold',
       widgetType: 'scaffold',
       renderContent: 'div',
-      defaultWidgetPropertyModel: {}
+      defaultWidgetPropertyModel: {},
     },
     layerPropertyModel: {
       class: '',
     },
-    children: []
-  }
+    children: [],
+  };
 }

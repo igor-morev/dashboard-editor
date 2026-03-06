@@ -1,15 +1,34 @@
-<div class="py-2 px-4 border-0 border-b border-gray-300 border-solid"></div>
-      <div class="py-2 px-4">
-        <div>
-          <div>Class</div>
-          <input type="text" class="border border-gray-300 rounded-md w-full"/>
-        </div>
-      
-        <!-- <div>Border</div>
-        <div>Padding</div>
-        <div>Margin</div>
-        <div>Width</div>
-        <div>Height</div>
-        <div>Color</div>
-        <div>Background</div> -->
+@if (selectedLayer()) {
+  <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">
+    {{ selectedLayer().widgetReference.widgetName }}
+  </div>
+  <div class="py-2 px-4">
+    @let backgroundColor = selectedLayer().widgetReference.propertyConfig?.styles?.backgroundColor;
+
+    @if (backgroundColor) {
+      <div [formGroup]="formGroup">
+        <div>BackgroundColor</div>
+        <select
+          name="backgroundColor_nameOptions"
+          id=""
+          required
+          formControlName="backgroundColorName"
+        >
+          @for (option of backgroundColor.nameOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+        <select
+          name="backgroundColor_rangeOptions"
+          id=""
+          required
+          formControlName="backgroundColorRange"
+        >
+          @for (option of backgroundColor.rangeOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
       </div>
+    }
+  </div>
+}

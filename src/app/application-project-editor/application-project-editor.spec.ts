@@ -8,9 +8,8 @@ describe('ApplicationProjectEditor', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ApplicationProjectEditor]
-    })
-    .compileComponents();
+      imports: [ApplicationProjectEditor],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ApplicationProjectEditor);
     component = fixture.componentInstance;

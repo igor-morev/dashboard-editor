@@ -8,11 +8,16 @@ import { LayerComponent } from '../layer/layer';
   imports: [NgTemplateOutlet, LayerComponent],
   templateUrl: './scaffold-outlet.html',
   styleUrl: './scaffold-outlet.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScaffoldOutlet {
   private state = inject(ApplicationEditorState);
 
-  layers = this.state.layers;
-  selectedlayer = this.state.selectedlayer;
+  get layers() {
+    return this.state.layers;
+  }
+
+  get selectedLayer() {
+    return this.state.selectedlayer;
+  }
 }

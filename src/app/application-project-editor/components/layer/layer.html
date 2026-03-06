@@ -3,37 +3,53 @@
     <de-layer-content [selected]="selected()">
       <section [class]="layer().widgetReference.defaultWidgetPropertyModel.class">
         @if (layer().children) {
-          <ng-container *ngTemplateOutlet="layersTemplate(); context: {
-            $implicit: layer().children
-          }"></ng-container>
-         }
+          <ng-container
+            *ngTemplateOutlet="
+              layersTemplate();
+              context: {
+                $implicit: layer().children,
+              }
+            "
+          ></ng-container>
+        }
       </section>
     </de-layer-content>
   }
 
   @case ('text') {
     <de-layer-content [selected]="selected()">
-      <p [class]="layer().widgetReference.defaultWidgetPropertyModel.class">{{layer().widgetReference.renderContent}}</p>
+      <p [class]="layer().widgetReference.defaultWidgetPropertyModel.class">
+        {{ layer().widgetReference.renderContent }}
+      </p>
     </de-layer-content>
   }
 
   @case ('image') {
     <de-layer-content [selected]="selected()">
-      <img [class]="layer().widgetReference.defaultWidgetPropertyModel.class" [src]="layer().widgetReference.renderContent" />
+      <img
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [src]="layer().widgetReference.renderContent"
+      />
     </de-layer-content>
   }
 
   @default {
     <de-layer-content [selected]="selected()">
-      <div [class]="layer().widgetReference.defaultWidgetPropertyModel.class">
+      <div
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerClassTransform"
+      >
         @if (layer().children) {
-          <ng-container *ngTemplateOutlet="layersTemplate(); context: {
-            $implicit: layer().children,
-          }"></ng-container>
-         }
-        </div>
+          <ng-container
+            *ngTemplateOutlet="
+              layersTemplate();
+              context: {
+                $implicit: layer().children,
+              }
+            "
+          ></ng-container>
+        }
+      </div>
     </de-layer-content>
-    
-    
   }
 }

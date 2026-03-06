@@ -1,5 +1,7 @@
 <div class="h-screen w-screen flex">
-  <div class="left-panel w-68 h-full bg-white grid grid-rows-[200px_100px_2fr] border-0 border-r border-gray-300 border-solid">
+  <div
+    class="left-panel w-68 h-full bg-white grid grid-rows-[200px_100px_2fr] border-0 border-r border-gray-300 border-solid"
+  >
     <div class="overflow-auto">
       <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
       <div class="py-2 px-4">
@@ -9,23 +11,34 @@
       </div>
     </div>
     <div class="overflow-auto">
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Pages</div>
-      <div class="py-2 px-4 overflow-auto ">
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
+        Pages
+      </div>
+      <div class="py-2 px-4 overflow-auto">
         <ul>
           @for (page of pages; track page.id) {
             <li>
-              <a [routerLink]="['page', page.id]" routerLinkActive="text-blue-500">{{page.pageName}}</a>
-          </li>
+              <a [routerLink]="['page', page.id]" routerLinkActive="text-blue-500">{{
+                page.pageName
+              }}</a>
+            </li>
           }
         </ul>
       </div>
     </div>
     <div class="overflow-auto">
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">Layers</div>
+      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
+        Layers
+      </div>
       <div class="py-2 px-4">
-        <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
-          $implicit: layers
-        }"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="
+            layersTreeTemplate;
+            context: {
+              $implicit: layers,
+            }
+          "
+        ></ng-container>
 
         <ng-template #layersTreeTemplate let-layerTree>
           @if (layerTree.length > 0) {
@@ -33,48 +46,42 @@
               @for (layer of layerTree; track layer.id) {
                 <li (click)="selectLayerFromTree($event, layer)" class="pl-2">
                   @if (layer.children) {
-                    <span class="block" [ngClass]="{
-                      'text-blue-500': layer.id === selectedLayer.id
-                    }">{{layer.widgetReference.widgetName}}</span>
-                    <ng-container *ngTemplateOutlet="layersTreeTemplate; context: {
-                      $implicit: layer.children,
-                    }"></ng-container>
+                    <span
+                      class="block"
+                      [ngClass]="{
+                        'text-blue-500': layer.id === selectedLayer.id,
+                      }"
+                      >{{ layer.widgetReference.widgetName }}</span
+                    >
+                    <ng-container
+                      *ngTemplateOutlet="
+                        layersTreeTemplate;
+                        context: {
+                          $implicit: layer.children,
+                        }
+                      "
+                    ></ng-container>
                   }
                 </li>
               }
             </ul>
           }
-          
-          
         </ng-template>
       </div>
     </div>
   </div>
-  
+
   <!--Route outlet-->
-  <div class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto" (click)="clickOnLayerFromScaffold($event)" (contextmenu)="contextMenuOnLayerFromScaffold($event)">
+  <div
+    class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
+    (click)="clickOnLayerFromScaffold($event)"
+    (contextmenu)="contextMenuOnLayerFromScaffold($event)"
+  >
     <router-outlet></router-outlet>
   </div>
-  <div class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid">
-    @if (selectedLayer) {
-      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">{{selectedLayer.widgetReference.widgetName}}</div>
-      <div class="py-2 px-4">
-        <div>
-          <div>Class</div>
-          <input type="text" class="border border-gray-300 rounded-md w-full" [(ngModel)]="selectedLayer.widgetReference.defaultWidgetPropertyModel.class" />
-        </div>
-      
-        <!-- <div>Border</div>
-        <div>Padding</div>
-        <div>Margin</div>
-        <div>Width</div>
-        <div>Height</div>
-        <div>Color</div>
-        <div>Background</div> -->
-      </div>
-    }
-    
-  
+  <div
+    class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid"
+  >
+    <de-layer-property-builder />
   </div>
-
 </div>

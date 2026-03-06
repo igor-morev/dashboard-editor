@@ -1,18 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ContextMenu } from './context-menu';
+import { EditorContextMenu } from './context-menu';
 
 describe('ContextMenu', () => {
-  let component: ContextMenu;
-  let fixture: ComponentFixture<ContextMenu>;
+  let component: EditorContextMenu;
+  let fixture: ComponentFixture<EditorContextMenu>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContextMenu]
-    })
-    .compileComponents();
+      imports: [EditorContextMenu],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ContextMenu);
+    fixture = TestBed.createComponent(EditorContextMenu);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

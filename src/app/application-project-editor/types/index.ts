@@ -1,4 +1,4 @@
-import { AppState, Layer, Widget, WidgetPropertyModel } from "./application-editor.type";
+import { AppState, Layer, Widget, WidgetPropertyModel } from './application-editor.type';
 
 interface WidgetsList {
   widgets: Widget[];
@@ -51,7 +51,6 @@ interface Scaffold {
   selectLayer(layer: Layer): void;
   highlightLayer(layer: Layer): void;
 }
-
 
 export interface ILayerPropertyConverter {
   convertToScaffoldClasses(propertyModel: WidgetPropertyModel): string;

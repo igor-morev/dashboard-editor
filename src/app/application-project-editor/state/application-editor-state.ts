@@ -8,27 +8,25 @@ export class ApplicationEditorState {
     pages: [
       {
         id: 'page-1',
-        pageName: 'Home Page'
+        pageName: 'Home Page',
       },
       {
         id: 'page-2',
-        pageName: 'Contacts Page'
-      }
+        pageName: 'Contacts Page',
+      },
     ],
     selectedPage: {
       id: 'page-1',
-      pageName: 'Home Page'
+      pageName: 'Home Page',
     },
     selectedLayer: layer('scaffold'),
     appViewSchema: {
       device: 'sm',
-      layers: [
-        layer('scaffold')
-      ],
+      layers: [layer('scaffold')],
       layersMap: {
-        'scaffold': layer('scaffold')
-      }
-    }
+        scaffold: layer('scaffold'),
+      },
+    },
   };
 
   get appState() {
@@ -37,7 +35,6 @@ export class ApplicationEditorState {
 
   layers = signal(this._appState.appViewSchema.layers);
   selectedlayer = signal(this._appState.selectedLayer);
-
 
   get pages() {
     return this._appState.pages;
@@ -52,9 +49,23 @@ export class ApplicationEditorState {
       canNotBeAddedInside: (widget: Widget) => {
         return widget.widgetType === 'container';
       },
+      propertyConfig: {
+        styles: {
+          backgroundColor: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
+        },
+      },
       defaultWidgetPropertyModel: {
-        class: 'pl-2 pr-2 bg-blue-300 min-h-48',
-      }
+        class: 'pl-2 pr-2 min-h-48',
+        styles: {
+          backgroundColor: {
+            name: 'green',
+            range: 400,
+          },
+        },
+      },
     },
     {
       id: 'section-widget',
@@ -64,9 +75,17 @@ export class ApplicationEditorState {
       canNotBeAddedInside: (widget: Widget) => {
         return widget.widgetType === 'section';
       },
+      propertyConfig: {
+        styles: {
+          backgroundColor: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
+        },
+      },
       defaultWidgetPropertyModel: {
         class: 'min-h-48 bg-gray-300',
-      }
+      },
     },
     {
       id: 'row-widget',
@@ -74,11 +93,11 @@ export class ApplicationEditorState {
       widgetType: 'row',
       renderContent: 'div',
       canNotBeAddedInside: (widget: Widget) => {
-        return widget.widgetType === 'row' // TBD;
+        return widget.widgetType === 'row'; // TBD;
       },
       defaultWidgetPropertyModel: {
         class: 'min-h-48 bg-red-300 flex gap-x-2',
-      }
+      },
     },
     {
       id: 'column-widget',
@@ -86,11 +105,11 @@ export class ApplicationEditorState {
       widgetType: 'column',
       renderContent: 'div',
       canNotBeAddedInside: (widget: Widget) => {
-        return widget.widgetType === 'column' // TBD;
+        return widget.widgetType === 'column'; // TBD;
       },
       defaultWidgetPropertyModel: {
         class: 'min-h-48 bg-green-300 grow pl-2 pr-2',
-      }
+      },
     },
     {
       id: 'heading-widget',
@@ -102,7 +121,7 @@ export class ApplicationEditorState {
       },
       defaultWidgetPropertyModel: {
         class: '',
-      }
+      },
     },
     {
       id: 'text-widget',
@@ -114,32 +133,34 @@ export class ApplicationEditorState {
       },
       defaultWidgetPropertyModel: {
         class: '',
-      }
+      },
     },
     {
       id: 'image-widget',
       widgetName: 'Image',
       widgetType: 'image',
-      renderContent: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
+      renderContent:
+        'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
       canNotBeAddedInside: (widget: Widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
         class: 'min-h-48',
-      }
+      },
     },
     {
       id: 'icon-widget',
       widgetName: 'Icon',
       widgetType: 'icon',
-      renderContent: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
+      renderContent:
+        'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
       canNotBeAddedInside: (widget: Widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
         class: '',
-      }
-    }
+      },
+    },
   ];
 
   get widgets() {
@@ -149,10 +170,12 @@ export class ApplicationEditorState {
   updateAppState(newState: Partial<AppState>) {
     this._appState = {
       ...this.appState,
-      ...newState
-    }
+      ...newState,
+    };
 
     this.layers.set(this._appState.appViewSchema.layers);
     this.selectedlayer.set(this._appState.selectedLayer);
+
+    console.log('updated app state', this._appState);
   }
 }

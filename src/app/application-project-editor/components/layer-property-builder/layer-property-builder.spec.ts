@@ -8,9 +8,8 @@ describe('LayerPropertyBuilder', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LayerPropertyBuilder]
-    })
-    .compileComponents();
+      imports: [LayerPropertyBuilder],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LayerPropertyBuilder);
     component = fixture.componentInstance;

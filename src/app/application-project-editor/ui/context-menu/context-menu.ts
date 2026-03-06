@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {MatListModule} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlayRef } from '@app/shared/context-menu-overlay';
 import { EditorCommand } from '@app/application-project-editor/types/application-editor.type';
 

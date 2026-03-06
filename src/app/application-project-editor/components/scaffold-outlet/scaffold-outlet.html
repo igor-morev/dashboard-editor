@@ -1,11 +1,20 @@
 <div data-scaffold class="w-md bg-white min-h-full shadow-md mr-auto ml-auto">
-  <ng-container *ngTemplateOutlet="layersTemplate; context: {
-    $implicit: layers()
-  }"></ng-container>
+  <ng-container
+    *ngTemplateOutlet="
+      layersTemplate;
+      context: {
+        $implicit: layers(),
+      }
+    "
+  ></ng-container>
 
   <ng-template #layersTemplate let-layersTree>
     @for (layer of layersTree; track layer.id) {
-      <de-layer [layer]="layer" [selected]="layer.id === selectedlayer().id" [layersTemplate]="layersTemplate"/>
+      <de-layer
+        [layer]="layer"
+        [selected]="layer.id === selectedLayer().id"
+        [layersTemplate]="layersTemplate"
+      />
     }
   </ng-template>
 </div>
