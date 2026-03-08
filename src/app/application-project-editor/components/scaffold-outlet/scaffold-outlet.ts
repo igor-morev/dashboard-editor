@@ -20,4 +20,8 @@ export class ScaffoldOutlet {
   get selectedLayer() {
     return this.state.selectedlayer;
   }
+
+  get highlightedLayer() {
+    return this.state.highlightedLayer;
+  }
 }

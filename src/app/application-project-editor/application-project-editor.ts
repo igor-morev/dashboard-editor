@@ -44,6 +44,10 @@ export class ApplicationProjectEditor {
     return this.state.appState.selectedLayer;
   }
 
+  get highlightedLayer() {
+    return this.state.appState.highlightedLayer;
+  }
+
   get layers() {
     return this.state.appState.appViewSchema.layers;
   }
@@ -56,7 +60,8 @@ export class ApplicationProjectEditor {
     return this.state.pages;
   }
 
-  moveWidgetOnScaffold(widget: Widget) {
+  moveWidgetOnScaffold(event: Event, widget: Widget) {
+    event.preventDefault();
     this.createLayer(widget);
   }
 
@@ -125,6 +130,18 @@ export class ApplicationProjectEditor {
     this.selectLayer(layer);
   }
 
+  highlightLayerFromTree(event: Event, layer: Layer) {
+    event.stopPropagation();
+
+    this.highlightLayer(layer);
+  }
+
+  unhighlightLayerFromTree(event: Event) {
+    event.stopPropagation();
+
+    this.unhighlightLayer();
+  }
+
   clickOnLayerFromScaffold(event: MouseEvent) {
     event.stopPropagation();
 
@@ -135,6 +152,24 @@ export class ApplicationProjectEditor {
     if (id) {
       this.selectLayer(this.appState.appViewSchema.layersMap[id]);
     }
+  }
+
+  mouseMoveOnScaffold(event: Event) {
+    const id = (event!.target! as HTMLElement)
+      .closest('[data-layer-id]')
+      ?.getAttribute('data-layer-id');
+
+    if (id) {
+      this.highlightLayer(this.appState.appViewSchema.layersMap[id]);
+    } else {
+      this.unhighlightLayer();
+    }
+  }
+
+  mouseLeaveOnLayerFromScaffold(event: MouseEvent) {
+    event.stopPropagation();
+
+    this.unhighlightLayer();
   }
 
   contextMenuOnLayerFromScaffold(event: MouseEvent) {
@@ -224,6 +259,26 @@ export class ApplicationProjectEditor {
 
     this.state.updateAppState({
       selectedLayer: layer,
+    });
+  }
+
+  private highlightLayer(layer: Layer) {
+    if (this.highlightedLayer && this.highlightedLayer.id === layer.id) {
+      return;
+    }
+
+    this.state.updateAppState({
+      highlightedLayer: layer,
+    });
+  }
+
+  private unhighlightLayer() {
+    if (this.highlightedLayer === undefined) {
+      return;
+    }
+
+    this.state.updateAppState({
+      highlightedLayer: undefined,
     });
   }
 

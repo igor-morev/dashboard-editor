@@ -1,7 +1,11 @@
 @switch (layer().widgetReference.widgetType) {
   @case ('section') {
-    <de-layer-content [selected]="selected()">
-      <section [class]="layer().widgetReference.defaultWidgetPropertyModel.class">
+    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+      <section
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+        [style]="layer().layerPropertyModel | layerAttributeTransform: buildLayerStyleAttribute"
+      >
         @if (layer().children) {
           <ng-container
             *ngTemplateOutlet="
@@ -16,16 +20,30 @@
     </de-layer-content>
   }
 
+  @case ('heading') {
+    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+      <h1
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      >
+        {{ layer().layerPropertyModel.content }}
+      </h1>
+    </de-layer-content>
+  }
+
   @case ('text') {
-    <de-layer-content [selected]="selected()">
-      <p [class]="layer().widgetReference.defaultWidgetPropertyModel.class">
-        {{ layer().widgetReference.renderContent }}
+    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+      <p
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      >
+        {{ layer().layerPropertyModel.content }}
       </p>
     </de-layer-content>
   }
 
   @case ('image') {
-    <de-layer-content [selected]="selected()">
+    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [src]="layer().widgetReference.renderContent"
@@ -34,10 +52,10 @@
   }
 
   @default {
-    <de-layer-content [selected]="selected()">
+    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
       <div
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerClassTransform"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
         @if (layer().children) {
           <ng-container

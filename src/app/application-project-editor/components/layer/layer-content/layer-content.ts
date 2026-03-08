@@ -8,5 +8,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerContent {
+  // TODO: get this data from parent layer component
   selected = input.required<boolean>();
+  highlighted = input<boolean>();
 }

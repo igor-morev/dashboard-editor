@@ -38,12 +38,26 @@ export class LayerPropertyBuilder {
   formGroup = new FormGroup({
     backgroundColorName: new FormControl(),
     backgroundColorRange: new FormControl(),
+    colorName: new FormControl(),
+    colorRange: new FormControl(),
+    content: new FormControl(),
+    textAlign: new FormControl(),
+    background: new FormGroup({
+      color: new FormGroup({
+        name: new FormControl(),
+        range: new FormControl(),
+      }),
+      image: new FormControl(),
+      position: new FormControl(),
+      repeat: new FormControl(),
+      size: new FormControl(),
+    }),
   });
 
   constructor() {
     effect(() => {
-      const layerPropertyModel = this.selectedLayer()?.layerPropertyModel;
-      const widgetPropertyModel = this.selectedLayer()?.widgetReference.defaultWidgetPropertyModel;
+      const layerPropertyModel = this.selectedLayer().layerPropertyModel;
+      const widgetPropertyModel = this.selectedLayer().widgetReference.defaultWidgetPropertyModel;
 
       this.formGroup.patchValue(
         {
@@ -53,6 +67,40 @@ export class LayerPropertyBuilder {
           backgroundColorRange:
             layerPropertyModel.styles?.backgroundColor?.range ||
             widgetPropertyModel?.styles?.backgroundColor?.range,
+          colorName:
+            layerPropertyModel.styles?.color?.name || widgetPropertyModel?.styles?.color?.name,
+          colorRange:
+            layerPropertyModel.styles?.color?.range || widgetPropertyModel?.styles?.color?.range,
+          content: this.selectedLayer().layerPropertyModel.content,
+          textAlign: this.selectedLayer().layerPropertyModel.styles?.textAlign,
+        },
+        {
+          emitEvent: false,
+        },
+      );
+
+      this.formGroup.get('background')!.patchValue(
+        {
+          color: {
+            name:
+              layerPropertyModel.styles?.background?.color?.name ||
+              widgetPropertyModel?.styles?.background?.color?.name,
+            range:
+              layerPropertyModel.styles?.background?.color?.range ||
+              widgetPropertyModel?.styles?.background?.color?.range,
+          },
+          image:
+            layerPropertyModel.styles?.background?.image ||
+            widgetPropertyModel?.styles?.background?.image,
+          position:
+            layerPropertyModel.styles?.background?.position ||
+            widgetPropertyModel?.styles?.background?.position,
+          repeat:
+            layerPropertyModel.styles?.background?.repeat ||
+            widgetPropertyModel?.styles?.background?.repeat,
+          size:
+            layerPropertyModel.styles?.background?.size ||
+            widgetPropertyModel?.styles?.background?.size,
         },
         {
           emitEvent: false,
@@ -69,7 +117,23 @@ export class LayerPropertyBuilder {
             name: this.formGroup.get('backgroundColorName')!.value!,
             range: this.formGroup.get('backgroundColorRange')!.value!,
           },
+          color: {
+            name: this.formGroup.get('colorName')!.value!,
+            range: this.formGroup.get('colorRange')!.value!,
+          },
+          textAlign: this.formGroup.get('textAlign')!.value!,
+          background: {
+            color: {
+              name: this.formGroup.get('background')!.get('color')!.get('name')!.value!,
+              range: this.formGroup.get('background')!.get('color')!.get('range')!.value!,
+            },
+            image: this.formGroup.get('background')!.get('image')!.value!,
+            position: this.formGroup.get('background')!.get('position')!.value!,
+            repeat: this.formGroup.get('background')!.get('repeat')!.value!,
+            size: this.formGroup.get('background')!.get('size')!.value!,
+          },
         },
+        content: this.formGroup.get('content')!.value!,
       });
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { AppState, Widget } from '../types/application-editor.type';
-import { layer } from '../utils/editor';
+import { layer, scaffoldLayer } from '../utils/editor';
 
 @Injectable()
 export class ApplicationEditorState {
@@ -19,12 +19,12 @@ export class ApplicationEditorState {
       id: 'page-1',
       pageName: 'Home Page',
     },
-    selectedLayer: layer('scaffold'),
+    selectedLayer: scaffoldLayer(),
     appViewSchema: {
       device: 'sm',
-      layers: [layer('scaffold')],
+      layers: [scaffoldLayer()],
       layersMap: {
-        scaffold: layer('scaffold'),
+        scaffold: scaffoldLayer(),
       },
     },
   };
@@ -35,6 +35,7 @@ export class ApplicationEditorState {
 
   layers = signal(this._appState.appViewSchema.layers);
   selectedlayer = signal(this._appState.selectedLayer);
+  highlightedLayer = signal(this._appState.highlightedLayer);
 
   get pages() {
     return this._appState.pages;
@@ -55,15 +56,19 @@ export class ApplicationEditorState {
             nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
             rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
           },
+          color: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
         },
       },
       defaultWidgetPropertyModel: {
-        class: 'pl-2 pr-2 min-h-48',
+        class: 'pl-2 pr-2',
         styles: {
-          backgroundColor: {
-            name: 'green',
-            range: 400,
-          },
+          // backgroundColor: {
+          //   name: 'green',
+          //   range: 400,
+          // },
         },
       },
     },
@@ -81,10 +86,26 @@ export class ApplicationEditorState {
             nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
             rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
           },
+          background: {
+            color: {
+              name: ['blue', 'red', 'green', 'gray', 'cyan'],
+              range: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            },
+            image: '',
+            position: ['center', 'top', 'bottom', 'left', 'right'],
+            repeat: ['no-repeat', 'repeat'],
+            size: ['cover', 'contain', 'auto'],
+          },
+          textAlign: ['left', 'center', 'right', 'justify'],
         },
       },
       defaultWidgetPropertyModel: {
-        class: 'min-h-48 bg-gray-300',
+        class: 'pt-4 pb-4',
+        styles: {
+          background: {
+            repeat: 'no-repeat',
+          },
+        },
       },
     },
     {
@@ -115,24 +136,44 @@ export class ApplicationEditorState {
       id: 'heading-widget',
       widgetName: 'Heading',
       widgetType: 'heading',
-      renderContent: 'h1',
+      renderContent: '2334',
       canNotBeAddedInside: (widget: Widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
-        class: '',
+        class: 'font-bold text-2xl',
+      },
+      propertyConfig: {
+        hasContent: true,
+        styles: {
+          color: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
+          textAlign: ['left', 'center', 'right', 'justify'],
+        },
       },
     },
     {
       id: 'text-widget',
       widgetName: 'Text',
       widgetType: 'text',
-      renderContent: 'Some text',
+      renderContent: '',
       canNotBeAddedInside: (widget: Widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
         class: '',
+      },
+      propertyConfig: {
+        hasContent: true,
+        styles: {
+          color: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
+          textAlign: ['left', 'center', 'right', 'justify'],
+        },
       },
     },
     {
@@ -175,6 +216,7 @@ export class ApplicationEditorState {
 
     this.layers.set(this._appState.appViewSchema.layers);
     this.selectedlayer.set(this._appState.selectedLayer);
+    this.highlightedLayer.set(this._appState.highlightedLayer);
 
     console.log('updated app state', this._appState);
   }

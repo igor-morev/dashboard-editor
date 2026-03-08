@@ -6,6 +6,44 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @use 'tailwindcss';
+@source inline("bg-white");
+@source inline("bg-black");
+
+@source inline("bg-blue-{100..900}");
+@source inline("bg-red-{100..900}");
+@source inline("bg-green-{100..900}");
+@source inline("bg-gray-{100..900}");
+@source inline("bg-cyan-{100..900}");
+
+@source inline("bg-center");
+@source inline("bg-top");
+@source inline("bg-bottom");
+@source inline("bg-left");
+@source inline("bg-right");
+
+@source inline("bg-repeat");
+@source inline("bg-no-repeat");
+
+@source inline("bg-auto");
+@source inline("bg-cover");
+@source inline("bg-contain");
+
+@source inline("text-white");
+@source inline("text-white");
+
+@source inline("text-blue-{100..900}");
+@source inline("text-red-{100..900}");
+@source inline("text-green-{100..900}");
+@source inline("text-gray-{100..900}");
+@source inline("text-cyan-{100..900}");
+
+
+@source inline("text-left");
+@source inline("text-center");
+@source inline("text-right");
+@source inline("text-justify");
+
+
 
 @import '@angular/cdk/overlay-prebuilt.css';
 

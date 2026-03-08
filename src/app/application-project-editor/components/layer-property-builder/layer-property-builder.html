@@ -2,19 +2,40 @@
   <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid">
     {{ selectedLayer().widgetReference.widgetName }}
   </div>
-  <div class="py-2 px-4">
-    @let backgroundColor = selectedLayer().widgetReference.propertyConfig?.styles?.backgroundColor;
+  <div class="py-2 px-4" [formGroup]="formGroup">
+    @let widget = selectedLayer().widgetReference;
 
-    @if (backgroundColor) {
-      <div [formGroup]="formGroup">
-        <div>BackgroundColor</div>
+    @if (widget.propertyConfig?.hasContent) {
+      <div class="mb-4">
+        <div>Content</div>
+        <input type="text" formControlName="content" />
+      </div>
+    }
+
+    @if (widget.propertyConfig?.styles?.textAlign) {
+      <div class="mb-4">
+        <div>Text Align</div>
+        <select name="textAlign" id="" required formControlName="textAlign">
+          @for (option of widget.propertyConfig?.styles?.textAlign; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    @if (widget.propertyConfig?.styles?.backgroundColor) {
+      <div class="mb-4">
+        <div>Background Color</div>
         <select
           name="backgroundColor_nameOptions"
           id=""
           required
           formControlName="backgroundColorName"
         >
-          @for (option of backgroundColor.nameOptions; track option) {
+          @for (
+            option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
+            track option
+          ) {
             <option [value]="option">{{ option }}</option>
           }
         </select>
@@ -24,7 +45,79 @@
           required
           formControlName="backgroundColorRange"
         >
-          @for (option of backgroundColor.rangeOptions; track option) {
+          @for (
+            option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
+            track option
+          ) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    @if (widget.propertyConfig?.styles?.background) {
+      <div class="mb-4" formGroupName="background">
+        <div>Background</div>
+        <div formGroupName="color" class="pl-2">
+          <div>Color</div>
+          <select name="nameOptions" id="" required formControlName="name">
+            @for (
+              option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
+              track option
+            ) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+          <select name="range" id="" required formControlName="range">
+            @for (
+              option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
+              track option
+            ) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+        <div class="pl-2">
+          <div>Image</div>
+          <input type="text" formControlName="image" />
+        </div>
+        <div class="pl-2">
+          <div>Position</div>
+          <select name="position" id="" required formControlName="position">
+            @for (option of widget.propertyConfig?.styles?.background?.position; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+        <div class="pl-2">
+          <div>Repeat</div>
+          <select name="repeat" id="" required formControlName="repeat">
+            @for (option of widget.propertyConfig?.styles?.background?.repeat; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+        <div class="pl-2">
+          <div>Size</div>
+          <select name="size" id="" required formControlName="size">
+            @for (option of widget.propertyConfig?.styles?.background?.size; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    }
+
+    @if (widget.propertyConfig?.styles?.color) {
+      <div class="mb-4">
+        <div>Text Color</div>
+        <select name="color_nameOptions" id="" required formControlName="colorName">
+          @for (option of widget.propertyConfig?.styles?.color?.nameOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+        <select name="color_rangeOptions" id="" required formControlName="colorRange">
+          @for (option of widget.propertyConfig?.styles?.color?.rangeOptions; track option) {
             <option [value]="option">{{ option }}</option>
           }
         </select>

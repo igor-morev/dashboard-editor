@@ -29,6 +29,7 @@ type Spaces =
     };
 
 type ColorName =
+  | 'white'
   | 'red'
   | 'blue'
   | 'green'
@@ -38,14 +39,30 @@ type ColorName =
   | 'pink'
   | 'indigo'
   | 'teal'
-  | 'cyan';
-type ColorRange = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+  | 'cyan'
+  | 'black';
+type ColorRange = null | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+
+type TextAlign = 'left' | 'center' | 'right' | 'justify';
+type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
+type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
+type BackgroundSize = 'cover' | 'contain' | 'auto';
 
 type WidgetPropertyConfig = Partial<{
   styles: Partial<{
     backgroundColor: {
       nameOptions: ColorName[];
       rangeOptions: ColorRange[];
+    };
+    background: {
+      color: {
+        name: ColorName[];
+        range: ColorRange[];
+      };
+      image: string;
+      position: BackgroundPosition[];
+      repeat: BackgroundRepeat[];
+      size: BackgroundSize[];
     };
     color: {
       nameOptions: ColorName[];
@@ -72,8 +89,10 @@ type WidgetPropertyConfig = Partial<{
     margin: {
       visible: boolean;
     };
+    textAlign: TextAlign[];
   }>;
   class: string;
+  hasContent: boolean;
 }>;
 
 export type WidgetPropertyModel = Partial<{
@@ -82,6 +101,16 @@ export type WidgetPropertyModel = Partial<{
       name: ColorName;
       range: ColorRange;
     };
+    background: Partial<{
+      color: {
+        name: ColorName;
+        range: ColorRange;
+      };
+      image: string;
+      position: BackgroundPosition;
+      repeat: BackgroundRepeat;
+      size: BackgroundSize;
+    }>;
     color: {
       name: ColorName;
       range: ColorRange;
@@ -97,8 +126,10 @@ export type WidgetPropertyModel = Partial<{
     };
     padding: Spaces;
     margin: Spaces;
+    textAlign: TextAlign;
   }>;
   class: string;
+  content?: string;
 }>;
 
 type TailwindWidgetProperties = Partial<{
@@ -143,6 +174,7 @@ export interface AppState {
   pages: Page[];
   selectedPage: Page;
   selectedLayer: Layer;
+  highlightedLayer?: Layer;
   appViewSchema: {
     device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
     layers: Layer[];

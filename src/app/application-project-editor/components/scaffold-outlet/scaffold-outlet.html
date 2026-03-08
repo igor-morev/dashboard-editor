@@ -13,6 +13,7 @@
       <de-layer
         [layer]="layer"
         [selected]="layer.id === selectedLayer().id"
+        [highlighted]="layer.id === highlightedLayer()?.id"
         [layersTemplate]="layersTemplate"
       />
     }

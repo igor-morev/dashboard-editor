@@ -6,7 +6,12 @@
       <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
       <div class="py-2 px-4">
         @for (widget of widgets; track widget.id) {
-          <div (click)="moveWidgetOnScaffold(widget)">{{ widget.widgetName }}</div>
+          <button
+            (click)="moveWidgetOnScaffold($event, widget)"
+            class="hover:bg-blue-300/50 cursor-pointer block w-full text-left"
+          >
+            {{ widget.widgetName }}
+          </button>
         }
       </div>
     </div>
@@ -18,9 +23,12 @@
         <ul>
           @for (page of pages; track page.id) {
             <li>
-              <a [routerLink]="['page', page.id]" routerLinkActive="text-blue-500">{{
-                page.pageName
-              }}</a>
+              <a
+                [routerLink]="['page', page.id]"
+                routerLinkActive="text-blue-500"
+                class="hover:bg-blue-300/50 block"
+                >{{ page.pageName }}</a
+              >
             </li>
           }
         </ul>
@@ -44,11 +52,17 @@
           @if (layerTree.length > 0) {
             <ul class="w-full list-inside">
               @for (layer of layerTree; track layer.id) {
-                <li (click)="selectLayerFromTree($event, layer)" class="pl-2">
+                <li
+                  (click)="selectLayerFromTree($event, layer)"
+                  (mouseenter)="highlightLayerFromTree($event, layer)"
+                  (mouseleave)="unhighlightLayerFromTree($event)"
+                  class="pl-2"
+                >
                   @if (layer.children) {
                     <span
                       class="block"
                       [ngClass]="{
+                        'bg-blue-300/50': layer.id === highlightedLayer?.id,
                         'text-blue-500': layer.id === selectedLayer.id,
                       }"
                       >{{ layer.widgetReference.widgetName }}</span
@@ -75,6 +89,7 @@
   <div
     class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
     (click)="clickOnLayerFromScaffold($event)"
+    (mousemove)="mouseMoveOnScaffold($event)"
     (contextmenu)="contextMenuOnLayerFromScaffold($event)"
   >
     <router-outlet></router-outlet>
