@@ -1,3 +1,65 @@
+interface AbstractBaseWidget {
+  id: string;
+  widgetName: string;
+  widgetType: string;
+  propertyConfig?: WidgetPropertyConfig;
+  defaultWidgetPropertyModel: WidgetPropertyModel;
+  canNotBeAddedInside?: (widget: Widget) => boolean;
+  canHaveChildren?: boolean;
+}
+
+export interface GenericWidget extends AbstractBaseWidget {
+  widgetType:
+  | 'scaffold'
+  | 'container'
+  | 'section'
+  | 'column'
+  | 'row'
+  | 'text'
+  | 'heading'
+  | 'icon'
+}
+
+export interface LinkWidget extends AbstractBaseWidget {
+  widgetType: 'link',
+  defaultWidgetPropertyModel: LinkWidgetPropertyModel;
+}
+
+export interface ImageWidget extends AbstractBaseWidget {
+  widgetType: 'image',
+  defaultWidgetPropertyModel: ImageWidgetPropertyModel;
+}
+
+export type Widget = GenericWidget | LinkWidget | ImageWidget;
+
+export interface Page {
+  id: string;
+  pageName: string;
+}
+
+export interface Layer {
+  id: string;
+  parentId: string | null;
+  sourceWidgetId: string;
+  widgetReference: Widget;
+  layerPropertyModel: WidgetPropertyModel;
+  children: Layer[];
+}
+
+export interface AppState {
+  pages: Page[];
+  selectedPage: Page;
+  selectedLayer: Layer;
+  highlightedLayer?: Layer;
+  appViewSchema: {
+    device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    layers: Layer[];
+    layersMap: Record<string, Layer>;
+  };
+}
+
+export type EditorCommand = 'delete' | 'copy' | 'paste';
+
 type SpaceValue =
   | 2
   | 4
@@ -132,54 +194,13 @@ export type WidgetPropertyModel = Partial<{
   content?: string;
 }>;
 
-type TailwindWidgetProperties = Partial<{
-  bg: string;
-}>;
 
-export interface Widget {
-  id: string;
-  widgetName: string;
-  widgetType:
-    | 'scaffold'
-    | 'container'
-    | 'section'
-    | 'column'
-    | 'row'
-    | 'text'
-    | 'heading'
-    | 'image'
-    | 'icon';
-  renderContent: string;
-  propertyConfig?: WidgetPropertyConfig;
-  defaultWidgetPropertyModel: WidgetPropertyModel;
-  canNotBeAddedInside?: (widget: Widget) => boolean;
-  canHaveChildren?: boolean;
+export type LinkWidgetPropertyModel = WidgetPropertyModel & {
+  href: string;
+  target: '_blank' | '_self' | '_parent' | '_top';
 }
 
-export interface Page {
-  id: string;
-  pageName: string;
+export type ImageWidgetPropertyModel = WidgetPropertyModel & {
+  src: string;
+  alt: string;
 }
-
-export interface Layer {
-  id: string;
-  parentId: string | null;
-  sourceWidgetId: string;
-  widgetReference: Widget;
-  layerPropertyModel: WidgetPropertyModel;
-  children: Layer[];
-}
-
-export interface AppState {
-  pages: Page[];
-  selectedPage: Page;
-  selectedLayer: Layer;
-  highlightedLayer?: Layer;
-  appViewSchema: {
-    device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-    layers: Layer[];
-    layersMap: Record<string, Layer>;
-  };
-}
-
-export type EditorCommand = 'delete' | 'copy' | 'paste';

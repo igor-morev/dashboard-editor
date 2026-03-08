@@ -14,6 +14,7 @@ interface WidgetConfigBase<T> {
   next?: WidgetConfig;
   api?: ApiSource<T>;
   data?: T;
+  component: string;
 }
 
 interface WidgetConfigText extends WidgetConfigBase<string> {

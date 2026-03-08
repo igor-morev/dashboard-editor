@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { LAYER_REF } from '../layer';
 
 @Component({
@@ -9,12 +9,17 @@ import { LAYER_REF } from '../layer';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerContent {
-  // TODO: get this data from parent layer component via injection token
-  layerRef = inject(LAYER_REF);
-  selected = input.required<boolean>();
-  highlighted = input<boolean>();
+  private readonly layerRef = inject(LAYER_REF);
 
-  ngOnInit() {
-    console.log(this.layerRef);
+  get layer() {
+    return this.layerRef.layer;
+  }
+
+  get selected() {
+    return this.layerRef.selected
+  }
+
+  get highlighted() {
+    return this.layerRef.highlighted
   }
 }

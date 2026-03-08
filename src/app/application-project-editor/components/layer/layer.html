@@ -1,6 +1,6 @@
 @switch (layer().widgetReference.widgetType) {
   @case ('section') {
-    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+    <de-layer-content>
       <section
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -21,7 +21,7 @@
   }
 
   @case ('heading') {
-    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+    <de-layer-content>
       <h1
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -32,7 +32,7 @@
   }
 
   @case ('text') {
-    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+    <de-layer-content>
       <p
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -43,16 +43,23 @@
   }
 
   @case ('image') {
-    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+    <de-layer-content>
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [src]="layer().widgetReference.renderContent"
+        [src]="layer().layerPropertyModel.content"
       />
     </de-layer-content>
   }
 
+  @case ('link') {
+    <de-layer-content>
+      <a [href]="linkLayerPropertyModel.href"         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      >{{layer().layerPropertyModel.content}}</a>
+    </de-layer-content>
+  }
+
   @default {
-    <de-layer-content [selected]="selected()" [highlighted]="highlighted()">
+    <de-layer-content>
       <div
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"

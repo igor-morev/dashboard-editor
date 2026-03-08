@@ -12,6 +12,20 @@
       </div>
     }
 
+    @if (widget.widgetType === 'link') {
+      {{widget.defaultWidgetPropertyModel.href}}
+      <div class="mb-4">
+        <div>
+          <div>Content</div>
+          <input type="text" formControlName="content" />
+        </div>
+        <div>
+          <div>Url</div>
+          <input type="text" formControlName="content" />
+        </div>
+      </div>
+    }
+
     @if (widget.propertyConfig?.styles?.textAlign) {
       <div class="mb-4">
         <div>Text Align</div>

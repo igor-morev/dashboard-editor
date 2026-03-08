@@ -46,8 +46,7 @@ export class ApplicationEditorState {
       id: 'container-widget',
       widgetName: 'Container',
       widgetType: 'container',
-      renderContent: 'div',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return widget.widgetType === 'container';
       },
       propertyConfig: {
@@ -76,8 +75,7 @@ export class ApplicationEditorState {
       id: 'section-widget',
       widgetName: 'Section',
       widgetType: 'section',
-      renderContent: 'div',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return widget.widgetType === 'section';
       },
       propertyConfig: {
@@ -112,8 +110,7 @@ export class ApplicationEditorState {
       id: 'row-widget',
       widgetName: 'Row',
       widgetType: 'row',
-      renderContent: 'div',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return widget.widgetType === 'row'; // TBD;
       },
       defaultWidgetPropertyModel: {
@@ -124,8 +121,7 @@ export class ApplicationEditorState {
       id: 'column-widget',
       widgetName: 'Column',
       widgetType: 'column',
-      renderContent: 'div',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return widget.widgetType === 'column'; // TBD;
       },
       defaultWidgetPropertyModel: {
@@ -136,8 +132,7 @@ export class ApplicationEditorState {
       id: 'heading-widget',
       widgetName: 'Heading',
       widgetType: 'heading',
-      renderContent: '2334',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
@@ -158,8 +153,7 @@ export class ApplicationEditorState {
       id: 'text-widget',
       widgetName: 'Text',
       widgetType: 'text',
-      renderContent: '',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
@@ -180,22 +174,35 @@ export class ApplicationEditorState {
       id: 'image-widget',
       widgetName: 'Image',
       widgetType: 'image',
-      renderContent:
-        'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
-      canNotBeAddedInside: (widget: Widget) => {
+      // renderContent:
+      //   'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
+      canNotBeAddedInside: (widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {
         class: 'min-h-48',
+        src: '',
+        alt: '',
+      },
+    },
+    {
+      id: 'link-widget',
+      widgetName: 'Link',
+      widgetType: 'link',
+      canNotBeAddedInside: (widget) => {
+        return true;
+      },
+      defaultWidgetPropertyModel: {
+        class: 'underline',
+        href: 'https://www.example.com',
+        target: '_self'
       },
     },
     {
       id: 'icon-widget',
       widgetName: 'Icon',
       widgetType: 'icon',
-      renderContent:
-        'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
-      canNotBeAddedInside: (widget: Widget) => {
+      canNotBeAddedInside: (widget) => {
         return true;
       },
       defaultWidgetPropertyModel: {

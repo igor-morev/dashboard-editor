@@ -11,7 +11,7 @@ import {
   signal,
   TemplateRef,
 } from '@angular/core';
-import { Layer } from '../../types/application-editor.type';
+import { Layer, LinkWidget } from '../../types/application-editor.type';
 import { NgTemplateOutlet } from '@angular/common';
 import { LayerContent } from './layer-content/layer-content';
 import { LayerAttributeTransformPipe } from '../../pipes/layer-attribute-transform-pipe';
@@ -52,4 +52,20 @@ export class LayerComponent {
 
   buildLayerTailwindClasses = buildLayerTailwindClasses;
   buildLayerStyleAttribute = buildLayerStyleAttribute;
+
+  ngOnInit() {
+    const l = this.layer();
+    if (l.widgetReference.widgetType === 'link') {
+      const a = l.widgetReference;
+
+    }
+  }
+
+  get linkWidgetReference() {
+    return this.layer().widgetReference as LinkWidget;
+  }
+
+  get linkLayerPropertyModel() {
+    return this.layer().layerPropertyModel as LinkWidget['defaultWidgetPropertyModel']
+  }
 }
