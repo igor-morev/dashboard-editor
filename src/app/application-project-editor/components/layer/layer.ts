@@ -2,8 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChild,
+  forwardRef,
   Host,
   HostBinding,
+  Inject,
+  InjectionToken,
   input,
   signal,
   TemplateRef,
@@ -17,12 +20,20 @@ import {
   buildLayerTailwindClasses,
 } from '../../pipes/layer-attribute.util';
 
+export const LAYER_REF = new InjectionToken<LayerComponent>('LAYER');
+
 @Component({
   selector: 'de-layer',
   imports: [NgTemplateOutlet, LayerContent, LayerAttributeTransformPipe],
   templateUrl: './layer.html',
   styleUrl: './layer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: LAYER_REF,
+      useExisting: forwardRef(() => LayerComponent),
+    },
+  ],
 })
 export class LayerComponent {
   layer = input.required<Layer>();

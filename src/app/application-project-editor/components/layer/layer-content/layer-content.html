@@ -1,5 +1,9 @@
 @if (this.selected()) {
-  <div class="frame absolute w-full h-full top-0 right-0 border border-blue-400 block"></div>
+  <div class="frame absolute w-full h-full top-0 right-0 border border-blue-400 block">
+    <div class="bg-blue-400 text-white inline-flex pl-2 pr-2 text-xs absolute -top-4 left-0">
+      {{ layerRef.layer().widgetReference.widgetName }}
+    </div>
+  </div>
 }
 
 @if (this.highlighted()) {
