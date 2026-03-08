@@ -6,7 +6,10 @@ import {
 } from '@app/application-project-editor/services/layer-property-converter';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import {
+  ImageWidgetPropertyModel,
   Layer,
+  LinkWidget,
+  LinkWidgetPropertyModel,
   WidgetPropertyModel,
 } from '@app/application-project-editor/types/application-editor.type';
 
@@ -52,6 +55,10 @@ export class LayerPropertyBuilder {
       repeat: new FormControl(),
       size: new FormControl(),
     }),
+    link: new FormGroup({
+        url: new FormControl(),
+        openInNewTab: new FormControl<boolean>(false),
+    })
   });
 
   constructor() {
@@ -106,39 +113,51 @@ export class LayerPropertyBuilder {
           emitEvent: false,
         },
       );
+
+        this.formGroup.get('link')!.patchValue(
+          {
+            url: (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href || (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href,
+            openInNewTab: (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank' || (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank',
+          },
+          {
+            emitEvent: false,
+          },
+        );
     });
 
     this.formGroup.valueChanges.subscribe((value) => {
       this.updateLayerPropertyModel(this.selectedLayer().id, {
         ...this.selectedLayer().layerPropertyModel,
         styles: {
-          ...this.selectedLayer().layerPropertyModel.styles!,
+          ...this.selectedLayer().layerPropertyModel.styles,
           backgroundColor: {
-            name: this.formGroup.get('backgroundColorName')!.value!,
-            range: this.formGroup.get('backgroundColorRange')!.value!,
+            name: value.backgroundColorName,
+            range: value.backgroundColorRange,
           },
           color: {
-            name: this.formGroup.get('colorName')!.value!,
-            range: this.formGroup.get('colorRange')!.value!,
+            name: value.colorName,
+            range: value.colorRange,
           },
-          textAlign: this.formGroup.get('textAlign')!.value!,
+          textAlign: value.textAlign,
           background: {
             color: {
-              name: this.formGroup.get('background')!.get('color')!.get('name')!.value!,
-              range: this.formGroup.get('background')!.get('color')!.get('range')!.value!,
+              name: value.background?.color?.name,
+              range: value.background?.color?.range,
             },
-            image: this.formGroup.get('background')!.get('image')!.value!,
-            position: this.formGroup.get('background')!.get('position')!.value!,
-            repeat: this.formGroup.get('background')!.get('repeat')!.value!,
-            size: this.formGroup.get('background')!.get('size')!.value!,
+            image: value.background?.image,
+            position: value.background?.position,
+            repeat: value.background?.repeat,
+            size: value.background?.size,
           },
         },
-        content: this.formGroup.get('content')!.value!,
+        content: value.content,
+        href: value.link?.url,
+        target: value.link?.openInNewTab ? '_blank' : '_self',
       });
     });
   }
 
-  private updateLayerPropertyModel(layerId: string, newPropertyModel: WidgetPropertyModel) {
+  private updateLayerPropertyModel(layerId: string, newPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel) {
     const layer = this.selectedLayer();
     if (layer) {
       const updatedLayer = {

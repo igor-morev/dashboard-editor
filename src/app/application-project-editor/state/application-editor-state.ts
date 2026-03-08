@@ -64,10 +64,6 @@ export class ApplicationEditorState {
       defaultWidgetPropertyModel: {
         class: 'pl-2 pr-2',
         styles: {
-          // backgroundColor: {
-          //   name: 'green',
-          //   range: 400,
-          // },
         },
       },
     },
@@ -114,7 +110,7 @@ export class ApplicationEditorState {
         return widget.widgetType === 'row'; // TBD;
       },
       defaultWidgetPropertyModel: {
-        class: 'min-h-48 bg-red-300 flex gap-x-2',
+        class: 'min-h-48 bg-black flex gap-x-2',
       },
     },
     {
@@ -192,10 +188,30 @@ export class ApplicationEditorState {
       canNotBeAddedInside: (widget) => {
         return true;
       },
+      propertyConfig: {
+        hasContent: true,
+      },
       defaultWidgetPropertyModel: {
         class: 'underline',
         href: 'https://www.example.com',
         target: '_self'
+      },
+    },
+    {
+      id: 'link-button-widget',
+      widgetName: 'LinkButton',
+      widgetType: 'link',
+      canNotBeAddedInside: (widget) => {
+        return true;
+      },
+      propertyConfig: {
+        hasContent: true,
+      },
+      defaultWidgetPropertyModel: {
+        class: 'px-2 py-1 bg-blue-500 text-white rounded inline-flex items-center gap-x-1',
+        href: 'https://www.example.com',
+        target: '_self',
+        content: 'Meditate'
       },
     },
     {
@@ -208,6 +224,138 @@ export class ApplicationEditorState {
       defaultWidgetPropertyModel: {
         class: '',
       },
+    },
+    {
+      id: 'banner-widget',
+      widgetName: 'Banner',
+      widgetType: 'section',
+      canNotBeAddedInside: (widget) => {
+        return widget.widgetType === 'section';
+      },
+      propertyConfig: {
+        styles: {
+          background: {
+            color: {
+              name: ['blue', 'red', 'green', 'gray', 'cyan'],
+              range: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            },
+            image: '',
+            position: ['center', 'top', 'bottom', 'left', 'right'],
+            repeat: ['no-repeat', 'repeat'],
+            size: ['cover', 'contain', 'auto'],
+          },
+          color: {
+            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          },
+          textAlign: ['left', 'center', 'right', 'justify'],
+        },
+      },
+      defaultWidgetPropertyModel: {
+        class: 'pt-20 pb-20',
+        styles: {
+          background: {
+            image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFkaWF0aW9uJTIwYmFubmVyfGVufDB8fDB8fHww',
+            repeat: 'no-repeat',
+            size: 'cover',
+          },
+          textAlign: 'center',
+          color: {
+            name: 'white',
+            range: null,
+          }
+        }
+      },
+      children: [
+        {
+          id: 'container-widget',
+          widgetName: 'Container',
+          widgetType: 'container',
+          canNotBeAddedInside: (widget) => {
+            return widget.widgetType === 'container';
+          },
+          propertyConfig: {
+            styles: {
+              backgroundColor: {
+                nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+                rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+              },
+              color: {
+                nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+                rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+              },
+            },
+          },
+          defaultWidgetPropertyModel: {
+            class: 'pl-2 pr-2',
+            styles: {
+            },
+          },
+          children: [
+            {
+              id: 'heading-widget',
+              widgetName: 'Heading',
+              widgetType: 'heading',
+              canNotBeAddedInside: (widget) => {
+                return true;
+              },
+              defaultWidgetPropertyModel: {
+                class: 'font-bold text-2xl mb-4',
+                content: 'Discover Your Inner Peace with Our Meditation App',
+              },
+              propertyConfig: {
+                hasContent: true,
+                styles: {
+                  color: {
+                    nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+                    rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                  },
+                  textAlign: ['left', 'center', 'right', 'justify'],
+                },
+              },
+            },
+            {
+              id: 'text-widget',
+              widgetName: 'Text',
+              widgetType: 'text',
+              canNotBeAddedInside: (widget) => {
+                return true;
+              },
+              defaultWidgetPropertyModel: {
+                class: 'mb-4',
+                content: 'Welcome to our website! We are glad to have you here.',
+              },
+              propertyConfig: {
+                hasContent: true,
+                styles: {
+                  color: {
+                    nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
+                    rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                  },
+                  textAlign: ['left', 'center', 'right', 'justify'],
+                },
+              },
+            },
+            {
+            id: 'link-button-widget',
+            widgetName: 'LinkButton',
+            widgetType: 'link',
+            canNotBeAddedInside: (widget) => {
+              return true;
+            },
+            propertyConfig: {
+              hasContent: true,
+            },
+            defaultWidgetPropertyModel: {
+              class: 'px-2 py-1 bg-blue-500 text-white rounded inline-flex items-center gap-x-1',
+              href: 'https://www.example.com',
+              target: '_self',
+              content: 'Get Started'
+            },
+          }
+          ]
+        }
+      ]
     },
   ];
 
@@ -225,6 +373,6 @@ export class ApplicationEditorState {
     this.selectedlayer.set(this._appState.selectedLayer);
     this.highlightedLayer.set(this._appState.highlightedLayer);
 
-    console.log('updated app state', this._appState);
+    // console.log('updated app state', this._appState);
   }
 }

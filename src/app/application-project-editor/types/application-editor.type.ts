@@ -6,7 +6,9 @@ interface AbstractBaseWidget {
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
   canHaveChildren?: boolean;
+  children?: Widget[]
 }
+
 
 export interface GenericWidget extends AbstractBaseWidget {
   widgetType:
@@ -42,7 +44,7 @@ export interface Layer {
   parentId: string | null;
   sourceWidgetId: string;
   widgetReference: Widget;
-  layerPropertyModel: WidgetPropertyModel;
+  layerPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel;
   children: Layer[];
 }
 
@@ -153,7 +155,6 @@ type WidgetPropertyConfig = Partial<{
     };
     textAlign: TextAlign[];
   }>;
-  class: string;
   hasContent: boolean;
 }>;
 

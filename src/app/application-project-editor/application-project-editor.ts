@@ -75,22 +75,12 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const newLayer: Layer = {
-      id: generateUniqueId(),
-      parentId: this.selectedLayer.id || null,
-      sourceWidgetId: widget.id,
-      widgetReference: widget,
-      layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
-      children: [],
-    };
+    const newLayer = this.createLayerForWidget(widget, null);
 
     this.state.updateAppState({
       appViewSchema: {
         ...this.appState.appViewSchema,
-        layersMap: {
-          ...this.appState.appViewSchema.layersMap,
-          [newLayer.id]: newLayer,
-        },
+        layersMap: this.updateLayersMap([newLayer], this.appState.appViewSchema.layersMap),
         layers: this.insertLayerInSchema(
           this.appState.appViewSchema.layers,
           this.selectedLayer.id,
@@ -98,8 +88,33 @@ export class ApplicationProjectEditor {
         ),
       },
     });
+  }
 
-    // this.selectLayer(newLayer);
+  private updateLayersMap(layers: Layer[], layersMap: Record<string, Layer>): Record<string, Layer> {
+    layers.forEach((layer) => {
+      layersMap[layer.id] = layer;
+
+      if (layer.children.length > 0) {
+        this.updateLayersMap(layer.children, layersMap);
+      }
+    });
+
+    return layersMap;
+  }
+
+  private createLayerForWidget(widget: Widget, parentId: string | null): Layer {
+    const layerId = generateUniqueId();
+
+    const newLayer: Layer = {
+      id: layerId,
+      parentId,
+      sourceWidgetId: widget.id,
+      widgetReference: widget,
+      layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
+      children: widget.children ? widget.children.map((childWidget) => this.createLayerForWidget(childWidget, layerId)) : [],
+    };
+
+    return newLayer;
   }
 
   private convertBgPropertyToTailwindClass(propertyKey: string, propertyValue: string): string {

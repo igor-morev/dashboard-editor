@@ -12,20 +12,6 @@
       </div>
     }
 
-    @if (widget.widgetType === 'link') {
-      {{widget.defaultWidgetPropertyModel.href}}
-      <div class="mb-4">
-        <div>
-          <div>Content</div>
-          <input type="text" formControlName="content" />
-        </div>
-        <div>
-          <div>Url</div>
-          <input type="text" formControlName="content" />
-        </div>
-      </div>
-    }
-
     @if (widget.propertyConfig?.styles?.textAlign) {
       <div class="mb-4">
         <div>Text Align</div>
@@ -40,7 +26,8 @@
     @if (widget.propertyConfig?.styles?.backgroundColor) {
       <div class="mb-4">
         <div>Background Color</div>
-        <select
+        <div class="flex gap-x-2">
+          <select
           name="backgroundColor_nameOptions"
           id=""
           required
@@ -66,36 +53,39 @@
             <option [value]="option">{{ option }}</option>
           }
         </select>
+        </div>
       </div>
     }
 
     @if (widget.propertyConfig?.styles?.background) {
       <div class="mb-4" formGroupName="background">
-        <div>Background</div>
+        <div class="mb-2">Background</div>
         <div formGroupName="color" class="pl-2">
           <div>Color</div>
-          <select name="nameOptions" id="" required formControlName="name">
-            @for (
-              option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
-              track option
-            ) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-          <select name="range" id="" required formControlName="range">
-            @for (
-              option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
-              track option
-            ) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
+          <div class="flex gap-x-2 mb-2">
+            <select name="nameOptions" id="" required formControlName="name">
+              @for (
+                option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
+                track option
+              ) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+            <select name="range" id="" required formControlName="range">
+              @for (
+                option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
+                track option
+              ) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          </div>
         </div>
-        <div class="pl-2">
+        <div class="pl-2 mb-2">
           <div>Image</div>
           <input type="text" formControlName="image" />
         </div>
-        <div class="pl-2">
+        <div class="pl-2 mb-2">
           <div>Position</div>
           <select name="position" id="" required formControlName="position">
             @for (option of widget.propertyConfig?.styles?.background?.position; track option) {
@@ -103,7 +93,7 @@
             }
           </select>
         </div>
-        <div class="pl-2">
+        <div class="pl-2 mb-2">
           <div>Repeat</div>
           <select name="repeat" id="" required formControlName="repeat">
             @for (option of widget.propertyConfig?.styles?.background?.repeat; track option) {
@@ -135,6 +125,21 @@
             <option [value]="option">{{ option }}</option>
           }
         </select>
+      </div>
+    }
+
+    @if (widget.widgetType === 'link') {
+      <div class="mb-4" formGroupName="link">
+        <div class="mb-2">
+          <label class="block ">Url</label>
+          <input type="text" formControlName="url" />
+        </div>
+        <div class="mb-2">
+          <label for="openInNewTab" class="inline-flex items-center gap-x-2">
+            Open in new tab
+          <input id="openInNewTab" type="checkbox" formControlName="openInNewTab" />
+        </label>
+        </div>
       </div>
     }
   </div>

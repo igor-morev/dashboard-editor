@@ -83,3 +83,11 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+input {
+  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+select {
+  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
