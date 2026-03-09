@@ -254,8 +254,6 @@ export class ApplicationProjectEditor {
     });
 
     this.selectParentLayer();
-
-    console.log('app state after delete', this.appState);
   }
 
   private selectParentLayer() {
