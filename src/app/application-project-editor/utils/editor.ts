@@ -1,3 +1,4 @@
+import { colorPalette, colorRange } from '../constants/application-editor.constant';
 import { Layer, Widget } from '../types/application-editor.type';
 
 export function generateUniqueId() {
@@ -30,12 +31,12 @@ export function scaffoldLayer(): Layer {
       propertyConfig: {
         styles: {
           backgroundColor: {
-            nameOptions: ['white', 'blue', 'red', 'green', 'gray', 'cyan', 'black'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           color: {
-            nameOptions: ['white', 'blue', 'red', 'green', 'gray', 'cyan', 'black'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
         },
       },

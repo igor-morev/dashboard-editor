@@ -97,7 +97,7 @@ export class LayerPropertyBuilder {
               widgetPropertyModel?.styles?.background?.color?.range,
           },
           image:
-            layerPropertyModel.styles?.background?.image ||
+            layerPropertyModel.styles?.background?.image !== undefined ? layerPropertyModel.styles?.background?.image :
             widgetPropertyModel?.styles?.background?.image,
           position:
             layerPropertyModel.styles?.background?.position ||
@@ -126,6 +126,7 @@ export class LayerPropertyBuilder {
     });
 
     this.formGroup.valueChanges.subscribe((value) => {
+      console.log(value);
       this.updateLayerPropertyModel(this.selectedLayer().id, {
         ...this.selectedLayer().layerPropertyModel,
         styles: {
@@ -144,7 +145,7 @@ export class LayerPropertyBuilder {
               name: value.background?.color?.name,
               range: value.background?.color?.range,
             },
-            image: value.background?.image,
+            image: value.background?.image || '',
             position: value.background?.position,
             repeat: value.background?.repeat,
             size: value.background?.size,

@@ -92,7 +92,7 @@ type Spaces =
       bottom: SpaceValue;
     };
 
-type ColorName =
+export type ColorName =
   | 'white'
   | 'red'
   | 'blue'
@@ -105,12 +105,12 @@ type ColorName =
   | 'teal'
   | 'cyan'
   | 'black';
-type ColorRange = null | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+export type ColorRange = null | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
-type TextAlign = 'left' | 'center' | 'right' | 'justify';
-type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
-type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
-type BackgroundSize = 'cover' | 'contain' | 'auto';
+export type TextAlign = 'left' | 'center' | 'right' | 'justify';
+export type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
+export type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
+export type BackgroundSize = 'cover' | 'contain' | 'auto';
 
 type WidgetPropertyConfig = Partial<{
   styles: Partial<{

@@ -66,7 +66,6 @@ export class ApplicationProjectEditor {
   }
 
   private createLayer(widget: Widget) {
-    console.log('Creating layer for widget', widget);
     if (
       this.selectedLayer &&
       this.selectedLayer.widgetReference.canNotBeAddedInside &&
@@ -75,7 +74,7 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const newLayer = this.createLayerForWidget(widget, null);
+    const newLayer = this.createLayerForWidget(widget, this.selectedLayer.id);
 
     this.state.updateAppState({
       appViewSchema: {
@@ -117,10 +116,6 @@ export class ApplicationProjectEditor {
     return newLayer;
   }
 
-  private convertBgPropertyToTailwindClass(propertyKey: string, propertyValue: string): string {
-    return `${propertyKey}-${propertyValue}`;
-  }
-
   private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
     return layers.map((layer) => {
       if (layer.id === destinationId) {
@@ -158,7 +153,7 @@ export class ApplicationProjectEditor {
   }
 
   clickOnLayerFromScaffold(event: MouseEvent) {
-    event.stopPropagation();
+    // event.stopPropagation();
 
     const id = (event!.target! as HTMLElement)
       .closest('[data-layer-id]')
@@ -181,13 +176,8 @@ export class ApplicationProjectEditor {
     }
   }
 
-  mouseLeaveOnLayerFromScaffold(event: MouseEvent) {
-    event.stopPropagation();
 
-    this.unhighlightLayer();
-  }
-
-  contextMenuOnLayerFromScaffold(event: MouseEvent) {
+  contextMenuOnLayer(event: MouseEvent) {
     const id = (event!.target! as HTMLElement)
       .closest('[data-layer-id]')
       ?.getAttribute('data-layer-id');
@@ -197,6 +187,10 @@ export class ApplicationProjectEditor {
     }
 
     this.selectLayer(this.appState.appViewSchema.layersMap[id]);
+
+    if (!this.selectedLayer.parentId) {
+      return;
+    }
 
     const overlayRef = this.contextMenuOverlay.open<EditorContextMenu, EditorCommand>(
       event,
@@ -216,9 +210,29 @@ export class ApplicationProjectEditor {
       });
   }
 
+  mouseMoveOnTree(event: Event) {
+    const id = (event!.target! as HTMLElement)
+      .closest('[data-layer-id]')
+      ?.getAttribute('data-layer-id');
+
+    if (id) {
+      this.highlightLayer(this.appState.appViewSchema.layersMap[id]);
+    } else {
+      this.unhighlightLayer();
+    }
+  }
+
+  mouseLeaveOnTree() {
+    this.unhighlightLayer();
+  }
+
   private removeLayer() {
     if (!this.selectedLayer) {
       console.warn('No layer selected for deletion');
+      return;
+    }
+
+    if (!this.selectedLayer.parentId) {
       return;
     }
 

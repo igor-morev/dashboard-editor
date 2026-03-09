@@ -1,14 +1,12 @@
-import { DestroyRef, inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
+import { inject, Injectable, InjectionToken, Injector, Type } from '@angular/core';
 
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 
 export const CONTEXT_MENU_OVERLAY_DATA = new InjectionToken<Record<string, any>>('CONTEXT_MENU_DATA');
 @Injectable()
 export class ContextMenuOverlayRef<R> {
-  private destroyRef = inject(DestroyRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private closedSubject = new Subject<R | null>();
 
@@ -19,11 +17,17 @@ export class ContextMenuOverlayRef<R> {
   }
 
   listenClickOutside() {
-    this.contextMenuOverlay.overlayRef?.outsidePointerEvents().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
-        this.closeMenu(null);
-    })
+    document.addEventListener('click', this.handleClickOutside.bind(this));
+  }
+
+  unlistenClickOutside() {
+    document.removeEventListener('click', this.handleClickOutside.bind(this));
+  }
+
+  handleClickOutside(event: MouseEvent) {
+    if (event.target instanceof HTMLElement && !event.target.closest('.cdk-overlay-pane')) {
+      this.closeMenu(null);
+    }
   }
 
   closeMenu(result: R | null) {
@@ -95,6 +99,12 @@ export class ContextMenuOverlay {
     this.overlayRef.attach(portal);
 
     return injector.get<ContextMenuOverlayRef<R>>(ContextMenuOverlayRef<R>);
+  }
+
+  handleClickOutside(event: MouseEvent) {
+    if (this.overlayRef && !this.overlayRef.overlayElement.contains(event.target as HTMLElement)) {
+      this.closeMenu();
+    }
   }
 
   private clearRef() {

@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { AppState, Widget } from '../types/application-editor.type';
-import { layer, scaffoldLayer } from '../utils/editor';
+import { scaffoldLayer } from '../utils/editor';
+import { colorPalette, colorRange } from '../constants/application-editor.constant';
 
 @Injectable()
 export class ApplicationEditorState {
@@ -52,12 +53,12 @@ export class ApplicationEditorState {
       propertyConfig: {
         styles: {
           backgroundColor: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           color: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
         },
       },
@@ -77,13 +78,13 @@ export class ApplicationEditorState {
       propertyConfig: {
         styles: {
           backgroundColor: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           background: {
             color: {
-              name: ['blue', 'red', 'green', 'gray', 'cyan'],
-              range: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+              name: colorPalette,
+              range: colorRange,
             },
             image: '',
             position: ['center', 'top', 'bottom', 'left', 'right'],
@@ -121,7 +122,7 @@ export class ApplicationEditorState {
         return widget.widgetType === 'column'; // TBD;
       },
       defaultWidgetPropertyModel: {
-        class: 'min-h-48 bg-green-300 grow pl-2 pr-2',
+        class: 'grow pl-2 pr-2',
       },
     },
     {
@@ -138,8 +139,8 @@ export class ApplicationEditorState {
         hasContent: true,
         styles: {
           color: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           textAlign: ['left', 'center', 'right', 'justify'],
         },
@@ -159,8 +160,8 @@ export class ApplicationEditorState {
         hasContent: true,
         styles: {
           color: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           textAlign: ['left', 'center', 'right', 'justify'],
         },
@@ -236,8 +237,8 @@ export class ApplicationEditorState {
         styles: {
           background: {
             color: {
-              name: ['blue', 'red', 'green', 'gray', 'cyan'],
-              range: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+              name: colorPalette,
+              range: colorRange,
             },
             image: '',
             position: ['center', 'top', 'bottom', 'left', 'right'],
@@ -245,8 +246,8 @@ export class ApplicationEditorState {
             size: ['cover', 'contain', 'auto'],
           },
           color: {
-            nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-            rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
           },
           textAlign: ['left', 'center', 'right', 'justify'],
         },
@@ -277,12 +278,12 @@ export class ApplicationEditorState {
           propertyConfig: {
             styles: {
               backgroundColor: {
-                nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-                rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                nameOptions: colorPalette,
+                rangeOptions: colorRange,
               },
               color: {
-                nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-                rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                nameOptions: colorPalette,
+                rangeOptions: colorRange,
               },
             },
           },
@@ -307,8 +308,8 @@ export class ApplicationEditorState {
                 hasContent: true,
                 styles: {
                   color: {
-                    nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-                    rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                    nameOptions: colorPalette,
+                    rangeOptions: colorRange,
                   },
                   textAlign: ['left', 'center', 'right', 'justify'],
                 },
@@ -329,8 +330,8 @@ export class ApplicationEditorState {
                 hasContent: true,
                 styles: {
                   color: {
-                    nameOptions: ['blue', 'red', 'green', 'gray', 'cyan'],
-                    rangeOptions: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+                    nameOptions: colorPalette,
+                    rangeOptions: colorRange,
                   },
                   textAlign: ['left', 'center', 'right', 'justify'],
                 },

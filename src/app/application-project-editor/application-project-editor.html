@@ -50,12 +50,16 @@
 
         <ng-template #layersTreeTemplate let-layerTree>
           @if (layerTree.length > 0) {
-            <ul class="w-full list-inside">
+            <ul class="w-full list-inside"                   
+                (mousemove)="mouseMoveOnTree($event)"
+                (mouseleave)="mouseLeaveOnTree()"
+                (contextmenu)="contextMenuOnLayer($event)"
+
+                >
               @for (layer of layerTree; track layer.id) {
                 <li
+                  [attr.data-layer-id]="layer.id"
                   (click)="selectLayerFromTree($event, layer)"
-                  (mouseenter)="highlightLayerFromTree($event, layer)"
-                  (mouseleave)="unhighlightLayerFromTree($event)"
                   class="pl-2"
                 >
                   @if (layer.children) {
@@ -90,7 +94,7 @@
     class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
     (click)="clickOnLayerFromScaffold($event)"
     (mousemove)="mouseMoveOnScaffold($event)"
-    (contextmenu)="contextMenuOnLayerFromScaffold($event)"
+    (contextmenu)="contextMenuOnLayer($event)"
   >
     <router-outlet></router-outlet>
   </div>

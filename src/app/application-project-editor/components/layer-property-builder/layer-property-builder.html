@@ -63,9 +63,9 @@
         <div formGroupName="color" class="pl-2">
           <div>Color</div>
           <div class="flex gap-x-2 mb-2">
-            <select name="nameOptions" id="" required formControlName="name">
+            <select name="name" id="" required formControlName="name">
               @for (
-                option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
+                option of widget.propertyConfig?.styles?.background?.color?.name;
                 track option
               ) {
                 <option [value]="option">{{ option }}</option>
@@ -73,7 +73,7 @@
             </select>
             <select name="range" id="" required formControlName="range">
               @for (
-                option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
+                option of widget.propertyConfig?.styles?.background?.color?.range;
                 track option
               ) {
                 <option [value]="option">{{ option }}</option>
@@ -115,16 +115,18 @@
     @if (widget.propertyConfig?.styles?.color) {
       <div class="mb-4">
         <div>Text Color</div>
-        <select name="color_nameOptions" id="" required formControlName="colorName">
-          @for (option of widget.propertyConfig?.styles?.color?.nameOptions; track option) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </select>
-        <select name="color_rangeOptions" id="" required formControlName="colorRange">
-          @for (option of widget.propertyConfig?.styles?.color?.rangeOptions; track option) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </select>
+        <div class="flex gap-x-2">
+          <select name="color_nameOptions" id="" required formControlName="colorName">
+            @for (option of widget.propertyConfig?.styles?.color?.nameOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+          <select name="color_rangeOptions" id="" required formControlName="colorRange">
+            @for (option of widget.propertyConfig?.styles?.color?.rangeOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
       </div>
     }
 
