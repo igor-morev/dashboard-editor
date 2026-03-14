@@ -57,7 +57,6 @@ export class LayerComponent {
     const l = this.layer();
     if (l.widgetReference.widgetType === 'link') {
       const a = l.widgetReference;
-
     }
   }
 
@@ -66,6 +65,6 @@ export class LayerComponent {
   }
 
   get linkLayerPropertyModel() {
-    return this.layer().layerPropertyModel as LinkWidget['defaultWidgetPropertyModel']
+    return this.layer().layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'];
   }
 }

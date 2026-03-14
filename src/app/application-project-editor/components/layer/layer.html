@@ -53,9 +53,12 @@
 
   @case ('link') {
     <de-layer-content>
-      <a [class]="layer().widgetReference.defaultWidgetPropertyModel.class" [href]="linkLayerPropertyModel.href"     
-      [target]="linkLayerPropertyModel.target"    
-      >{{layer().layerPropertyModel.content}}</a>
+      <a
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [href]="linkLayerPropertyModel.href"
+        [target]="linkLayerPropertyModel.target"
+        >{{ layer().layerPropertyModel.content }}</a
+      >
     </de-layer-content>
   }
 

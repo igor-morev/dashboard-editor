@@ -56,9 +56,9 @@ export class LayerPropertyBuilder {
       size: new FormControl(),
     }),
     link: new FormGroup({
-        url: new FormControl(),
-        openInNewTab: new FormControl<boolean>(false),
-    })
+      url: new FormControl(),
+      openInNewTab: new FormControl<boolean>(false),
+    }),
   });
 
   constructor() {
@@ -97,8 +97,9 @@ export class LayerPropertyBuilder {
               widgetPropertyModel?.styles?.background?.color?.range,
           },
           image:
-            layerPropertyModel.styles?.background?.image !== undefined ? layerPropertyModel.styles?.background?.image :
-            widgetPropertyModel?.styles?.background?.image,
+            layerPropertyModel.styles?.background?.image !== undefined
+              ? layerPropertyModel.styles?.background?.image
+              : widgetPropertyModel?.styles?.background?.image,
           position:
             layerPropertyModel.styles?.background?.position ||
             widgetPropertyModel?.styles?.background?.position,
@@ -114,15 +115,19 @@ export class LayerPropertyBuilder {
         },
       );
 
-        this.formGroup.get('link')!.patchValue(
-          {
-            url: (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href || (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href,
-            openInNewTab: (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank' || (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank',
-          },
-          {
-            emitEvent: false,
-          },
-        );
+      this.formGroup.get('link')!.patchValue(
+        {
+          url:
+            (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href ||
+            (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href,
+          openInNewTab:
+            (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank' ||
+            (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank',
+        },
+        {
+          emitEvent: false,
+        },
+      );
     });
 
     this.formGroup.valueChanges.subscribe((value) => {
@@ -158,7 +163,10 @@ export class LayerPropertyBuilder {
     });
   }
 
-  private updateLayerPropertyModel(layerId: string, newPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel) {
+  private updateLayerPropertyModel(
+    layerId: string,
+    newPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel,
+  ) {
     const layer = this.selectedLayer();
     if (layer) {
       const updatedLayer = {

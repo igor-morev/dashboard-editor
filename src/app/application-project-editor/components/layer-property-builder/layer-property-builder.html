@@ -28,31 +28,31 @@
         <div>Background Color</div>
         <div class="flex gap-x-2">
           <select
-          name="backgroundColor_nameOptions"
-          id=""
-          required
-          formControlName="backgroundColorName"
-        >
-          @for (
-            option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
-            track option
-          ) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </select>
-        <select
-          name="backgroundColor_rangeOptions"
-          id=""
-          required
-          formControlName="backgroundColorRange"
-        >
-          @for (
-            option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
-            track option
-          ) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </select>
+            name="backgroundColor_nameOptions"
+            id=""
+            required
+            formControlName="backgroundColorName"
+          >
+            @for (
+              option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
+              track option
+            ) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+          <select
+            name="backgroundColor_rangeOptions"
+            id=""
+            required
+            formControlName="backgroundColorRange"
+          >
+            @for (
+              option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
+              track option
+            ) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
         </div>
       </div>
     }
@@ -133,14 +133,14 @@
     @if (widget.widgetType === 'link') {
       <div class="mb-4" formGroupName="link">
         <div class="mb-2">
-          <label class="block ">Url</label>
+          <label class="block">Url</label>
           <input type="text" formControlName="url" />
         </div>
         <div class="mb-2">
           <label for="openInNewTab" class="inline-flex items-center gap-x-2">
             Open in new tab
-          <input id="openInNewTab" type="checkbox" formControlName="openInNewTab" />
-        </label>
+            <input id="openInNewTab" type="checkbox" formControlName="openInNewTab" />
+          </label>
         </div>
       </div>
     }

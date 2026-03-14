@@ -16,10 +16,10 @@ export class LayerContent {
   }
 
   get selected() {
-    return this.layerRef.selected
+    return this.layerRef.selected;
   }
 
   get highlighted() {
-    return this.layerRef.highlighted
+    return this.layerRef.highlighted;
   }
 }

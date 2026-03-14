@@ -50,12 +50,12 @@
 
         <ng-template #layersTreeTemplate let-layerTree>
           @if (layerTree.length > 0) {
-            <ul class="w-full list-inside"                   
-                (mousemove)="mouseMoveOnTree($event)"
-                (mouseleave)="mouseLeaveOnTree()"
-                (contextmenu)="contextMenuOnLayer($event)"
-
-                >
+            <ul
+              class="w-full list-inside"
+              (mousemove)="mouseMoveOnTree($event)"
+              (mouseleave)="mouseLeaveOnTree()"
+              (contextmenu)="contextMenuOnLayer($event)"
+            >
               @for (layer of layerTree; track layer.id) {
                 <li
                   [attr.data-layer-id]="layer.id"
@@ -66,7 +66,7 @@
                     <span
                       class="block"
                       [ngClass]="{
-                        'bg-blue-300/50': layer.id === highlightedLayer?.id,
+                        'bg-blue-300/50': layer.id === highlightedLayer()?.id,
                         'text-blue-500': layer.id === selectedLayer.id,
                       }"
                       >{{ layer.widgetReference.widgetName }}</span
@@ -89,15 +89,25 @@
     </div>
   </div>
 
-  <!--Route outlet-->
-  <div
-    class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
-    (click)="clickOnLayerFromScaffold($event)"
-    (mousemove)="mouseMoveOnScaffold($event)"
-    (contextmenu)="contextMenuOnLayer($event)"
-  >
-    <router-outlet></router-outlet>
+  <div class="grow h-full flex flex-col">
+    <div class="editor-toolbar py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">
+      <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
+        <mat-icon>undo</mat-icon>
+      </button>
+      <button matIconButton (click)="redo()" [disabled]="!canRedo()" title="Redo (Cmd+Shift+Z)">
+        <mat-icon>redo</mat-icon>
+      </button>
+    </div>
+    <div
+      class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
+      (click)="clickOnLayerFromScaffold($event)"
+      (mousemove)="mouseMoveOnScaffold($event)"
+      (contextmenu)="contextMenuOnLayer($event)"
+    >
+      <router-outlet></router-outlet>
+    </div>
   </div>
+
   <div
     class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid"
   >

@@ -6,29 +6,20 @@ interface AbstractBaseWidget {
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
   canHaveChildren?: boolean;
-  children?: Widget[]
+  children?: Widget[];
 }
 
-
 export interface GenericWidget extends AbstractBaseWidget {
-  widgetType:
-  | 'scaffold'
-  | 'container'
-  | 'section'
-  | 'column'
-  | 'row'
-  | 'text'
-  | 'heading'
-  | 'icon'
+  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'heading' | 'icon';
 }
 
 export interface LinkWidget extends AbstractBaseWidget {
-  widgetType: 'link',
+  widgetType: 'link';
   defaultWidgetPropertyModel: LinkWidgetPropertyModel;
 }
 
 export interface ImageWidget extends AbstractBaseWidget {
-  widgetType: 'image',
+  widgetType: 'image';
   defaultWidgetPropertyModel: ImageWidgetPropertyModel;
 }
 
@@ -48,16 +39,17 @@ export interface Layer {
   children: Layer[];
 }
 
+export interface AppViewSchema {
+  device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  layers: Layer[];
+  layersMap: Record<string, Layer>;
+}
+
 export interface AppState {
   pages: Page[];
   selectedPage: Page;
   selectedLayer: Layer;
-  highlightedLayer?: Layer;
-  appViewSchema: {
-    device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-    layers: Layer[];
-    layersMap: Record<string, Layer>;
-  };
+  appViewSchema: AppViewSchema;
 }
 
 export type EditorCommand = 'delete' | 'copy' | 'paste';
@@ -195,13 +187,12 @@ export type WidgetPropertyModel = Partial<{
   content?: string;
 }>;
 
-
 export type LinkWidgetPropertyModel = WidgetPropertyModel & {
   href: string;
   target: '_blank' | '_self' | '_parent' | '_top';
-}
+};
 
 export type ImageWidgetPropertyModel = WidgetPropertyModel & {
   src: string;
   alt: string;
-}
+};

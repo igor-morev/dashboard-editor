@@ -15,6 +15,9 @@ import { generateUniqueId } from './utils/editor';
 import { ApplicationEditorState } from './state/application-editor-state';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
+import { WidgetsState } from './state/widgets-state';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -26,6 +29,8 @@ import { LayerPropertyBuilder } from './components/layer-property-builder/layer-
     RouterLink,
     RouterLinkActive,
     LayerPropertyBuilder,
+    MatButtonModule,
+    MatIconModule,
   ],
   templateUrl: './application-project-editor.html',
   styleUrl: './application-project-editor.scss',
@@ -35,6 +40,9 @@ export class ApplicationProjectEditor {
   private destroyRef = inject(DestroyRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly state = inject(ApplicationEditorState);
+  private readonly widgetsState = inject(WidgetsState);
+
+  highlightedLayer = this.state.highlightedLayer;
 
   get appState() {
     return this.state.appState;
@@ -44,94 +52,29 @@ export class ApplicationProjectEditor {
     return this.state.appState.selectedLayer;
   }
 
-  get highlightedLayer() {
-    return this.state.appState.highlightedLayer;
-  }
-
   get layers() {
     return this.state.appState.appViewSchema.layers;
   }
 
   get widgets() {
-    return this.state.widgets;
+    return this.widgetsState.widgets;
   }
 
   get pages() {
     return this.state.pages;
   }
 
+  canUndo() {
+    return this.state.canUndo();
+  }
+
+  canRedo() {
+    return this.state.canRedo();
+  }
+
   moveWidgetOnScaffold(event: Event, widget: Widget) {
     event.preventDefault();
     this.createLayer(widget);
-  }
-
-  private createLayer(widget: Widget) {
-    if (
-      this.selectedLayer &&
-      this.selectedLayer.widgetReference.canNotBeAddedInside &&
-      this.selectedLayer.widgetReference.canNotBeAddedInside(widget)
-    ) {
-      return;
-    }
-
-    const newLayer = this.createLayerForWidget(widget, this.selectedLayer.id);
-
-    this.state.updateAppState({
-      appViewSchema: {
-        ...this.appState.appViewSchema,
-        layersMap: this.updateLayersMap([newLayer], this.appState.appViewSchema.layersMap),
-        layers: this.insertLayerInSchema(
-          this.appState.appViewSchema.layers,
-          this.selectedLayer.id,
-          newLayer,
-        ),
-      },
-    });
-  }
-
-  private updateLayersMap(layers: Layer[], layersMap: Record<string, Layer>): Record<string, Layer> {
-    layers.forEach((layer) => {
-      layersMap[layer.id] = layer;
-
-      if (layer.children.length > 0) {
-        this.updateLayersMap(layer.children, layersMap);
-      }
-    });
-
-    return layersMap;
-  }
-
-  private createLayerForWidget(widget: Widget, parentId: string | null): Layer {
-    const layerId = generateUniqueId();
-
-    const newLayer: Layer = {
-      id: layerId,
-      parentId,
-      sourceWidgetId: widget.id,
-      widgetReference: widget,
-      layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
-      children: widget.children ? widget.children.map((childWidget) => this.createLayerForWidget(childWidget, layerId)) : [],
-    };
-
-    return newLayer;
-  }
-
-  private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
-    return layers.map((layer) => {
-      if (layer.id === destinationId) {
-        return {
-          ...layer,
-          children: [...layer.children, newLayer],
-        };
-      } else if (layer.children.length > 0) {
-        return {
-          ...layer,
-          children: this.insertLayerInSchema(layer.children, destinationId, newLayer),
-        };
-      } else {
-        return layer;
-      }
-    });
   }
 
   selectLayerFromTree(event: Event, layer: Layer) {
@@ -175,7 +118,6 @@ export class ApplicationProjectEditor {
       this.unhighlightLayer();
     }
   }
-
 
   contextMenuOnLayer(event: MouseEvent) {
     const id = (event!.target! as HTMLElement)
@@ -224,6 +166,115 @@ export class ApplicationProjectEditor {
 
   mouseLeaveOnTree() {
     this.unhighlightLayer();
+  }
+
+  selectPage(page: { id: string; pageName: string }) {
+    if (page) {
+      this.state.updateAppState({
+        selectedPage: page,
+      });
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardShortcuts(event: KeyboardEvent) {
+    const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+    const modifier = isMac ? event.metaKey : event.ctrlKey;
+
+    if (modifier && event.key === 'z' && !event.shiftKey) {
+      event.preventDefault();
+      this.undo();
+    } else if (
+      (modifier && event.shiftKey && event.key === 'z') ||
+      (modifier && event.key === 'y')
+    ) {
+      event.preventDefault();
+      this.redo();
+    }
+  }
+
+  undo() {
+    console.log('Undo');
+    this.state.undo();
+  }
+
+  redo() {
+    console.log('Redo');
+    this.state.redo();
+  }
+
+  private createLayer(widget: Widget) {
+    if (
+      this.selectedLayer &&
+      this.selectedLayer.widgetReference.canNotBeAddedInside &&
+      this.selectedLayer.widgetReference.canNotBeAddedInside(widget)
+    ) {
+      return;
+    }
+
+    const newLayer = this.createLayerForWidget(widget, this.selectedLayer.id);
+
+    this.state.updateAppState({
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layersMap: this.updateLayersMap([newLayer], this.appState.appViewSchema.layersMap),
+        layers: this.insertLayerInSchema(
+          this.appState.appViewSchema.layers,
+          this.selectedLayer.id,
+          newLayer,
+        ),
+      },
+    });
+  }
+
+  private updateLayersMap(
+    layers: Layer[],
+    layersMap: Record<string, Layer>,
+  ): Record<string, Layer> {
+    layers.forEach((layer) => {
+      layersMap[layer.id] = layer;
+
+      if (layer.children.length > 0) {
+        this.updateLayersMap(layer.children, layersMap);
+      }
+    });
+
+    return layersMap;
+  }
+
+  private createLayerForWidget(widget: Widget, parentId: string | null): Layer {
+    const layerId = generateUniqueId();
+
+    const newLayer: Layer = {
+      id: layerId,
+      parentId,
+      sourceWidgetId: widget.id,
+      widgetReference: widget,
+      layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
+      children: widget.children
+        ? widget.children.map((childWidget) => this.createLayerForWidget(childWidget, layerId))
+        : [],
+    };
+
+    return newLayer;
+  }
+
+  private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
+    return layers.map((layer) => {
+      if (layer.id === destinationId) {
+        return {
+          ...layer,
+          children: [...layer.children, newLayer],
+        };
+      } else if (layer.children.length > 0) {
+        return {
+          ...layer,
+          children: this.insertLayerInSchema(layer.children, destinationId, newLayer),
+        };
+      } else {
+        return layer;
+      }
+    });
   }
 
   private removeLayer() {
@@ -290,13 +341,11 @@ export class ApplicationProjectEditor {
   }
 
   private highlightLayer(layer: Layer) {
-    if (this.highlightedLayer && this.highlightedLayer.id === layer.id) {
+    if (this.highlightedLayer()?.id === layer.id) {
       return;
     }
 
-    this.state.updateAppState({
-      highlightedLayer: layer,
-    });
+    this.state.highlightLayer(layer);
   }
 
   private unhighlightLayer() {
@@ -304,33 +353,6 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    this.state.updateAppState({
-      highlightedLayer: undefined,
-    });
-  }
-
-  // private unselectLayer() {
-  //   this.appState.selectedLayer = null;
-  // }
-
-  selectPage(page: { id: string; pageName: string }) {
-    if (page) {
-      this.state.updateAppState({
-        selectedPage: page,
-      });
-    }
-  }
-
-  private clickOutside() {
-    // this.appState.selectedLayer = null;
-  }
-
-  @HostListener('document:click', ['$event'])
-  handleDocumentClick(event: MouseEvent) {
-    const clickedInsideLayer = (event.target as HTMLElement).closest('[data-scaffold]');
-
-    if (!clickedInsideLayer) {
-      this.clickOutside();
-    }
+    this.state.highlightLayer(null);
   }
 }
