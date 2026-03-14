@@ -1,131 +1,130 @@
 <div class="h-screen w-screen flex">
   <div class="w-68 h-full bg-white border-0 border-r border-gray-300 border-solid">
-
-    <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12">
+    <div
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12"
+    >
       Project Name
     </div>
-    <div
-    class="h-full grid grid-rows-[200px_100px_2fr]"
-  >
- 
-    <div class="overflow-auto">
-      <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
-      <div class="py-2 px-4">
-        @for (widget of widgets; track widget.id) {
-          <button
-            (click)="moveWidgetOnScaffold($event, widget)"
-            class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left"
-          >
-            {{ widget.widgetName }}
-          </button>
-        }
-      </div>
-    </div>
-    <div class="overflow-auto">
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
-        Pages
-      </div>
-      <div class="py-2 px-4 overflow-auto">
-        <ul>
-          @for (page of pages; track page.id) {
-            <li>
-              <a
-                [routerLink]="['page', page.id]"
-                routerLinkActive="text-blue-500"
-                class="pl-1 hover:bg-blue-300/50 block"
-                >{{ page.pageName }}</a
-              >
-            </li>
-          }
-        </ul>
-      </div>
-    </div>
-    <div class="overflow-auto">
-      <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
-        Layers
-      </div>
-      <div class="py-2 px-4">
-        <ng-container
-          *ngTemplateOutlet="
-            layersTreeTemplate;
-            context: {
-              $implicit: layers,
-            }
-          "
-        ></ng-container>
-
-        <ng-template #layersTreeTemplate let-layerTree>
-          @if (layerTree.length > 0) {
-            <ul
-              class="w-full list-inside"
-              (mousemove)="mouseMoveOnTree($event)"
-              (mouseleave)="mouseLeaveOnTree()"
-              (contextmenu)="contextMenuOnLayer($event)"
-              (click)="clickOnLayerFromTree($event)"
+    <div class="h-full grid grid-rows-[200px_100px_2fr]">
+      <div class="overflow-auto">
+        <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
+        <div class="py-2 px-4">
+          @for (widget of widgets; track widget.id) {
+            <button
+              (click)="moveWidgetOnScaffold($event, widget)"
+              class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left"
             >
-              @for (layer of layerTree; track layer.id) {
-                <li [attr.data-layer-id]="layer.id" class="pl-2">
-                  @if (layer.children) {
-                    <span
-                      class="pl-1 pr-1 flex items-center cursor-pointer justify-between"
-                      [ngClass]="{
-                        'bg-blue-300/50': layer.id === highlightedLayer()?.id,
-                        'text-blue-500': layer.id === selectedLayer.id,
-                        'opacity-50': !!layer.isVisible === false,
-                      }"
-                    >
-                      {{ layer.widgetReference.widgetName }}
-
-                      <span class="flex items-center gap-x-1">
-                        <button
-                          matIconButton
-                          class="icon-button-xs invisible"
-                          (click)="toggleLayerLock($event, layer)"
-                          [class.visible]="
-                            (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                            layer.locked
-                          "
-                        >
-                          <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
-                        </button>
-
-                        <button
-                          matIconButton
-                          class="icon-button-xs invisible"
-                          (click)="toggleLayerVisibility($event, layer)"
-                          [class.visible]="
-                            (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                            !layer.isVisible
-                          "
-                        >
-                          <mat-icon>{{
-                            layer.isVisible ? 'visibility' : 'visibility_off'
-                          }}</mat-icon>
-                        </button>
-                      </span>
-                    </span>
-                    <ng-container
-                      *ngTemplateOutlet="
-                        layersTreeTemplate;
-                        context: {
-                          $implicit: layer.children,
-                        }
-                      "
-                    ></ng-container>
-                  }
-                </li>
-              }
-            </ul>
+              {{ widget.widgetName }}
+            </button>
           }
-        </ng-template>
+        </div>
+      </div>
+      <div class="overflow-auto">
+        <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
+          Pages
+        </div>
+        <div class="py-2 px-4 overflow-auto">
+          <ul>
+            @for (page of pages; track page.id) {
+              <li>
+                <a
+                  [routerLink]="['page', page.id]"
+                  routerLinkActive="text-blue-500"
+                  class="pl-1 hover:bg-blue-300/50 block"
+                  >{{ page.pageName }}</a
+                >
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="overflow-auto">
+        <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
+          Layers
+        </div>
+        <div class="py-2 px-4">
+          <ng-container
+            *ngTemplateOutlet="
+              layersTreeTemplate;
+              context: {
+                $implicit: layers,
+              }
+            "
+          ></ng-container>
+
+          <ng-template #layersTreeTemplate let-layerTree>
+            @if (layerTree.length > 0) {
+              <ul
+                class="w-full list-inside"
+                (mousemove)="mouseMoveOnTree($event)"
+                (mouseleave)="mouseLeaveOnTree()"
+                (contextmenu)="contextMenuOnLayer($event)"
+                (click)="clickOnLayerFromTree($event)"
+              >
+                @for (layer of layerTree; track layer.id) {
+                  <li [attr.data-layer-id]="layer.id" class="pl-2">
+                    @if (layer.children) {
+                      <span
+                        class="pl-1 pr-1 flex items-center cursor-pointer justify-between"
+                        [ngClass]="{
+                          'bg-blue-300/50': layer.id === highlightedLayer()?.id,
+                          'text-blue-500': layer.id === selectedLayer.id,
+                          'opacity-50': !!layer.isVisible === false,
+                        }"
+                      >
+                        {{ layer.widgetReference.widgetName }}
+
+                        <span class="flex items-center gap-x-1">
+                          <button
+                            matIconButton
+                            class="icon-button-xs invisible"
+                            (click)="toggleLayerLock($event, layer)"
+                            [class.visible]="
+                              (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                              layer.locked
+                            "
+                          >
+                            <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
+                          </button>
+
+                          <button
+                            matIconButton
+                            class="icon-button-xs invisible"
+                            (click)="toggleLayerVisibility($event, layer)"
+                            [class.visible]="
+                              (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                              !layer.isVisible
+                            "
+                          >
+                            <mat-icon>{{
+                              layer.isVisible ? 'visibility' : 'visibility_off'
+                            }}</mat-icon>
+                          </button>
+                        </span>
+                      </span>
+                      <ng-container
+                        *ngTemplateOutlet="
+                          layersTreeTemplate;
+                          context: {
+                            $implicit: layer.children,
+                          }
+                        "
+                      ></ng-container>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
-  </div>
-  
 
   <div class="grow h-full flex flex-col">
-    <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12">
+    <div
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12"
+    >
       <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
         <mat-icon>undo</mat-icon>
       </button>
