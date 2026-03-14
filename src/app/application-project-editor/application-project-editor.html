@@ -1,7 +1,13 @@
 <div class="h-screen w-screen flex">
-  <div
-    class="left-panel w-68 h-full bg-white grid grid-rows-[200px_100px_2fr] border-0 border-r border-gray-300 border-solid"
+  <div class="w-68 h-full bg-white border-0 border-r border-gray-300 border-solid">
+
+    <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12">
+      Project Name
+    </div>
+    <div
+    class="h-full grid grid-rows-[200px_100px_2fr]"
   >
+ 
     <div class="overflow-auto">
       <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
       <div class="py-2 px-4">
@@ -115,9 +121,11 @@
       </div>
     </div>
   </div>
+  </div>
+  
 
   <div class="grow h-full flex flex-col">
-    <div class="editor-toolbar py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">
+    <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12">
       <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
         <mat-icon>undo</mat-icon>
       </button>
