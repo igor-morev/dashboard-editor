@@ -37,6 +37,7 @@ export interface Layer {
   widgetReference: Widget;
   layerPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel;
   children: Layer[];
+  index: number;
 }
 
 export interface AppViewSchema {
@@ -52,7 +53,7 @@ export interface AppState {
   appViewSchema: AppViewSchema;
 }
 
-export type EditorCommand = 'delete' | 'copy' | 'paste';
+export type EditorCommand = 'delete' | 'copy' | 'paste' | 'duplicate';
 
 type SpaceValue =
   | 2

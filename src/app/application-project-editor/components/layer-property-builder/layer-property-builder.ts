@@ -1,9 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import {
-  LAYER_PROPERTY_CONVERTER,
-  TailwindLayerPropertyConverter,
-} from '@app/application-project-editor/services/layer-property-converter';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import {
   ImageWidgetPropertyModel,
@@ -12,6 +9,7 @@ import {
   LinkWidgetPropertyModel,
   WidgetPropertyModel,
 } from '@app/application-project-editor/types/application-editor.type';
+import { auditTime } from 'rxjs';
 
 @Component({
   selector: 'de-layer-property-builder',
@@ -19,15 +17,9 @@ import {
   templateUrl: './layer-property-builder.html',
   styleUrl: './layer-property-builder.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: LAYER_PROPERTY_CONVERTER,
-      useClass: TailwindLayerPropertyConverter,
-    },
-  ],
 })
 export class LayerPropertyBuilder {
-  private layerPropertyConverter = inject(LAYER_PROPERTY_CONVERTER);
+  private destroyRef = inject(DestroyRef);
   private state = inject(ApplicationEditorState);
 
   get appState() {
@@ -130,37 +122,39 @@ export class LayerPropertyBuilder {
       );
     });
 
-    this.formGroup.valueChanges.subscribe((value) => {
-      console.log(value);
-      this.updateLayerPropertyModel(this.selectedLayer().id, {
-        ...this.selectedLayer().layerPropertyModel,
-        styles: {
-          ...this.selectedLayer().layerPropertyModel.styles,
-          backgroundColor: {
-            name: value.backgroundColorName,
-            range: value.backgroundColorRange,
-          },
-          color: {
-            name: value.colorName,
-            range: value.colorRange,
-          },
-          textAlign: value.textAlign,
-          background: {
-            color: {
-              name: value.background?.color?.name,
-              range: value.background?.color?.range,
+    this.formGroup.valueChanges
+      .pipe(auditTime(200), takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        console.log(value);
+        this.updateLayerPropertyModel(this.selectedLayer().id, {
+          ...this.selectedLayer().layerPropertyModel,
+          styles: {
+            ...this.selectedLayer().layerPropertyModel.styles,
+            backgroundColor: {
+              name: value.backgroundColorName,
+              range: value.backgroundColorRange,
             },
-            image: value.background?.image || '',
-            position: value.background?.position,
-            repeat: value.background?.repeat,
-            size: value.background?.size,
+            color: {
+              name: value.colorName,
+              range: value.colorRange,
+            },
+            textAlign: value.textAlign,
+            background: {
+              color: {
+                name: value.background?.color?.name,
+                range: value.background?.color?.range,
+              },
+              image: value.background?.image || '',
+              position: value.background?.position,
+              repeat: value.background?.repeat,
+              size: value.background?.size,
+            },
           },
-        },
-        content: value.content,
-        href: value.link?.url,
-        target: value.link?.openInNewTab ? '_blank' : '_self',
+          content: value.content,
+          href: value.link?.url,
+          target: value.link?.openInNewTab ? '_blank' : '_self',
+        });
       });
-    });
   }
 
   private updateLayerPropertyModel(
@@ -177,15 +171,18 @@ export class LayerPropertyBuilder {
         },
       };
 
+      const updatedLayersTree = this.updateLayerInTree(
+        this.appState.appViewSchema.layers,
+        layerId,
+        updatedLayer,
+      );
+
       this.state.updateAppState({
         selectedLayer: updatedLayer,
         appViewSchema: {
           ...this.appState.appViewSchema,
-          layers: this.updateLayerInTree(this.appState.appViewSchema.layers, layerId, updatedLayer),
-          layersMap: {
-            ...this.appState.appViewSchema.layersMap,
-            [layerId]: updatedLayer,
-          },
+          layers: updatedLayersTree,
+          layersMap: this.updateLayersMap(updatedLayersTree, {}),
         },
       });
     }
@@ -210,5 +207,20 @@ export class LayerPropertyBuilder {
         return layer;
       }
     });
+  }
+
+  private updateLayersMap(
+    layers: Layer[],
+    layersMap: Record<string, Layer>,
+  ): Record<string, Layer> {
+    layers.forEach((layer) => {
+      layersMap[layer.id] = layer;
+
+      if (layer.children.length > 0) {
+        this.updateLayersMap(layer.children, layersMap);
+      }
+    });
+
+    return layersMap;
   }
 }

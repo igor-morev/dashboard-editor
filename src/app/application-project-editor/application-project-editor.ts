@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   HostListener,
@@ -38,6 +39,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class ApplicationProjectEditor {
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly state = inject(ApplicationEditorState);
   private readonly widgetsState = inject(WidgetsState);
@@ -149,6 +151,12 @@ export class ApplicationProjectEditor {
         if (result === 'delete') {
           this.removeLayer();
         }
+
+        if (result === 'duplicate') {
+          this.duplicateLayer();
+        }
+
+        this.cdr.markForCheck();
       });
   }
 
@@ -212,17 +220,24 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const newLayer = this.createLayerForWidget(widget, this.selectedLayer.id);
+    const newLayer = this.createLayerForWidget(
+      widget,
+      this.selectedLayer.id,
+      this.selectedLayer.children.length,
+    );
+    const updatedLayers = this.insertLayerInSchema(
+      this.appState.appViewSchema.layers,
+      this.selectedLayer.id,
+      newLayer,
+    );
+    const updatedMap = this.updateLayersMap(updatedLayers, {});
 
     this.state.updateAppState({
+      selectedLayer: updatedMap[newLayer.parentId!],
       appViewSchema: {
         ...this.appState.appViewSchema,
-        layersMap: this.updateLayersMap([newLayer], this.appState.appViewSchema.layersMap),
-        layers: this.insertLayerInSchema(
-          this.appState.appViewSchema.layers,
-          this.selectedLayer.id,
-          newLayer,
-        ),
+        layers: updatedLayers,
+        layersMap: this.updateLayersMap(updatedLayers, {}),
       },
     });
   }
@@ -242,39 +257,74 @@ export class ApplicationProjectEditor {
     return layersMap;
   }
 
-  private createLayerForWidget(widget: Widget, parentId: string | null): Layer {
+  private createLayerForWidget(widget: Widget, parentId: string | null, index = 0): Layer {
     const layerId = generateUniqueId();
 
     const newLayer: Layer = {
       id: layerId,
       parentId,
+      index: index,
       sourceWidgetId: widget.id,
       widgetReference: widget,
       layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
       children: widget.children
-        ? widget.children.map((childWidget) => this.createLayerForWidget(childWidget, layerId))
+        ? widget.children.map((childWidget, childIndex) =>
+            this.createLayerForWidget(childWidget, layerId, childIndex),
+          )
         : [],
     };
 
     return newLayer;
   }
 
-  private insertLayerInSchema(layers: Layer[], destinationId: string, newLayer: Layer): Layer[] {
-    return layers.map((layer) => {
-      if (layer.id === destinationId) {
-        return {
-          ...layer,
-          children: [...layer.children, newLayer],
-        };
-      } else if (layer.children.length > 0) {
-        return {
-          ...layer,
-          children: this.insertLayerInSchema(layer.children, destinationId, newLayer),
-        };
-      } else {
-        return layer;
-      }
+  private duplicateLayer() {
+    if (!this.selectedLayer) {
+      console.warn('No layer selected for deletion');
+      return;
+    }
+
+    if (!this.selectedLayer.parentId) {
+      return;
+    }
+
+    const newLayer = this.duplicateLayerTree(this.selectedLayer);
+
+    console.log('Duplicated layer:', newLayer);
+
+    console.log(this.selectedLayer.parentId);
+
+    const updatedLayers = this.recalculateLayersIndex(
+      this.insertLayerInSchema(
+        this.appState.appViewSchema.layers,
+        this.selectedLayer.parentId,
+        newLayer,
+        this.selectedLayer.index + 1,
+      ),
+    );
+
+    this.state.updateAppState({
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: updatedLayers,
+        layersMap: this.updateLayersMap(updatedLayers, {}),
+      },
     });
+  }
+
+  private duplicateLayerTree(layer: Layer, parentId = layer.parentId): Layer {
+    const layerId = generateUniqueId();
+
+    const newLayer: Layer = {
+      ...layer,
+      id: layerId,
+      parentId,
+      layerPropertyModel: structuredClone(layer.layerPropertyModel),
+      children: layer.children
+        ? layer.children.map((layerChild) => this.duplicateLayerTree(layerChild, layerId))
+        : [],
+    };
+
+    return newLayer;
   }
 
   private removeLayer() {
@@ -287,24 +337,27 @@ export class ApplicationProjectEditor {
       return;
     }
 
+    const updatedLayers = this.recalculateLayersIndex(
+      this.removeLayerInSchema(this.appState.appViewSchema.layers, this.selectedLayer.id),
+    );
+
     this.state.updateAppState({
       appViewSchema: {
         ...this.appState.appViewSchema,
-        layers: this.removeLayerInSchema(this.appState.appViewSchema.layers, this.selectedLayer.id),
-        layersMap: Object.keys(this.appState.appViewSchema.layersMap).reduce((result, key) => {
-          if (key !== this.selectedLayer.id) {
-            return {
-              ...result,
-              [key]: this.appState.appViewSchema.layersMap[key],
-            };
-          } else {
-            return result;
-          }
-        }, {}),
+        layers: updatedLayers,
+        layersMap: this.updateLayersMap(updatedLayers, {}),
       },
     });
 
     this.selectParentLayer();
+  }
+
+  recalculateLayersIndex(layers: Layer[]): Layer[] {
+    return layers.map((layer, index) => ({
+      ...layer,
+      index,
+      children: this.recalculateLayersIndex(layer.children),
+    }));
   }
 
   private selectParentLayer() {
@@ -313,14 +366,44 @@ export class ApplicationProjectEditor {
     }
   }
 
+  private insertLayerInSchema(
+    layers: Layer[],
+    destinationId: string,
+    newLayer: Layer,
+    insertIndex?: number,
+  ): Layer[] {
+    return layers.map((layer) => {
+      if (layer.id === destinationId) {
+        return {
+          ...layer,
+          children:
+            insertIndex !== undefined
+              ? [
+                  ...layer.children.slice(0, insertIndex),
+                  newLayer,
+                  ...layer.children.slice(insertIndex),
+                ]
+              : [...layer.children, newLayer],
+        };
+      } else if (layer.children.length > 0) {
+        return {
+          ...layer,
+          children: this.insertLayerInSchema(layer.children, destinationId, newLayer, insertIndex),
+        };
+      } else {
+        return layer;
+      }
+    });
+  }
+
   private removeLayerInSchema(layers: Layer[], forDeleteId: string): Layer[] {
-    return layers.reduce((result: Layer[], layer) => {
+    return layers.reduce((result: Layer[], layer, index: number) => {
       if (layer.id === forDeleteId) {
         return result;
       } else if (layer.children.length > 0) {
         return [
           ...result,
-          { ...layer, children: this.removeLayerInSchema(layer.children, forDeleteId) },
+          { ...layer, index, children: this.removeLayerInSchema(layer.children, forDeleteId) },
         ];
       } else {
         return [...result, layer];

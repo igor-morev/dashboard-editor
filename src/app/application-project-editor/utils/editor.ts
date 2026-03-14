@@ -20,6 +20,7 @@ export function layer(id: string, parentId = null, classNames = ''): Layer {
       class: classNames,
     },
     children: [],
+    index: 0,
   };
 }
 

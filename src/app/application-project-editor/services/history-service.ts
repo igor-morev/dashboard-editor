@@ -3,6 +3,7 @@ import { Layer, AppViewSchema } from '../types/application-editor.type';
 
 export interface HistoryState {
   appViewSchema: AppViewSchema;
+  // TODO: get rid of this, because we dont need to store selected layer in history
   selectedLayer: Layer;
   timestamp: number;
 }
