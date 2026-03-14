@@ -21,6 +21,8 @@ export function layer(id: string, parentId = null, classNames = ''): Layer {
     },
     children: [],
     index: 0,
+    isVisible: true,
+    locked: false,
   };
 }
 

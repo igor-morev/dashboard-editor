@@ -25,6 +25,7 @@ export class ContextMenuOverlayRef<R> {
   }
 
   handleClickOutside(event: MouseEvent) {
+    console.log(event.target instanceof HTMLElement && !event.target.closest('.cdk-overlay-pane'));
     if (event.target instanceof HTMLElement && !event.target.closest('.cdk-overlay-pane')) {
       this.closeMenu(null);
     }

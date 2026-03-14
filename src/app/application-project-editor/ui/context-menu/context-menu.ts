@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlayRef } from '@app/shared/context-menu-overlay';
-import { EditorCommand } from '@app/application-project-editor/types/application-editor.type';
+import {
+  EditorCommand,
+  Layer,
+} from '@app/application-project-editor/types/application-editor.type';
 
 @Component({
   selector: 'de-context-menu',
@@ -11,8 +14,12 @@ import { EditorCommand } from '@app/application-project-editor/types/application
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorContextMenu implements OnInit, OnDestroy {
-  private data = inject(CONTEXT_MENU_OVERLAY_DATA);
+  private data = inject<Layer>(CONTEXT_MENU_OVERLAY_DATA);
   private contextMenuOverlayRef = inject(ContextMenuOverlayRef);
+
+  get layer() {
+    return this.data;
+  }
 
   ngOnInit() {
     this.contextMenuOverlayRef.listenClickOutside();

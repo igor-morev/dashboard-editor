@@ -95,3 +95,24 @@ input {
 select {
   @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
 }
+
+.icon-button-xs {
+  // @include mat.button-density(-4);
+
+  /* Change the size of the icon inside the button */
+  --mat-icon-button-icon-size: 16px;
+
+  // // --mat-icon-button-icon-color: var(--mat-sys-primary);
+
+  // /* Optionally, change the overall button container size (default is 40px) */
+  --mat-icon-button-state-layer-size: var(--mat-icon-button-icon-size);
+
+  /* You may also need to adjust padding/dimensions for perfect centering */
+  // width: 50px;
+  // height: 50px;   
+  .mat-icon {
+    width: var(--mat-icon-button-icon-size);
+    height: var(--mat-icon-button-icon-size);
+    font-size: var(--mat-icon-button-icon-size);
+  }  
+}

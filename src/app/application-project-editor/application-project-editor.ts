@@ -66,6 +66,20 @@ export class ApplicationProjectEditor {
     return this.state.pages;
   }
 
+  getParent(parentId: string, reccursive = false): Layer | null {
+    const parent = this.appState.appViewSchema.layersMap[parentId];
+
+    if (!parent) {
+      return null;
+    }
+
+    if (reccursive && parent.parentId) {
+      return this.getParent(parent.parentId, true);
+    }
+
+    return parent;
+  }
+
   canUndo() {
     return this.state.canUndo();
   }
@@ -79,27 +93,25 @@ export class ApplicationProjectEditor {
     this.createLayer(widget);
   }
 
-  selectLayerFromTree(event: Event, layer: Layer) {
-    event.stopPropagation();
-
-    this.selectLayer(layer);
-  }
-
   highlightLayerFromTree(event: Event, layer: Layer) {
-    event.stopPropagation();
-
     this.highlightLayer(layer);
   }
 
   unhighlightLayerFromTree(event: Event) {
-    event.stopPropagation();
-
     this.unhighlightLayer();
   }
 
   clickOnLayerFromScaffold(event: MouseEvent) {
-    // event.stopPropagation();
+    const id = (event!.target! as HTMLElement)
+      .closest('[data-layer-id]')
+      ?.getAttribute('data-layer-id');
 
+    if (id) {
+      this.selectLayer(this.appState.appViewSchema.layersMap[id]);
+    }
+  }
+
+  clickOnLayerFromTree(event: MouseEvent) {
     const id = (event!.target! as HTMLElement)
       .closest('[data-layer-id]')
       ?.getAttribute('data-layer-id');
@@ -139,9 +151,7 @@ export class ApplicationProjectEditor {
     const overlayRef = this.contextMenuOverlay.open<EditorContextMenu, EditorCommand>(
       event,
       EditorContextMenu,
-      {
-        id,
-      },
+      this.selectedLayer,
     );
 
     overlayRef
@@ -211,6 +221,73 @@ export class ApplicationProjectEditor {
     this.state.redo();
   }
 
+  toggleLayerVisibility($event: Event, selectedLayer: Layer) {
+    const updatedLayer = {
+      ...selectedLayer,
+      isVisible: !selectedLayer.isVisible,
+    };
+
+    const updatedLayersTree = this.updateLayerInTree(
+      this.appState.appViewSchema.layers,
+      selectedLayer.id,
+      updatedLayer,
+    );
+
+    this.state.updateAppState({
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: updatedLayersTree,
+        layersMap: this.updateLayersMap(updatedLayersTree, {}),
+      },
+    });
+  }
+
+  toggleLayerLock($event: Event, selectedLayer: Layer) {
+    const updatedLayer = {
+      ...selectedLayer,
+      locked: !selectedLayer.locked,
+    };
+
+    const updatedLayersTree = this.updateLayerInTree(
+      this.appState.appViewSchema.layers,
+      selectedLayer.id,
+      updatedLayer,
+    );
+
+    const updatedLayersMap = this.updateLayersMap(updatedLayersTree, {});
+
+    this.state.updateAppState({
+      selectedLayer: updatedLayersMap[selectedLayer.id],
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: updatedLayersTree,
+        layersMap: updatedLayersMap,
+      },
+    });
+  }
+
+  private updateLayerInTree(layers: Layer[], layerId: string, updatedLayer: Layer): Layer[] {
+    return layers.map((layer) => {
+      if (layer.id === layerId) {
+        return {
+          ...layer,
+          ...updatedLayer,
+          layerPropertyModel: {
+            ...layer.layerPropertyModel,
+            ...updatedLayer.layerPropertyModel,
+          },
+        };
+      } else if (layer.children.length > 0) {
+        return {
+          ...layer,
+          children: this.updateLayerInTree(layer.children, layerId, updatedLayer),
+        };
+      } else {
+        return layer;
+      }
+    });
+  }
+
   private createLayer(widget: Widget) {
     if (
       this.selectedLayer &&
@@ -262,6 +339,8 @@ export class ApplicationProjectEditor {
 
     const newLayer: Layer = {
       id: layerId,
+      isVisible: true,
+      locked: false,
       parentId,
       index: index,
       sourceWidgetId: widget.id,
@@ -352,7 +431,7 @@ export class ApplicationProjectEditor {
     this.selectParentLayer();
   }
 
-  recalculateLayersIndex(layers: Layer[]): Layer[] {
+  private recalculateLayersIndex(layers: Layer[]): Layer[] {
     return layers.map((layer, index) => ({
       ...layer,
       index,

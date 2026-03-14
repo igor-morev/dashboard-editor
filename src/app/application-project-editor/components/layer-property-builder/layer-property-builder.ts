@@ -12,7 +12,7 @@ import {
 import { auditTime } from 'rxjs';
 
 @Component({
-  selector: 'de-layer-property-builder',
+  selector: 'de-layer-property-editor',
   imports: [ReactiveFormsModule],
   templateUrl: './layer-property-builder.html',
   styleUrl: './layer-property-builder.scss',

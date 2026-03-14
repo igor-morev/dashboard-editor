@@ -10,12 +10,14 @@
 
   <ng-template #layersTemplate let-layersTree>
     @for (layer of layersTree; track layer.id) {
-      <de-layer
-        [layer]="layer"
-        [selected]="layer.id === selectedLayer().id"
-        [highlighted]="layer.id === highlightedLayer()?.id"
-        [layersTemplate]="layersTemplate"
-      />
+      @if (layer.isVisible) {
+        <de-layer
+          [layer]="layer"
+          [selected]="layer.id === selectedLayer().id"
+          [highlighted]="layer.id === highlightedLayer()?.id"
+          [layersTemplate]="layersTemplate"
+        />
+      }
     }
   </ng-template>
 </div>

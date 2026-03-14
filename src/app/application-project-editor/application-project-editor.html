@@ -8,7 +8,7 @@
         @for (widget of widgets; track widget.id) {
           <button
             (click)="moveWidgetOnScaffold($event, widget)"
-            class="hover:bg-blue-300/50 cursor-pointer block w-full text-left"
+            class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left"
           >
             {{ widget.widgetName }}
           </button>
@@ -26,7 +26,7 @@
               <a
                 [routerLink]="['page', page.id]"
                 routerLinkActive="text-blue-500"
-                class="hover:bg-blue-300/50 block"
+                class="pl-1 hover:bg-blue-300/50 block"
                 >{{ page.pageName }}</a
               >
             </li>
@@ -55,22 +55,49 @@
               (mousemove)="mouseMoveOnTree($event)"
               (mouseleave)="mouseLeaveOnTree()"
               (contextmenu)="contextMenuOnLayer($event)"
+              (click)="clickOnLayerFromTree($event)"
             >
               @for (layer of layerTree; track layer.id) {
-                <li
-                  [attr.data-layer-id]="layer.id"
-                  (click)="selectLayerFromTree($event, layer)"
-                  class="pl-2"
-                >
+                <li [attr.data-layer-id]="layer.id" class="pl-2">
                   @if (layer.children) {
                     <span
-                      class="block"
+                      class="pl-1 pr-1 flex items-center cursor-pointer justify-between"
                       [ngClass]="{
                         'bg-blue-300/50': layer.id === highlightedLayer()?.id,
                         'text-blue-500': layer.id === selectedLayer.id,
+                        'opacity-50': !!layer.isVisible === false,
                       }"
-                      >{{ layer.widgetReference.widgetName }}</span
                     >
+                      {{ layer.widgetReference.widgetName }}
+
+                      <span class="flex items-center gap-x-1">
+                        <button
+                          matIconButton
+                          class="icon-button-xs invisible"
+                          (click)="toggleLayerLock($event, layer)"
+                          [class.visible]="
+                            (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                            layer.locked
+                          "
+                        >
+                          <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
+                        </button>
+
+                        <button
+                          matIconButton
+                          class="icon-button-xs invisible"
+                          (click)="toggleLayerVisibility($event, layer)"
+                          [class.visible]="
+                            (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                            !layer.isVisible
+                          "
+                        >
+                          <mat-icon>{{
+                            layer.isVisible ? 'visibility' : 'visibility_off'
+                          }}</mat-icon>
+                        </button>
+                      </span>
+                    </span>
                     <ng-container
                       *ngTemplateOutlet="
                         layersTreeTemplate;
@@ -111,6 +138,6 @@
   <div
     class="property-panel w-68 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid"
   >
-    <de-layer-property-builder />
+    <de-layer-property-editor />
   </div>
 </div>

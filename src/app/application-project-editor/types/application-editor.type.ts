@@ -38,6 +38,8 @@ export interface Layer {
   layerPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel;
   children: Layer[];
   index: number;
+  isVisible: boolean;
+  locked: boolean;
 }
 
 export interface AppViewSchema {
