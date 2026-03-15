@@ -75,7 +75,7 @@
                             'text-blue-500': layer.id === selectedLayer.id,
                             'opacity-50': !!layer.isVisible === false,
                           }"
-                          (dblclick)="startEditingLayer(layer.id)"
+                          (dblclick)="startEditingLayer(layer)"
                         >
                           {{ layerName }}
 

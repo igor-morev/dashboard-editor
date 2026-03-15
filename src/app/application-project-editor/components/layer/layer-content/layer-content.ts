@@ -4,11 +4,10 @@ import {
   computed,
   effect,
   inject,
-  signal,
 } from '@angular/core';
 import { LAYER_REF } from '../layer';
 import { Autofocus } from '@app/application-project-editor/ui/directives/autofocus';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'de-layer-content',
@@ -47,6 +46,9 @@ export class LayerContent {
   });
 
   startEditingLayer(): void {
+    if (this.layer().locked) {
+      return;
+    }
     this.layerRef.onStartEditingLayer.emit();
   }
 

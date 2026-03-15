@@ -273,8 +273,11 @@ export class ApplicationProjectEditor {
     });
   }
 
-  startEditingLayer(layerId: string): void {
-    this.editingLayerId.set(layerId);
+  startEditingLayer(layer: Layer): void {
+    if (layer.locked) {
+      return;
+    }
+    this.editingLayerId.set(layer.id);
   }
 
   saveLayerName(layer: Layer, newName: string): void {
