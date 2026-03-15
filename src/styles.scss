@@ -41,6 +41,11 @@
 @source inline("text-green-{100..900}");
 @source inline("text-gray-{100..900}");
 @source inline("text-cyan-{100..900}");
+@source inline("text-indigo-{100..900}");
+@source inline("text-yellow-{100..900}");
+@source inline("text-purple-{100..900}");
+@source inline("text-pink-{100..900}");
+@source inline("text-teal-{100..900}");
 
 
 @source inline("text-left");
@@ -88,11 +93,7 @@ body {
   overflow: hidden;
 }
 
-input {
-  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-}
-
-select {
+.de-input {
   @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
 }
 

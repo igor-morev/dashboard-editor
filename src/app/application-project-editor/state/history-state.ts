@@ -3,7 +3,6 @@ import { Layer, AppViewSchema } from '../types/application-editor.type';
 
 export interface HistoryState {
   appViewSchema: AppViewSchema;
-  // TODO: get rid of this, because we dont need to store selected layer in history
   selectedLayer: Layer;
   timestamp: number;
 }
@@ -11,7 +10,7 @@ export interface HistoryState {
 @Injectable({
   providedIn: 'root',
 })
-export class HistoryService {
+export class HistoryEditorState {
   private history: HistoryState[] = [];
   private currentIndex = -1;
   private maxHistorySize = 50;

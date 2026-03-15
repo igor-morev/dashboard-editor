@@ -10,14 +10,14 @@
     @if (widget.propertyConfig?.hasContent) {
       <div class="mb-4">
         <div>Content</div>
-        <input type="text" formControlName="content" />
+        <input class="de-input" type="text" formControlName="content" />
       </div>
     }
 
     @if (widget.propertyConfig?.styles?.textAlign) {
       <div class="mb-4">
         <div>Text Align</div>
-        <select name="textAlign" id="" required formControlName="textAlign">
+        <select class="de-input" name="textAlign" id="" required formControlName="textAlign">
           @for (option of widget.propertyConfig?.styles?.textAlign; track option) {
             <option [value]="option">{{ option }}</option>
           }
@@ -30,6 +30,7 @@
         <div>Background Color</div>
         <div class="flex gap-x-2">
           <select
+            class="de-input"
             name="backgroundColor_nameOptions"
             id=""
             required
@@ -43,6 +44,7 @@
             }
           </select>
           <select
+            class="de-input"
             name="backgroundColor_rangeOptions"
             id=""
             required
@@ -65,7 +67,7 @@
         <div formGroupName="color" class="pl-2">
           <div>Color</div>
           <div class="flex gap-x-2 mb-2">
-            <select name="name" id="" required formControlName="name">
+            <select class="de-input" name="name" id="" required formControlName="name">
               @for (
                 option of widget.propertyConfig?.styles?.background?.color?.name;
                 track option
@@ -73,7 +75,7 @@
                 <option [value]="option">{{ option }}</option>
               }
             </select>
-            <select name="range" id="" required formControlName="range">
+            <select class="de-input" name="range" id="" required formControlName="range">
               @for (
                 option of widget.propertyConfig?.styles?.background?.color?.range;
                 track option
@@ -85,11 +87,11 @@
         </div>
         <div class="pl-2 mb-2">
           <div>Image</div>
-          <input type="text" formControlName="image" />
+          <input class="de-input" type="text" formControlName="image" />
         </div>
         <div class="pl-2 mb-2">
           <div>Position</div>
-          <select name="position" id="" required formControlName="position">
+          <select class="de-input" name="position" id="" required formControlName="position">
             @for (option of widget.propertyConfig?.styles?.background?.position; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -97,7 +99,7 @@
         </div>
         <div class="pl-2 mb-2">
           <div>Repeat</div>
-          <select name="repeat" id="" required formControlName="repeat">
+          <select class="de-input" name="repeat" id="" required formControlName="repeat">
             @for (option of widget.propertyConfig?.styles?.background?.repeat; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -105,7 +107,7 @@
         </div>
         <div class="pl-2">
           <div>Size</div>
-          <select name="size" id="" required formControlName="size">
+          <select class="de-input" name="size" id="" required formControlName="size">
             @for (option of widget.propertyConfig?.styles?.background?.size; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -118,12 +120,24 @@
       <div class="mb-4">
         <div>Text Color</div>
         <div class="flex gap-x-2">
-          <select name="color_nameOptions" id="" required formControlName="colorName">
+          <select
+            class="de-input"
+            name="color_nameOptions"
+            id=""
+            required
+            formControlName="colorName"
+          >
             @for (option of widget.propertyConfig?.styles?.color?.nameOptions; track option) {
               <option [value]="option">{{ option }}</option>
             }
           </select>
-          <select name="color_rangeOptions" id="" required formControlName="colorRange">
+          <select
+            class="de-input"
+            name="color_rangeOptions"
+            id=""
+            required
+            formControlName="colorRange"
+          >
             @for (option of widget.propertyConfig?.styles?.color?.rangeOptions; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -136,12 +150,17 @@
       <div class="mb-4" formGroupName="link">
         <div class="mb-2">
           <label class="block">Url</label>
-          <input type="text" formControlName="url" />
+          <input class="de-input" type="text" formControlName="url" />
         </div>
         <div class="mb-2">
           <label for="openInNewTab" class="inline-flex items-center gap-x-2">
             Open in new tab
-            <input id="openInNewTab" type="checkbox" formControlName="openInNewTab" />
+            <input
+              class="de-input"
+              id="openInNewTab"
+              type="checkbox"
+              formControlName="openInNewTab"
+            />
           </label>
         </div>
       </div>

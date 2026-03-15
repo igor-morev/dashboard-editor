@@ -8,6 +8,7 @@ import {
   Inject,
   InjectionToken,
   input,
+  output,
   signal,
   TemplateRef,
 } from '@angular/core';
@@ -45,6 +46,12 @@ export class LayerComponent {
 
   selected = input.required<boolean>();
   highlighted = input<boolean>();
+
+  editingLayer = input<boolean>();
+
+  onStartEditingLayer = output<void>();
+  onSaveEditingLayerName = output<string>();
+  onCancelEditingLayer = output<void>();
 
   @HostBinding('attr.data-layer-id') get layerId() {
     return this.layer().id;

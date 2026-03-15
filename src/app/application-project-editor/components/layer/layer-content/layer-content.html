@@ -1,9 +1,24 @@
 @if (this.selected()) {
   <div class="frame absolute w-full h-full top-0 right-0 border border-blue-400 block">
     <div
-      class="bg-blue-400 text-white inline-flex pl-2 pr-2 text-xs absolute -top-4 right-full z-10"
+      class="bg-blue-400 text-white inline-flex pl-2 pr-2 text-xs absolute -top-4 left-[-1px] z-10"
+      (dblclick)="startEditingLayer()"
     >
-      {{ layer().widgetReference.widgetName }}
+      @if (editingLayer()) {
+        <input
+          type="text"
+          class="pl-1 w-full outline-blue-500 bg-white absolute top-0 left-0 text-black outline-ra"
+          [formControl]="editLayerNameControl"
+          #editInput
+          (blur)="saveLayerName(editInput.value)"
+          (keydown.enter)="saveLayerName(editInput.value)"
+          (keydown.escape)="cancelEditingLayer()"
+          deAutofocus
+        />
+        {{ editLayerNameControl.value }}
+      } @else {
+        {{ layerName() }}
+      }
     </div>
   </div>
 }

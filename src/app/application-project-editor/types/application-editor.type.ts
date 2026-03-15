@@ -40,6 +40,7 @@ export interface Layer {
   index: number;
   isVisible: boolean;
   locked: boolean;
+  layerName?: string;
 }
 
 export interface AppViewSchema {

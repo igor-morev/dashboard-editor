@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HistoryService } from './history-service';
+import { LayersEditor } from './layers-editor';
 
-describe('HistoryState', () => {
-  let service: HistoryService;
+describe('LayersEditor', () => {
+  let service: LayersEditor;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HistoryService);
+    service = TestBed.inject(LayersEditor);
   });
 
   it('should be created', () => {

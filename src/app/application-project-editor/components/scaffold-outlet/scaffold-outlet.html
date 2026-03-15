@@ -15,7 +15,11 @@
           [layer]="layer"
           [selected]="layer.id === selectedLayer().id"
           [highlighted]="layer.id === highlightedLayer()?.id"
+          [editingLayer]="editingLayerId() === layer.id"
           [layersTemplate]="layersTemplate"
+          (onStartEditingLayer)="startEditingLayer(layer.id)"
+          (onSaveEditingLayerName)="saveLayerName($event, layer)"
+          (onCancelEditingLayer)="cancelEditingLayer()"
         />
       }
     }

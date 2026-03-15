@@ -1,13 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AppState, Layer } from '../types/application-editor.type';
 import { scaffoldLayer } from '../utils/editor';
-import { HistoryService } from '../services/history-service';
+import { HistoryEditorState } from './history-state';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationEditorState {
-  private historyService = inject(HistoryService);
+  private historyState = inject(HistoryEditorState);
 
   private _appState: AppState = {
     pages: [
@@ -48,7 +48,7 @@ export class ApplicationEditorState {
   }
 
   constructor() {
-    this.historyService.pushState({
+    this.historyState.pushState({
       appViewSchema: this._appState.appViewSchema,
       selectedLayer: this._appState.selectedLayer,
       timestamp: Date.now(),
@@ -58,7 +58,7 @@ export class ApplicationEditorState {
   updateAppState(updates: Partial<AppState>) {
     const newState = { ...this.appState, ...updates };
 
-    this.historyService.pushState({
+    this.historyState.pushState({
       appViewSchema: newState.appViewSchema,
       selectedLayer: newState.selectedLayer,
       timestamp: Date.now(),
@@ -74,7 +74,7 @@ export class ApplicationEditorState {
   }
 
   undo() {
-    const previousState = this.historyService.undo();
+    const previousState = this.historyState.undo();
     if (previousState) {
       this.updateState({
         ...this.appState,
@@ -85,7 +85,7 @@ export class ApplicationEditorState {
   }
 
   redo() {
-    const nextState = this.historyService.redo();
+    const nextState = this.historyState.redo();
     if (nextState) {
       this.updateState({
         ...this.appState,
@@ -96,11 +96,11 @@ export class ApplicationEditorState {
   }
 
   canUndo(): boolean {
-    return this.historyService.canUndo();
+    return this.historyState.canUndo();
   }
 
   canRedo(): boolean {
-    return this.historyService.canRedo();
+    return this.historyState.canRedo();
   }
 
   private updateState(newState: AppState) {

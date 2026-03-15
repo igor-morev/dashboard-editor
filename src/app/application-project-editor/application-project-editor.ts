@@ -5,6 +5,7 @@ import {
   DestroyRef,
   HostListener,
   inject,
+  signal,
 } from '@angular/core';
 import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
@@ -12,13 +13,14 @@ import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
-import { generateUniqueId } from './utils/editor';
 import { ApplicationEditorState } from './state/application-editor-state';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
 import { WidgetsState } from './state/widgets-state';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Autofocus } from './ui/directives/autofocus';
+import { LayersEditor } from './services/layers-editor';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -32,6 +34,7 @@ import { MatButtonModule } from '@angular/material/button';
     LayerPropertyBuilder,
     MatButtonModule,
     MatIconModule,
+    Autofocus,
   ],
   templateUrl: './application-project-editor.html',
   styleUrl: './application-project-editor.scss',
@@ -43,6 +46,10 @@ export class ApplicationProjectEditor {
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly state = inject(ApplicationEditorState);
   private readonly widgetsState = inject(WidgetsState);
+
+  private layersEditor = inject(LayersEditor);
+
+  editingLayerId = signal<string | null>(null);
 
   highlightedLayer = this.state.highlightedLayer;
 
@@ -227,7 +234,7 @@ export class ApplicationProjectEditor {
       isVisible: !selectedLayer.isVisible,
     };
 
-    const updatedLayersTree = this.updateLayerInTree(
+    const updatedLayersTree = this.layersEditor.updateLayerInTree(
       this.appState.appViewSchema.layers,
       selectedLayer.id,
       updatedLayer,
@@ -237,7 +244,7 @@ export class ApplicationProjectEditor {
       appViewSchema: {
         ...this.appState.appViewSchema,
         layers: updatedLayersTree,
-        layersMap: this.updateLayersMap(updatedLayersTree, {}),
+        layersMap: this.layersEditor.updateLayersMap(updatedLayersTree, {}),
       },
     });
   }
@@ -248,13 +255,13 @@ export class ApplicationProjectEditor {
       locked: !selectedLayer.locked,
     };
 
-    const updatedLayersTree = this.updateLayerInTree(
+    const updatedLayersTree = this.layersEditor.updateLayerInTree(
       this.appState.appViewSchema.layers,
       selectedLayer.id,
       updatedLayer,
     );
 
-    const updatedLayersMap = this.updateLayersMap(updatedLayersTree, {});
+    const updatedLayersMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
 
     this.state.updateAppState({
       selectedLayer: updatedLayersMap[selectedLayer.id],
@@ -266,26 +273,39 @@ export class ApplicationProjectEditor {
     });
   }
 
-  private updateLayerInTree(layers: Layer[], layerId: string, updatedLayer: Layer): Layer[] {
-    return layers.map((layer) => {
-      if (layer.id === layerId) {
-        return {
-          ...layer,
-          ...updatedLayer,
-          layerPropertyModel: {
-            ...layer.layerPropertyModel,
-            ...updatedLayer.layerPropertyModel,
-          },
-        };
-      } else if (layer.children.length > 0) {
-        return {
-          ...layer,
-          children: this.updateLayerInTree(layer.children, layerId, updatedLayer),
-        };
-      } else {
-        return layer;
-      }
-    });
+  startEditingLayer(layerId: string): void {
+    this.editingLayerId.set(layerId);
+  }
+
+  saveLayerName(layer: Layer, newName: string): void {
+    if (newName.trim()) {
+      const updatedLayer: Layer = {
+        ...layer,
+        layerName: newName,
+      };
+
+      const updatedLayersTree = this.layersEditor.updateLayerInTree(
+        this.appState.appViewSchema.layers,
+        layer.id,
+        updatedLayer,
+      );
+
+      const updatedLayersMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
+
+      this.state.updateAppState({
+        selectedLayer: updatedLayersMap[layer.id],
+        appViewSchema: {
+          ...this.appState.appViewSchema,
+          layers: updatedLayersTree,
+          layersMap: updatedLayersMap,
+        },
+      });
+    }
+    this.editingLayerId.set(null);
+  }
+
+  cancelEditingLayer(): void {
+    this.editingLayerId.set(null);
   }
 
   private createLayer(widget: Widget) {
@@ -297,63 +317,26 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const newLayer = this.createLayerForWidget(
+    const newLayer = this.layersEditor.createLayerForWidget(
       widget,
       this.selectedLayer.id,
       this.selectedLayer.children.length,
     );
-    const updatedLayers = this.insertLayerInSchema(
+    const updatedLayers = this.layersEditor.insertLayerInSchema(
       this.appState.appViewSchema.layers,
       this.selectedLayer.id,
       newLayer,
     );
-    const updatedMap = this.updateLayersMap(updatedLayers, {});
+    const updatedMap = this.layersEditor.updateLayersMap(updatedLayers, {});
 
     this.state.updateAppState({
       selectedLayer: updatedMap[newLayer.parentId!],
       appViewSchema: {
         ...this.appState.appViewSchema,
         layers: updatedLayers,
-        layersMap: this.updateLayersMap(updatedLayers, {}),
+        layersMap: this.layersEditor.updateLayersMap(updatedLayers, {}),
       },
     });
-  }
-
-  private updateLayersMap(
-    layers: Layer[],
-    layersMap: Record<string, Layer>,
-  ): Record<string, Layer> {
-    layers.forEach((layer) => {
-      layersMap[layer.id] = layer;
-
-      if (layer.children.length > 0) {
-        this.updateLayersMap(layer.children, layersMap);
-      }
-    });
-
-    return layersMap;
-  }
-
-  private createLayerForWidget(widget: Widget, parentId: string | null, index = 0): Layer {
-    const layerId = generateUniqueId();
-
-    const newLayer: Layer = {
-      id: layerId,
-      isVisible: true,
-      locked: false,
-      parentId,
-      index: index,
-      sourceWidgetId: widget.id,
-      widgetReference: widget,
-      layerPropertyModel: { ...widget.defaultWidgetPropertyModel },
-      children: widget.children
-        ? widget.children.map((childWidget, childIndex) =>
-            this.createLayerForWidget(childWidget, layerId, childIndex),
-          )
-        : [],
-    };
-
-    return newLayer;
   }
 
   private duplicateLayer() {
@@ -366,14 +349,10 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const newLayer = this.duplicateLayerTree(this.selectedLayer);
+    const newLayer = this.layersEditor.duplicateLayerTree(this.selectedLayer);
 
-    console.log('Duplicated layer:', newLayer);
-
-    console.log(this.selectedLayer.parentId);
-
-    const updatedLayers = this.recalculateLayersIndex(
-      this.insertLayerInSchema(
+    const updatedLayers = this.layersEditor.recalculateLayersIndex(
+      this.layersEditor.insertLayerInSchema(
         this.appState.appViewSchema.layers,
         this.selectedLayer.parentId,
         newLayer,
@@ -385,25 +364,9 @@ export class ApplicationProjectEditor {
       appViewSchema: {
         ...this.appState.appViewSchema,
         layers: updatedLayers,
-        layersMap: this.updateLayersMap(updatedLayers, {}),
+        layersMap: this.layersEditor.updateLayersMap(updatedLayers, {}),
       },
     });
-  }
-
-  private duplicateLayerTree(layer: Layer, parentId = layer.parentId): Layer {
-    const layerId = generateUniqueId();
-
-    const newLayer: Layer = {
-      ...layer,
-      id: layerId,
-      parentId,
-      layerPropertyModel: structuredClone(layer.layerPropertyModel),
-      children: layer.children
-        ? layer.children.map((layerChild) => this.duplicateLayerTree(layerChild, layerId))
-        : [],
-    };
-
-    return newLayer;
   }
 
   private removeLayer() {
@@ -416,78 +379,28 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    const updatedLayers = this.recalculateLayersIndex(
-      this.removeLayerInSchema(this.appState.appViewSchema.layers, this.selectedLayer.id),
+    const updatedLayers = this.layersEditor.recalculateLayersIndex(
+      this.layersEditor.removeLayerInSchema(
+        this.appState.appViewSchema.layers,
+        this.selectedLayer.id,
+      ),
     );
 
     this.state.updateAppState({
       appViewSchema: {
         ...this.appState.appViewSchema,
         layers: updatedLayers,
-        layersMap: this.updateLayersMap(updatedLayers, {}),
+        layersMap: this.layersEditor.updateLayersMap(updatedLayers, {}),
       },
     });
 
     this.selectParentLayer();
   }
 
-  private recalculateLayersIndex(layers: Layer[]): Layer[] {
-    return layers.map((layer, index) => ({
-      ...layer,
-      index,
-      children: this.recalculateLayersIndex(layer.children),
-    }));
-  }
-
   private selectParentLayer() {
     if (this.appState.selectedLayer.parentId) {
       this.selectLayer(this.appState.appViewSchema.layersMap[this.appState.selectedLayer.parentId]);
     }
-  }
-
-  private insertLayerInSchema(
-    layers: Layer[],
-    destinationId: string,
-    newLayer: Layer,
-    insertIndex?: number,
-  ): Layer[] {
-    return layers.map((layer) => {
-      if (layer.id === destinationId) {
-        return {
-          ...layer,
-          children:
-            insertIndex !== undefined
-              ? [
-                  ...layer.children.slice(0, insertIndex),
-                  newLayer,
-                  ...layer.children.slice(insertIndex),
-                ]
-              : [...layer.children, newLayer],
-        };
-      } else if (layer.children.length > 0) {
-        return {
-          ...layer,
-          children: this.insertLayerInSchema(layer.children, destinationId, newLayer, insertIndex),
-        };
-      } else {
-        return layer;
-      }
-    });
-  }
-
-  private removeLayerInSchema(layers: Layer[], forDeleteId: string): Layer[] {
-    return layers.reduce((result: Layer[], layer, index: number) => {
-      if (layer.id === forDeleteId) {
-        return result;
-      } else if (layer.children.length > 0) {
-        return [
-          ...result,
-          { ...layer, index, children: this.removeLayerInSchema(layer.children, forDeleteId) },
-        ];
-      } else {
-        return [...result, layer];
-      }
-    }, []);
   }
 
   private selectLayer(layer: Layer) {
