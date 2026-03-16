@@ -1,0 +1,27 @@
+<div class="grid custom-grid gap-1" [formGroup]="formGroup">
+  @for (color of colors; let idx = $index; track idx) {
+    <button
+      [disabled]="formGroup.disabled"
+      type="button"
+      class="color-swatch group"
+      [ngClass]="{
+        selected: isSelected({
+          name: color.name,
+          range: color.range,
+        }),
+      }"
+      class="{{ 'bg-' + color.name }}{{ color.range ? '-' + color.range : '' }}"
+      (click)="selectColor(color.name, color.range)"
+      title="{{ color.name }}{{ color.range ? '-' + color.range : '' }}"
+    >
+      @if (
+        isSelected({
+          name: color.name,
+          range: color.range,
+        })
+      ) {
+        <span class="checkmark">✓</span>
+      }
+    </button>
+  }
+</div>

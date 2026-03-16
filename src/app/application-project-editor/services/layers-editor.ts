@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { Layer, Widget } from '../types/application-editor.type';
 import { generateUniqueId } from '../utils/editor';
 
+/**
+ * LayersEditor is responsible for managing the layers tree structure in the application editor.
+ * It provides methods to create layers from widgets, update layers in the tree, insert and remove layers,
+ * duplicate layer trees, and recalculate layer indices after modifications.
+ * This service abstracts the logic for manipulating the layers tree, allowing other parts of the application
+ *
+ */
 @Injectable({
   providedIn: 'root',
 })

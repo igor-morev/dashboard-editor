@@ -4,7 +4,7 @@
   >
     {{ selectedLayer().widgetReference.widgetName }}
   </div>
-  <div class="py-2 px-4" [formGroup]="formGroup">
+  <div class="pt-2 px-4 grow overflow-y-auto overflow-x-hidden" [formGroup]="formGroup">
     @let widget = selectedLayer().widgetReference;
 
     @if (widget.propertyConfig?.hasContent) {
@@ -28,62 +28,24 @@
     @if (widget.propertyConfig?.styles?.backgroundColor) {
       <div class="mb-4">
         <div>Background Color</div>
-        <div class="flex gap-x-2">
-          <select
-            class="de-input"
-            name="backgroundColor_nameOptions"
-            id=""
-            required
-            formControlName="backgroundColorName"
-          >
-            @for (
-              option of widget.propertyConfig?.styles?.backgroundColor?.nameOptions;
-              track option
-            ) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-          <select
-            class="de-input"
-            name="backgroundColor_rangeOptions"
-            id=""
-            required
-            formControlName="backgroundColorRange"
-          >
-            @for (
-              option of widget.propertyConfig?.styles?.backgroundColor?.rangeOptions;
-              track option
-            ) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-        </div>
+        <de-color-pallete-select
+          [colorNames]="widget.propertyConfig?.styles?.backgroundColor?.nameOptions || []"
+          [colorRanges]="widget.propertyConfig?.styles?.backgroundColor?.rangeOptions || []"
+          formControlName="backgroundColor"
+        />
       </div>
     }
 
     @if (widget.propertyConfig?.styles?.background) {
       <div class="mb-4" formGroupName="background">
         <div class="mb-2">Background</div>
-        <div formGroupName="color" class="pl-2">
+        <div class="pl-2">
           <div>Color</div>
-          <div class="flex gap-x-2 mb-2">
-            <select class="de-input" name="name" id="" required formControlName="name">
-              @for (
-                option of widget.propertyConfig?.styles?.background?.color?.name;
-                track option
-              ) {
-                <option [value]="option">{{ option }}</option>
-              }
-            </select>
-            <select class="de-input" name="range" id="" required formControlName="range">
-              @for (
-                option of widget.propertyConfig?.styles?.background?.color?.range;
-                track option
-              ) {
-                <option [value]="option">{{ option }}</option>
-              }
-            </select>
-          </div>
+          <de-color-pallete-select
+            [colorNames]="widget.propertyConfig?.styles?.background?.color?.name || []"
+            [colorRanges]="widget.propertyConfig?.styles?.background?.color?.range || []"
+            formControlName="color"
+          />
         </div>
         <div class="pl-2 mb-2">
           <div>Image</div>
@@ -119,30 +81,11 @@
     @if (widget.propertyConfig?.styles?.color) {
       <div class="mb-4">
         <div>Text Color</div>
-        <div class="flex gap-x-2">
-          <select
-            class="de-input"
-            name="color_nameOptions"
-            id=""
-            required
-            formControlName="colorName"
-          >
-            @for (option of widget.propertyConfig?.styles?.color?.nameOptions; track option) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-          <select
-            class="de-input"
-            name="color_rangeOptions"
-            id=""
-            required
-            formControlName="colorRange"
-          >
-            @for (option of widget.propertyConfig?.styles?.color?.rangeOptions; track option) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </select>
-        </div>
+        <de-color-pallete-select
+          [colorNames]="widget.propertyConfig?.styles?.color?.nameOptions || []"
+          [colorRanges]="widget.propertyConfig?.styles?.color?.rangeOptions || []"
+          formControlName="textColor"
+        />
       </div>
     }
 

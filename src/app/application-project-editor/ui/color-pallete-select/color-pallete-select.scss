@@ -1,0 +1,18 @@
+@use 'tailwindcss';
+
+@layer components {
+  .custom-grid {
+    grid-template-columns: repeat(10, minmax(0, 24px));
+  }
+  .color-swatch {
+    @apply w-6 h-6 rounded-md border-2 border-gray-300 transition-all duration-200 hover:border-gray-500 hover:scale-110 focus:outline-none relative cursor-pointer;
+  }
+
+  .color-swatch.selected {
+    @apply border-black shadow-lg;
+  }
+
+  .checkmark {
+    @apply absolute inset-0 flex items-center justify-center text-white font-bold text-lg drop-shadow;
+  }
+}

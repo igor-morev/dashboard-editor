@@ -40,27 +40,7 @@ export class ScaffoldOutlet {
 
   saveLayerName(newName: string, layer: Layer): void {
     if (newName.trim()) {
-      const updatedLayer: Layer = {
-        ...layer,
-        layerName: newName,
-      };
-
-      const updatedLayersTree = this.layersEditor.updateLayerInTree(
-        this.appState.appViewSchema.layers,
-        layer.id,
-        updatedLayer,
-      );
-
-      const updatedLayersMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
-
-      this.state.updateAppState({
-        selectedLayer: updatedLayersMap[layer.id],
-        appViewSchema: {
-          ...this.appState.appViewSchema,
-          layers: updatedLayersTree,
-          layersMap: updatedLayersMap,
-        },
-      });
+      this.state.updateLayerName(layer, newName);
     }
     this.editingLayerId.set(null);
   }

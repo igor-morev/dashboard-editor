@@ -101,7 +101,7 @@ export type ColorName =
   | 'teal'
   | 'cyan'
   | 'black';
-export type ColorRange = null | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+export type ColorRange = null | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export type TextAlign = 'left' | 'center' | 'right' | 'justify';
 export type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';

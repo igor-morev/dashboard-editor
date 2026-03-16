@@ -2,11 +2,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AppState, Layer } from '../types/application-editor.type';
 import { scaffoldLayer } from '../utils/editor';
 import { HistoryEditorState } from './history-state';
+import { LayersEditor } from '../services/layers-editor';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationEditorState {
+  private layersEditor = inject(LayersEditor);
   private historyState = inject(HistoryEditorState);
 
   private _appState: AppState = {
@@ -101,6 +103,30 @@ export class ApplicationEditorState {
 
   canRedo(): boolean {
     return this.historyState.canRedo();
+  }
+
+  updateLayerName(layer: Layer, newName: string): void {
+    const updatedLayer: Layer = {
+      ...layer,
+      layerName: newName,
+    };
+
+    const updatedLayersTree = this.layersEditor.updateLayerInTree(
+      this.appState.appViewSchema.layers,
+      layer.id,
+      updatedLayer,
+    );
+
+    const updatedLayersMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
+
+    this.updateAppState({
+      selectedLayer: updatedLayersMap[layer.id],
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: updatedLayersTree,
+        layersMap: updatedLayersMap,
+      },
+    });
   }
 
   private updateState(newState: AppState) {

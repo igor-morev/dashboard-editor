@@ -3,17 +3,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import {
+  ColorName,
+  ColorRange,
   ImageWidgetPropertyModel,
   Layer,
   LinkWidget,
   LinkWidgetPropertyModel,
   WidgetPropertyModel,
 } from '@app/application-project-editor/types/application-editor.type';
+import { ColorPalleteSelect } from '@app/application-project-editor/ui/color-pallete-select/color-pallete-select';
 import { auditTime } from 'rxjs';
 
 @Component({
   selector: 'de-layer-property-editor',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ColorPalleteSelect],
   templateUrl: './layer-property-builder.html',
   styleUrl: './layer-property-builder.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,16 +34,29 @@ export class LayerPropertyBuilder {
   }
 
   formGroup = new FormGroup({
-    backgroundColorName: new FormControl(),
-    backgroundColorRange: new FormControl(),
-    colorName: new FormControl(),
-    colorRange: new FormControl(),
+    backgroundColor: new FormControl<{
+      name: ColorName;
+      range: ColorRange;
+    }>({
+      name: '' as ColorName,
+      range: null as ColorRange,
+    }),
+    textColor: new FormControl<{
+      name: ColorName;
+      range: ColorRange;
+    }>({
+      name: '' as ColorName,
+      range: null as ColorRange,
+    }),
     content: new FormControl(),
     textAlign: new FormControl(),
     background: new FormGroup({
-      color: new FormGroup({
-        name: new FormControl(),
-        range: new FormControl(),
+      color: new FormControl<{
+        name: ColorName;
+        range: ColorRange;
+      }>({
+        name: '' as ColorName,
+        range: null as ColorRange,
       }),
       image: new FormControl(),
       position: new FormControl(),
@@ -53,6 +69,14 @@ export class LayerPropertyBuilder {
     }),
   });
 
+  get backgroundColorFormGroup() {
+    return this.formGroup.get('background')!.get('color') as FormGroup;
+  }
+
+  get textColorFormGroup() {
+    return this.formGroup.get('textColor') as FormGroup;
+  }
+
   constructor() {
     effect(() => {
       const layerPropertyModel = this.selectedLayer().layerPropertyModel;
@@ -60,18 +84,22 @@ export class LayerPropertyBuilder {
 
       this.formGroup.patchValue(
         {
-          backgroundColorName:
-            layerPropertyModel.styles?.backgroundColor?.name ||
-            widgetPropertyModel?.styles?.backgroundColor?.name,
-          backgroundColorRange:
-            layerPropertyModel.styles?.backgroundColor?.range ||
-            widgetPropertyModel?.styles?.backgroundColor?.range,
-          colorName:
-            layerPropertyModel.styles?.color?.name || widgetPropertyModel?.styles?.color?.name,
-          colorRange:
-            layerPropertyModel.styles?.color?.range || widgetPropertyModel?.styles?.color?.range,
+          backgroundColor: {
+            name:
+              layerPropertyModel.styles?.backgroundColor?.name! ||
+              widgetPropertyModel?.styles?.backgroundColor?.name!,
+            range:
+              layerPropertyModel.styles?.backgroundColor?.range! ||
+              widgetPropertyModel?.styles?.backgroundColor?.range,
+          },
           content: this.selectedLayer().layerPropertyModel.content,
           textAlign: this.selectedLayer().layerPropertyModel.styles?.textAlign,
+          textColor: {
+            name:
+              layerPropertyModel.styles?.color?.name! || widgetPropertyModel?.styles?.color?.name!,
+            range:
+              layerPropertyModel.styles?.color?.range! || widgetPropertyModel?.styles?.color?.range,
+          },
         },
         {
           emitEvent: false,
@@ -82,10 +110,10 @@ export class LayerPropertyBuilder {
         {
           color: {
             name:
-              layerPropertyModel.styles?.background?.color?.name ||
-              widgetPropertyModel?.styles?.background?.color?.name,
+              layerPropertyModel.styles?.background?.color?.name! ||
+              widgetPropertyModel?.styles?.background?.color?.name!,
             range:
-              layerPropertyModel.styles?.background?.color?.range ||
+              layerPropertyModel.styles?.background?.color?.range! ||
               widgetPropertyModel?.styles?.background?.color?.range,
           },
           image:
@@ -125,24 +153,23 @@ export class LayerPropertyBuilder {
     this.formGroup.valueChanges
       .pipe(auditTime(200), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        console.log(value);
         this.updateLayerPropertyModel(this.selectedLayer().id, {
           ...this.selectedLayer().layerPropertyModel,
           styles: {
             ...this.selectedLayer().layerPropertyModel.styles,
             backgroundColor: {
-              name: value.backgroundColorName,
-              range: value.backgroundColorRange,
+              name: value.backgroundColor?.name!,
+              range: value.backgroundColor?.range!,
             },
             color: {
-              name: value.colorName,
-              range: value.colorRange,
+              name: value.textColor?.name!,
+              range: value.textColor?.range!,
             },
             textAlign: value.textAlign,
             background: {
               color: {
-                name: value.background?.color?.name,
-                range: value.background?.color?.range,
+                name: value.background?.color?.name!,
+                range: value.background?.color?.range!,
               },
               image: value.background?.image || '',
               position: value.background?.position,

@@ -1,14 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { LAYER_REF } from '../layer';
 import { Autofocus } from '@app/application-project-editor/ui/directives/autofocus';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
+/**
+ * LayerContent component is responsible for displaying the content of a layer, including its name and editing capabilities.
+ * It uses the LAYER_REF injection token to access the layer's properties and actions, such as starting to edit the layer name, saving the new name, and canceling the editing process.
+ */
 @Component({
   selector: 'de-layer-content',
   imports: [Autofocus, ReactiveFormsModule],
