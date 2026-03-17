@@ -79,7 +79,7 @@ export class ContextMenuOverlay {
         },
       ]);
 
-    this.overlayRef = this.overlay.create({ positionStrategy, minWidth: 250 });
+    this.overlayRef = this.overlay.create({ positionStrategy, minWidth: 250, panelClass: 'overlay-panel' });
 
     const injector = Injector.create({
       providers: [

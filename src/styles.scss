@@ -94,7 +94,7 @@ body {
 }
 
 .de-input {
-  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full;
 }
 
 .icon-button-xs {
@@ -116,4 +116,8 @@ body {
     height: var(--mat-icon-button-icon-size);
     font-size: var(--mat-icon-button-icon-size);
   }  
+}
+
+.overlay-panel {
+  @apply bg-white border border-gray-300 rounded z-50 py-2;
 }

@@ -1,17 +1,18 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  computed,
+  DestroyRef,
   effect,
   forwardRef,
   inject,
-  Input,
   input,
   output,
-  SimpleChanges,
+  TemplateRef,
+  ViewContainerRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormGroup,
   FormControl,
@@ -23,6 +24,9 @@ import {
   ColorName,
   ColorRange,
 } from '@app/application-project-editor/types/application-editor.type';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { filter } from 'rxjs';
 
 interface ColorSwatch {
   name: ColorName;
@@ -38,7 +42,7 @@ interface ColorFormGroup extends FormGroup {
 
 @Component({
   selector: 'de-color-pallete-select',
-  imports: [NgClass, ReactiveFormsModule],
+  imports: [NgClass, ReactiveFormsModule, NgTemplateOutlet],
   templateUrl: './color-pallete-select.html',
   styleUrl: './color-pallete-select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +55,12 @@ interface ColorFormGroup extends FormGroup {
   ],
 })
 export class ColorPalleteSelect implements ControlValueAccessor {
+  private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
+
+  private overlay = inject(Overlay);
+  private viewContainerRef = inject(ViewContainerRef);
+  private overlayRef: OverlayRef | null = null;
 
   private onChange: (value: ColorSwatch) => void = () => {};
   private onTouched: () => void = () => {};
@@ -63,6 +72,7 @@ export class ColorPalleteSelect implements ControlValueAccessor {
 
   colorNames = input<ColorName[]>([]);
   colorRanges = input<ColorRange[]>([]);
+  inline = input<boolean>(false);
   colorSelected = output<ColorSwatch>();
 
   colors: ColorSwatch[] = [];
@@ -72,7 +82,7 @@ export class ColorPalleteSelect implements ControlValueAccessor {
   });
 
   constructor() {
-    this.formGroup.valueChanges.subscribe((value) => {
+    this.formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value.name) {
         this.onChange({
           name: value.name,
@@ -117,6 +127,9 @@ export class ColorPalleteSelect implements ControlValueAccessor {
   selectColor(name: ColorName, range: ColorRange): void {
     this.formGroup.patchValue({ name, range });
     this.colorSelected.emit({ name, range });
+    this.closePopup();
+
+    this.cdr.markForCheck();
   }
 
   isSelected(color: ColorSwatch): boolean {
@@ -125,6 +138,64 @@ export class ColorPalleteSelect implements ControlValueAccessor {
     }
 
     return this.formGroup.value.name === color.name && this.formGroup.value.range === color.range;
+  }
+
+  toggleMenu(menuTemplate: TemplateRef<any>, trigger: HTMLElement): void {
+    if (this.overlayRef?.hasAttached()) {
+      this.closePopup();
+      return;
+    }
+
+    const positionStrategy = this.overlay
+      .position()
+      .flexibleConnectedTo(trigger)
+      .withPositions([
+        {
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+        },
+        {
+          originX: 'start',
+          originY: 'top',
+          overlayX: 'start',
+          overlayY: 'bottom',
+        },
+      ]);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      panelClass: 'overlay-panel',
+    });
+
+    const portal = new TemplatePortal(menuTemplate, this.viewContainerRef);
+    this.overlayRef.attach(portal);
+
+    this.overlayRef
+      .outsidePointerEvents()
+      .pipe(
+        filter(
+          (value) =>
+            !(value.target as HTMLElement).closest(
+              trigger.className
+                .split(' ')
+                .map((c) => `.${c}`)
+                .join(''),
+            ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.closePopup();
+      });
+  }
+
+  closePopup(): void {
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = null;
+    }
   }
 
   private generateColorGrid(): void {

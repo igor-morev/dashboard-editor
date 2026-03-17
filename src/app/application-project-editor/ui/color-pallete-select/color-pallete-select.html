@@ -1,27 +1,43 @@
-<div class="grid custom-grid gap-1" [formGroup]="formGroup">
-  @for (color of colors; let idx = $index; track idx) {
-    <button
-      [disabled]="formGroup.disabled"
-      type="button"
-      class="color-swatch group"
-      [ngClass]="{
-        selected: isSelected({
-          name: color.name,
-          range: color.range,
-        }),
-      }"
-      class="{{ 'bg-' + color.name }}{{ color.range ? '-' + color.range : '' }}"
-      (click)="selectColor(color.name, color.range)"
-      title="{{ color.name }}{{ color.range ? '-' + color.range : '' }}"
-    >
-      @if (
-        isSelected({
-          name: color.name,
-          range: color.range,
-        })
-      ) {
-        <span class="checkmark">✓</span>
-      }
-    </button>
-  }
-</div>
+@if (!inline()) {
+  <input
+    type="text"
+    class="color-swatch {{ 'bg-' + formGroup.value.name }}{{
+      formGroup.value.range ? '-' + formGroup.value.range : ''
+    }}"
+    readonly
+    #inputRef
+    (click)="toggleMenu(menuTemplate, inputRef)"
+  />
+} @else {
+  <ng-container *ngTemplateOutlet="menuTemplate"></ng-container>
+}
+
+<ng-template #menuTemplate>
+  <div class="grid custom-grid gap-1" [formGroup]="formGroup" [class.px-2]="!inline()">
+    @for (color of colors; let idx = $index; track idx) {
+      <button
+        [disabled]="formGroup.disabled"
+        type="button"
+        class="color-swatch group"
+        [ngClass]="{
+          selected: isSelected({
+            name: color.name,
+            range: color.range,
+          }),
+        }"
+        class="{{ 'bg-' + color.name }}{{ color.range ? '-' + color.range : '' }}"
+        (click)="selectColor(color.name, color.range)"
+        title="{{ color.name }}{{ color.range ? '-' + color.range : '' }}"
+      >
+        @if (
+          isSelected({
+            name: color.name,
+            range: color.range,
+          })
+        ) {
+          <span class="checkmark" [class.text-black]="color.name === 'white'">✓</span>
+        }
+      </button>
+    }
+  </div>
+</ng-template>

@@ -79,33 +79,35 @@
                         >
                           {{ layerName }}
 
-                          <span class="flex items-center gap-x-1">
-                            <button
-                              matIconButton
-                              class="icon-button-xs invisible"
-                              (click)="toggleLayerLock($event, layer)"
-                              [class.visible]="
-                                (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                                layer.locked
-                              "
-                            >
-                              <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
-                            </button>
+                          @if (layer.parentId) {
+                            <span class="flex items-center gap-x-1">
+                              <button
+                                matIconButton
+                                class="icon-button-xs invisible"
+                                (click)="toggleLayerLock($event, layer)"
+                                [class.visible]="
+                                  (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                                  layer.locked
+                                "
+                              >
+                                <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
+                              </button>
 
-                            <button
-                              matIconButton
-                              class="icon-button-xs invisible"
-                              (click)="toggleLayerVisibility($event, layer)"
-                              [class.visible]="
-                                (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                                !layer.isVisible
-                              "
-                            >
-                              <mat-icon>{{
-                                layer.isVisible ? 'visibility' : 'visibility_off'
-                              }}</mat-icon>
-                            </button>
-                          </span>
+                              <button
+                                matIconButton
+                                class="icon-button-xs invisible"
+                                (click)="toggleLayerVisibility($event, layer)"
+                                [class.visible]="
+                                  (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
+                                  !layer.isVisible
+                                "
+                              >
+                                <mat-icon>{{
+                                  layer.isVisible ? 'visibility' : 'visibility_off'
+                                }}</mat-icon>
+                              </button>
+                            </span>
+                          }
                         </span>
                       } @else {
                         <input

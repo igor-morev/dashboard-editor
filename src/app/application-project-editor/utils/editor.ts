@@ -29,6 +29,7 @@ export function layer(id: string, parentId = null, classNames = ''): Layer {
 export function scaffoldLayer(): Layer {
   return {
     ...layer('scaffold', null),
+    locked: true,
     widgetReference: {
       ...layer('scaffold', null).widgetReference,
       propertyConfig: {
