@@ -2,7 +2,6 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import { LayerComponent } from '../layer/layer';
-import { LayersEditor } from '@app/application-project-editor/services/layers-editor';
 import { Layer } from '@app/application-project-editor/types/application-editor.type';
 
 @Component({
@@ -13,7 +12,6 @@ import { Layer } from '@app/application-project-editor/types/application-editor.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScaffoldOutlet {
-  private layersEditor = inject(LayersEditor);
   private state = inject(ApplicationEditorState);
 
   editingLayerId = signal<string | null>(null);

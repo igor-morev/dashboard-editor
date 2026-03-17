@@ -74,7 +74,7 @@ export class WidgetsState {
         return widget.widgetType === 'row'; // TBD;
       },
       defaultWidgetPropertyModel: {
-        class: 'min-h-48 bg-black flex gap-x-2',
+        class: 'flex gap-x-2',
       },
     },
     {

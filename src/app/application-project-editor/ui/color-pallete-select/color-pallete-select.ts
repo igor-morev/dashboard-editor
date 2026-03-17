@@ -141,6 +141,7 @@ export class ColorPalleteSelect implements ControlValueAccessor {
   }
 
   toggleMenu(menuTemplate: TemplateRef<any>, trigger: HTMLElement): void {
+    console.log(1);
     if (this.overlayRef?.hasAttached()) {
       this.closePopup();
       return;
