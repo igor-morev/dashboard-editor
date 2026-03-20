@@ -68,16 +68,16 @@
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
-      @if (layer().children) {
-        <ng-container
-          *ngTemplateOutlet="
-            layersTemplate();
-            context: {
-              $implicit: layer().children,
-            }
-          "
-        ></ng-container>
-      }
+        @if (layer().children) {
+          <ng-container
+            *ngTemplateOutlet="
+              layersTemplate();
+              context: {
+                $implicit: layer().children,
+              }
+            "
+          ></ng-container>
+        }
       </ul>
     </de-layer-content>
   }

@@ -19,7 +19,7 @@ function linkWidget(content?: string): Widget {
       target: '_self',
       content,
     },
-  }
+  };
 }
 
 function listItemWidget(children?: Widget): Widget {
@@ -212,9 +212,7 @@ export class WidgetsState {
         alt: '',
       },
     },
-    listWidget(
-      [listItemWidget()]
-    ),
+    listWidget([listItemWidget()]),
     {
       id: 'link-button-widget',
       widgetName: 'LinkButton',
@@ -414,8 +412,8 @@ export class WidgetsState {
           defaultWidgetPropertyModel: {
             content: 'List Item',
           },
-        }
-      ]
+        },
+      ],
     },
     {
       id: 'header-widget',
@@ -466,7 +464,8 @@ export class WidgetsState {
                     class: 'w-[50px]',
                     src: '',
                     alt: '',
-                    content: 'https://cdn-icons-png.freepik.com/512/5200/5200787.png?ga=GA1.1.859669412.1773966547',
+                    content:
+                      'https://cdn-icons-png.freepik.com/512/5200/5200787.png?ga=GA1.1.859669412.1773966547',
                   },
                 },
               ],
@@ -510,16 +509,16 @@ export class WidgetsState {
                 class: 'grow flex pl-2 pr-2 flex h-full items-center ',
               },
               children: [
-                listWidget([
-                  listItemWidget(linkWidget('Home')),
-                  listItemWidget(linkWidget('Contact')),
-                ], 'flex gap-x-2 list-none')
+                listWidget(
+                  [listItemWidget(linkWidget('Home')), listItemWidget(linkWidget('Contact'))],
+                  'flex gap-x-2 list-none',
+                ),
               ],
             },
-          ]
+          ],
         },
-      ]
-    }
+      ],
+    },
   ];
 
   get widgets() {
