@@ -10,7 +10,7 @@ interface AbstractBaseWidget {
 }
 
 export interface GenericWidget extends AbstractBaseWidget {
-  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'heading' | 'icon';
+  widgetType: 'scaffold' | 'container' | 'section' | 'column' | 'row' | 'text' | 'heading' | 'icon' | 'list' | 'list-item' | 'header';
 }
 
 export interface LinkWidget extends AbstractBaseWidget {

@@ -2,6 +2,73 @@ import { Injectable } from '@angular/core';
 import { colorPalette, colorRange } from '../constants/application-editor.constant';
 import { Widget } from '../types/application-editor.type';
 
+function linkWidget(content?: string): Widget {
+  return {
+    id: 'link-widget',
+    widgetName: 'Link',
+    widgetType: 'link',
+    canNotBeAddedInside: () => {
+      return true;
+    },
+    propertyConfig: {
+      hasContent: true,
+    },
+    defaultWidgetPropertyModel: {
+      class: '',
+      href: 'https://www.example.com',
+      target: '_self',
+      content,
+    },
+  }
+}
+
+function listItemWidget(children?: Widget): Widget {
+  return {
+    id: 'list-item-widget',
+    widgetName: 'ListItem',
+    widgetType: 'list-item',
+    canNotBeAddedInside: (widget) => {
+      return true;
+    },
+    propertyConfig: {
+      styles: {
+        color: {
+          nameOptions: colorPalette,
+          rangeOptions: colorRange,
+        },
+      },
+      hasContent: true,
+    },
+    defaultWidgetPropertyModel: {
+      content: 'List Item',
+    },
+    children: children ? [children] : [],
+  };
+}
+
+function listWidget(children: Widget[], customClass?: string): Widget {
+  return {
+    id: 'list-widget',
+    widgetName: 'List',
+    widgetType: 'list',
+    canNotBeAddedInside: () => {
+      return true;
+    },
+    propertyConfig: {
+      styles: {
+        color: {
+          nameOptions: colorPalette,
+          rangeOptions: colorRange,
+        },
+      },
+    },
+    defaultWidgetPropertyModel: {
+      class: `list-disc list-inside ${customClass || ''}`,
+    },
+    children,
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -140,27 +207,14 @@ export class WidgetsState {
         return true;
       },
       defaultWidgetPropertyModel: {
-        class: 'min-h-48',
+        class: '',
         src: '',
         alt: '',
       },
     },
-    {
-      id: 'link-widget',
-      widgetName: 'Link',
-      widgetType: 'link',
-      canNotBeAddedInside: (widget) => {
-        return true;
-      },
-      propertyConfig: {
-        hasContent: true,
-      },
-      defaultWidgetPropertyModel: {
-        class: 'underline',
-        href: 'https://www.example.com',
-        target: '_self',
-      },
-    },
+    listWidget(
+      [listItemWidget()]
+    ),
     {
       id: 'link-button-widget',
       widgetName: 'LinkButton',
@@ -178,6 +232,7 @@ export class WidgetsState {
         content: 'Meditate',
       },
     },
+    linkWidget('Home'),
     {
       id: 'icon-widget',
       widgetName: 'Icon',
@@ -321,6 +376,150 @@ export class WidgetsState {
         },
       ],
     },
+    {
+      id: 'list-widget',
+      widgetName: 'List',
+      widgetType: 'list',
+      canNotBeAddedInside: (widget) => {
+        return true;
+      },
+      propertyConfig: {
+        styles: {
+          color: {
+            nameOptions: colorPalette,
+            rangeOptions: colorRange,
+          },
+        },
+      },
+      defaultWidgetPropertyModel: {
+        class: 'list-disc list-inside',
+      },
+      children: [
+        {
+          id: 'list-item-widget',
+          widgetName: 'ListItem',
+          widgetType: 'list-item',
+          canNotBeAddedInside: (widget) => {
+            return true;
+          },
+          propertyConfig: {
+            styles: {
+              color: {
+                nameOptions: colorPalette,
+                rangeOptions: colorRange,
+              },
+            },
+            hasContent: true,
+          },
+          defaultWidgetPropertyModel: {
+            content: 'List Item',
+          },
+        }
+      ]
+    },
+    {
+      id: 'header-widget',
+      widgetName: 'Header',
+      widgetType: 'header',
+      canNotBeAddedInside: (widget) => {
+        return widget.widgetType === 'header' || widget.widgetType === 'section';
+      },
+      defaultWidgetPropertyModel: {
+        class: 'bg-gray-white h-16 flex items-center px-4',
+      },
+      children: [
+        {
+          id: 'row-widget',
+          widgetName: 'Row',
+          widgetType: 'row',
+          canNotBeAddedInside: (widget) => {
+            return widget.widgetType === 'row'; // TBD;
+          },
+          defaultWidgetPropertyModel: {
+            class: 'flex gap-x-2 h-full',
+          },
+          children: [
+            {
+              id: 'column-widget',
+              widgetName: 'Column',
+              widgetType: 'column',
+              canNotBeAddedInside: (widget) => {
+                return widget.widgetType === 'column'; // TBD;
+              },
+              defaultWidgetPropertyModel: {
+                class: 'grow pl-2 pr-2  flex h-full items-center ',
+              },
+              children: [
+                {
+                  id: 'image-widget',
+                  widgetName: 'Image',
+                  widgetType: 'image',
+                  // renderContent:
+                  //   'https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg',
+                  canNotBeAddedInside: (widget) => {
+                    return true;
+                  },
+                  propertyConfig: {
+                    hasContent: true,
+                  },
+                  defaultWidgetPropertyModel: {
+                    class: 'w-[50px]',
+                    src: '',
+                    alt: '',
+                    content: 'https://cdn-icons-png.freepik.com/512/5200/5200787.png?ga=GA1.1.859669412.1773966547',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-widget',
+              widgetName: 'Column',
+              widgetType: 'column',
+              canNotBeAddedInside: (widget) => {
+                return widget.widgetType === 'column'; // TBD;
+              },
+              defaultWidgetPropertyModel: {
+                class: 'grow pl-2 pr-2  flex h-full items-center ',
+              },
+              children: [
+                {
+                  id: 'text-widget',
+                  widgetName: 'Text',
+                  widgetType: 'text',
+                  canNotBeAddedInside: (widget) => {
+                    return true;
+                  },
+                  propertyConfig: {
+                    hasContent: true,
+                  },
+                  defaultWidgetPropertyModel: {
+                    class: 'font-bold text-lg',
+                    content: 'Discover',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-widget',
+              widgetName: 'Column',
+              widgetType: 'column',
+              canNotBeAddedInside: (widget) => {
+                return widget.widgetType === 'column'; // TBD;
+              },
+              defaultWidgetPropertyModel: {
+                class: 'grow flex pl-2 pr-2 flex h-full items-center ',
+              },
+              children: [
+                listWidget([
+                  listItemWidget(linkWidget('Home')),
+                  listItemWidget(linkWidget('Contact')),
+                ], 'flex gap-x-2 list-none')
+              ],
+            },
+          ]
+        },
+      ]
+    }
   ];
 
   get widgets() {

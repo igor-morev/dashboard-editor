@@ -62,6 +62,48 @@
     </de-layer-content>
   }
 
+  @case ('list') {
+    <de-layer-content>
+      <ul
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+      </ul>
+    </de-layer-content>
+  }
+
+  @case ('list-item') {
+    <de-layer-content>
+      <li
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      >
+        @if (layer().children.length) {
+          <ng-container
+            *ngTemplateOutlet="
+              layersTemplate();
+              context: {
+                $implicit: layer().children,
+              }
+            "
+          ></ng-container>
+        } @else {
+          {{ layer().layerPropertyModel.content }}
+        }
+      </li>
+    </de-layer-content>
+  }
+
   @default {
     <de-layer-content>
       <div
