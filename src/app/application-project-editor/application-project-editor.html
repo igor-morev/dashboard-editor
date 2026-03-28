@@ -43,98 +43,47 @@
           Layers
         </div>
         <div class="py-2 px-4">
-          <ng-container
-            *ngTemplateOutlet="
-              layersTreeTemplate;
-              context: {
-                $implicit: layers,
-              }
-            "
-          ></ng-container>
+          @if (layers.length > 0) {
+            <ng-container
+              *ngTemplateOutlet="
+                layersTreeTemplate;
+                context: {
+                  $implicit: layers,
+                }
+              "
+            ></ng-container>
+          }
 
           <ng-template #layersTreeTemplate let-layerTree>
-            @if (layerTree.length > 0) {
-              <ul
-                class="w-full list-inside"
-                (mousemove)="mouseMoveOnTree($event)"
-                (mouseleave)="mouseLeaveOnTree()"
-                (contextmenu)="contextMenuOnLayer($event)"
-                (click)="clickOnLayerFromTree($event)"
-              >
-                @for (layer of layerTree; track layer.id) {
-                  <li [attr.data-layer-id]="layer.id" class="pl-2">
-                    @if (layer.children) {
-                      @let layerName =
-                        layer.layerName ? layer.layerName : layer.widgetReference.widgetName;
-
-                      @if (editingLayerId() !== layer.id) {
-                        <span
-                          class="pl-1 pr-1 flex items-center cursor-pointer justify-between"
-                          [ngClass]="{
-                            'bg-blue-300/50': layer.id === highlightedLayer()?.id,
-                            'text-blue-500': layer.id === selectedLayer.id,
-                            'opacity-50': !!layer.isVisible === false,
-                          }"
-                          (dblclick)="startEditingLayer(layer)"
-                        >
-                          {{ layerName }}
-
-                          @if (layer.parentId) {
-                            <span class="flex items-center gap-x-1">
-                              <button
-                                matIconButton
-                                class="icon-button-xs invisible"
-                                (click)="toggleLayerLock($event, layer)"
-                                [class.visible]="
-                                  (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                                  layer.locked
-                                "
-                              >
-                                <mat-icon>{{ layer.locked ? 'lock' : 'lock_open' }}</mat-icon>
-                              </button>
-
-                              <button
-                                matIconButton
-                                class="icon-button-xs invisible"
-                                (click)="toggleLayerVisibility($event, layer)"
-                                [class.visible]="
-                                  (highlightedLayer()?.id === layer.id && !!layer.parentId) ||
-                                  !layer.isVisible
-                                "
-                              >
-                                <mat-icon>{{
-                                  layer.isVisible ? 'visibility' : 'visibility_off'
-                                }}</mat-icon>
-                              </button>
-                            </span>
-                          }
-                        </span>
-                      } @else {
-                        <input
-                          type="text"
-                          class="pl-1 pr-1 w-full outline-blue-500"
-                          [value]="layerName"
-                          #editInput
-                          (blur)="saveLayerName(layer, editInput.value)"
-                          (keydown.enter)="saveLayerName(layer, editInput.value)"
-                          (keydown.escape)="cancelEditingLayer()"
-                          deAutofocus
-                        />
+            <ul
+              class="w-full list-inside"
+              cdkDropList
+              [cdkDropListData]="layerTree"
+              cdkDropListSortingDisabled
+              (cdkDropListDropped)="onLayerDragDrop($event)"
+              (mousemove)="mouseMoveOnTree($event)"
+              (mouseleave)="mouseLeaveOnTree()"
+              (contextmenu)="contextMenuOnLayer($event)"
+              (click)="clickOnLayerFromTree($event)"
+            >
+              @for (layer of layerTree; track layer.id) {
+                <li
+                  [attr.data-layer-id]="layer.id"
+                  cdkDrag
+                  [cdkDragData]="layer"
+                  (cdkDragMoved)="dragMoved($event)"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      layerTemplate;
+                      context: {
+                        $implicit: layer,
                       }
-
-                      <ng-container
-                        *ngTemplateOutlet="
-                          layersTreeTemplate;
-                          context: {
-                            $implicit: layer.children,
-                          }
-                        "
-                      ></ng-container>
-                    }
-                  </li>
-                }
-              </ul>
-            }
+                    "
+                  ></ng-container>
+                </li>
+              }
+            </ul>
           </ng-template>
         </div>
       </div>
@@ -168,3 +117,125 @@
     <de-layer-property-editor />
   </div>
 </div>
+
+<ng-template #layerTemplate let-layerItem>
+  <!-- Drop zone: BEFORE this layer -->
+  <!-- <div
+        class="h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        cdkDropList
+        [cdkDropListData]="[layer]"
+        (cdkDropListDropped)="handleDropZone($event, layer.id, 'before')"
+      ></div> -->
+  @let pos = dragPosition();
+
+  <div
+    class="flex items-center"
+    [ngClass]="{
+      inside: pos && pos.id === layerItem.id && pos.position === 'inside',
+      before: pos && pos.id === layerItem.id && pos.position === 'before',
+      after: pos && pos.id === layerItem.id && pos.position === 'after',
+    }"
+  >
+    @let layerName =
+      layerItem.layerName ? layerItem.layerName : layerItem.widgetReference.widgetName;
+
+    <!-- Expand/Collapse toggle -->
+    @if (layerItem.children && layerItem.children.length > 0) {
+      <button
+        class="flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors"
+        [class.rotate-90]="isLayerExpanded(layerItem.id)"
+        (click)="toggleLayerExpanded(layerItem.id, $event)"
+      >
+        <mat-icon class="text-sm">chevron_right</mat-icon>
+      </button>
+    } @else {
+      <div class="w-5 h-5"></div>
+    }
+
+    @if (editingLayerId() !== layerItem.id) {
+      <span
+        class="pl-1 pr-1 flex items-center cursor-pointer justify-between grow h-full"
+        [ngClass]="{
+          'bg-blue-300/50': layerItem.id === highlightedLayer()?.id,
+          'text-blue-500': layerItem.id === selectedLayer.id,
+          'opacity-50': !!layerItem.isVisible === false,
+        }"
+        (dblclick)="startEditingLayer(layerItem)"
+      >
+        {{ layerName }}
+
+        @if (layerItem.parentId) {
+          <span class="flex items-center gap-x-1 h-full">
+            <button
+              matIconButton
+              class="icon-button-xs invisible"
+              (click)="toggleLayerLock($event, layerItem)"
+              [class.visible]="
+                (highlightedLayer()?.id === layerItem.id && !!layerItem.parentId) ||
+                layerItem.locked
+              "
+            >
+              <mat-icon>{{ layerItem.locked ? 'lock' : 'lock_open' }}</mat-icon>
+            </button>
+
+            <button
+              matIconButton
+              class="icon-button-xs invisible"
+              (click)="toggleLayerVisibility($event, layerItem)"
+              [class.visible]="
+                (highlightedLayer()?.id === layerItem.id && !!layerItem.parentId) ||
+                !layerItem.isVisible
+              "
+            >
+              <mat-icon>{{ layerItem.isVisible ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </span>
+        }
+      </span>
+    } @else {
+      <input
+        type="text"
+        class="pl-1 pr-1 w-full outline-blue-500"
+        [value]="layerName"
+        #editInput
+        (blur)="saveLayerName(layerItem, editInput.value)"
+        (keydown.enter)="saveLayerName(layerItem, editInput.value)"
+        (keydown.escape)="cancelEditingLayer()"
+        deAutofocus
+      />
+    }
+  </div>
+
+  <!-- Drop zone: AFTER this layer -->
+  <!-- <div
+        class="h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        cdkDropList
+        [cdkDropListData]="[layer]"
+        (cdkDropListDropped)="handleDropZone($event, layer.id, 'after')"
+      ></div> -->
+
+  @if (layerItem.children && layerItem.children.length > 0 && isLayerExpanded(layerItem.id)) {
+    <div class="w-full pl-2 mt-1 border-l-2 border-gray-200 pl-2">
+      <ng-container
+        *ngTemplateOutlet="
+          layersTreeTemplate;
+          context: {
+            $implicit: layerItem.children,
+          }
+        "
+      ></ng-container>
+    </div>
+  } @else if (
+    layerItem.children && layerItem.children.length === 0 && isLayerExpanded(layerItem.id)
+  ) {
+    <!-- Empty drop zone for INSIDE -->
+    <!-- <div
+          class="ml-4 mt-1 border-l-2 border-dashed border-gray-300 pl-2 p-4 rounded bg-gray-50/50 text-center text-gray-400 text-xs"
+          cdkDropList
+          [cdkDropListData]="[]"
+          (cdkDropListDropped)="handleDropZone($any($event), layer.id, 'inside')"
+        >
+          Drop here to add child
+        </div> -->
+  }
+</ng-template>

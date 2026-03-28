@@ -375,7 +375,7 @@ export class WidgetsState {
       ],
     },
     {
-      id: 'list-widget',
+      id: 'list-widget1',
       widgetName: 'List',
       widgetType: 'list',
       canNotBeAddedInside: (widget) => {

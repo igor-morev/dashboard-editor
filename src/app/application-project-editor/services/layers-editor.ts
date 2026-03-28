@@ -99,6 +99,32 @@ export class LayersEditor {
     });
   }
 
+  batchReplaceChildrenLayersInSchema(
+    layers: Layer[],
+    destinationId: string,
+    newChildrenLayers: Layer[],
+  ): Layer[] {
+    return layers.map((layer) => {
+      if (layer.id === destinationId) {
+        return {
+          ...layer,
+          children: newChildrenLayers,
+        };
+      } else if (layer.children.length > 0) {
+        return {
+          ...layer,
+          children: this.batchReplaceChildrenLayersInSchema(
+            layer.children,
+            destinationId,
+            newChildrenLayers,
+          ),
+        };
+      } else {
+        return layer;
+      }
+    });
+  }
+
   removeLayerInSchema(layers: Layer[], forDeleteId: string): Layer[] {
     return layers.reduce((result: Layer[], layer, index: number) => {
       if (layer.id === forDeleteId) {

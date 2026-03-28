@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ApplicationProjects } from './application-projects/application-projects';
+import { VersionComparison } from './version-comparison/version-comparison';
 
 export const routes: Routes = [
   {
@@ -10,4 +11,8 @@ export const routes: Routes = [
     path: 'project/:projectId',
     loadChildren: () => import('./application-project-editor/application-project-editor.routes').then(m => m.ApplicationProjectEditorRoutes)
   },
+  {
+    path: 'version-comparison',
+    component: VersionComparison
+  }
 ];

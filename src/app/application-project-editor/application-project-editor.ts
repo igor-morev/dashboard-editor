@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  DOCUMENT,
   HostListener,
   inject,
   signal,
@@ -11,7 +12,7 @@ import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { ApplicationEditorState } from './state/application-editor-state';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
@@ -21,6 +22,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Autofocus } from './ui/directives/autofocus';
 import { LayersEditor } from './services/layers-editor';
+import { LayerReordering } from './services/layer-reordering';
+import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
+import {
+  debounceTime,
+  map,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+  takeWhile,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -35,12 +49,15 @@ import { LayersEditor } from './services/layers-editor';
     MatButtonModule,
     MatIconModule,
     Autofocus,
+    CdkDropList,
+    CdkDrag,
   ],
   templateUrl: './application-project-editor.html',
   styleUrl: './application-project-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationProjectEditor {
+  private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
@@ -48,10 +65,118 @@ export class ApplicationProjectEditor {
   private readonly widgetsState = inject(WidgetsState);
 
   private layersEditor = inject(LayersEditor);
+  private layerReordering = inject(LayerReordering);
+
+  private expandedLayers = signal<Set<string>>(new Set());
 
   editingLayerId = signal<string | null>(null);
 
   highlightedLayer = this.state.highlightedLayer;
+
+  dragMovedEvent = new Subject<CdkDragMove<Layer>>();
+  dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
+
+  dragPosition = toSignal(
+    this.dragMovedEvent.pipe(
+      debounceTime(50),
+      map((event) => {
+        const elementByPositionRef = this.document.elementFromPoint(
+          event.pointerPosition.x,
+          event.pointerPosition.y,
+        );
+
+        if (!elementByPositionRef) {
+          this.clearDragInfo();
+          return;
+        }
+
+        const nodeContainer = elementByPositionRef.classList.contains('[data-layer-id]')
+          ? elementByPositionRef
+          : elementByPositionRef.closest('[data-layer-id]');
+
+        if (!nodeContainer) {
+          this.clearDragInfo();
+          return;
+        }
+
+        console.log(
+          this.appState.appViewSchema.layersMap[nodeContainer.getAttribute('data-layer-id')!],
+        );
+        const targetRect = nodeContainer.getBoundingClientRect();
+        const oneThird = targetRect.height / 3;
+
+        if (event.pointerPosition.y - targetRect.top < oneThird) {
+          // before
+          console.log('before');
+          return {
+            position: 'before',
+            id: nodeContainer.getAttribute('data-layer-id')!,
+          };
+        } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
+          // after
+          console.log('after');
+          return {
+            position: 'after',
+            id: nodeContainer.getAttribute('data-layer-id')!,
+          };
+        } else {
+          // inside
+          console.log('inside');
+          return {
+            position: 'inside',
+            id: nodeContainer.getAttribute('data-layer-id')!,
+          };
+        }
+      }),
+      shareReplay(1),
+    ),
+  );
+
+  constructor() {
+    this.dragDroppedEvent
+      .pipe(withLatestFrom(toObservable(this.dragPosition)))
+      .subscribe(([event, movedEvent]) => {
+        const swapedLayers = this.layerReordering.handleDragAndDrop(
+          {
+            ...event,
+            currentIndex: movedEvent
+              ? this.appState.appViewSchema.layersMap[movedEvent.id].index
+              : event.currentIndex,
+          },
+          this.layers,
+        );
+
+        if (swapedLayers === this.layers) {
+          console.info('No changes from drag-drop');
+          return;
+        }
+
+        if (!movedEvent) {
+          return;
+        }
+
+        const targetLayer = this.appState.appViewSchema.layersMap[movedEvent.id];
+
+        const updatedLayersTree = this.layersEditor.recalculateLayersIndex(
+          this.layersEditor.batchReplaceChildrenLayersInSchema(
+            this.appState.appViewSchema.layers,
+            targetLayer.parentId!,
+            swapedLayers,
+          ),
+        );
+
+        const updatedMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
+
+        this.state.updateAppState({
+          appViewSchema: {
+            ...this.appState.appViewSchema,
+            layers: updatedLayersTree,
+            layersMap: updatedMap,
+          },
+          selectedLayer: updatedMap[this.selectedLayer?.id || ''],
+        });
+      });
+  }
 
   get appState() {
     return this.state.appState;
@@ -85,6 +210,28 @@ export class ApplicationProjectEditor {
     }
 
     return parent;
+  }
+
+  // ============================================================================
+  // Layer Expansion
+  // ============================================================================
+
+  isLayerExpanded(layerId: string): boolean {
+    return this.expandedLayers().has(layerId);
+  }
+
+  toggleLayerExpanded(layerId: string, event: Event) {
+    // event.stopPropagation();
+    const expanded = new Set(this.expandedLayers());
+
+    if (expanded.has(layerId)) {
+      expanded.delete(layerId);
+    } else {
+      expanded.add(layerId);
+    }
+
+    this.expandedLayers.set(expanded);
+    this.cdr.markForCheck();
   }
 
   canUndo() {
@@ -289,6 +436,19 @@ export class ApplicationProjectEditor {
 
   cancelEditingLayer(): void {
     this.editingLayerId.set(null);
+  }
+
+  dragMoved(event: CdkDragMove<Layer>) {
+    this.dragMovedEvent.next(event);
+  }
+
+  clearDragInfo() {}
+
+  /**
+   * Handle CDK drag-drop from layer tree
+   */
+  onLayerDragDrop(event: CdkDragDrop<Layer[]>) {
+    this.dragDroppedEvent.next(event);
   }
 
   private createLayer(widget: Widget) {
