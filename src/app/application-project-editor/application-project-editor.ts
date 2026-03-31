@@ -12,7 +12,7 @@ import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { ApplicationEditorState } from './state/application-editor-state';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
@@ -25,15 +25,7 @@ import { LayersEditor } from './services/layers-editor';
 import { LayerReordering } from './services/layer-reordering';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
 import {
-  debounceTime,
-  map,
-  shareReplay,
   Subject,
-  switchMap,
-  takeUntil,
-  takeWhile,
-  tap,
-  withLatestFrom,
 } from 'rxjs';
 
 @Component({
@@ -76,86 +68,95 @@ export class ApplicationProjectEditor {
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
 
-  dragPosition = toSignal(
-    this.dragMovedEvent.pipe(
-      debounceTime(50),
-      map((event) => {
-        const elementByPositionRef = this.document.elementFromPoint(
-          event.pointerPosition.x,
-          event.pointerPosition.y,
-        );
-
-        if (!elementByPositionRef) {
-          this.clearDragInfo();
-          return;
-        }
-
-        const nodeContainer = elementByPositionRef.classList.contains('[data-layer-id]')
-          ? elementByPositionRef
-          : elementByPositionRef.closest('[data-layer-id]');
-
-        if (!nodeContainer) {
-          this.clearDragInfo();
-          return;
-        }
-
-        console.log(
-          this.appState.appViewSchema.layersMap[nodeContainer.getAttribute('data-layer-id')!],
-        );
-        const targetRect = nodeContainer.getBoundingClientRect();
-        const oneThird = targetRect.height / 3;
-
-        if (event.pointerPosition.y - targetRect.top < oneThird) {
-          // before
-          console.log('before');
-          return {
-            position: 'before',
-            id: nodeContainer.getAttribute('data-layer-id')!,
-          };
-        } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
-          // after
-          console.log('after');
-          return {
-            position: 'after',
-            id: nodeContainer.getAttribute('data-layer-id')!,
-          };
-        } else {
-          // inside
-          console.log('inside');
-          return {
-            position: 'inside',
-            id: nodeContainer.getAttribute('data-layer-id')!,
-          };
-        }
-      }),
-      shareReplay(1),
-    ),
-  );
+  private _dragPosition = signal<{ position: 'before' | 'after' | 'inside'; id: string } | null>(null);
+  dragPosition = this._dragPosition.asReadonly();
 
   constructor() {
+    this.dragMovedEvent.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((event) => {
+      const elementByPositionRef = this.document.elementFromPoint(
+        event.pointerPosition.x,
+        event.pointerPosition.y,
+      );
+
+      if (!elementByPositionRef) {
+        this.clearDragInfo();
+        return;
+      }
+
+      const nodeContainer = elementByPositionRef.classList.contains('[data-layer-id]')
+        ? elementByPositionRef
+        : elementByPositionRef.closest('[data-layer-id]');
+
+      if (!nodeContainer) {
+        this.clearDragInfo();
+        return;
+      }
+
+      const layerId = nodeContainer.getAttribute('data-layer-id')!;
+
+      const targetRect = nodeContainer.getBoundingClientRect();
+      const oneThird = targetRect.height / 3;
+
+      if (event.pointerPosition.y - targetRect.top < oneThird) {
+        this.setDragPosition({
+          position: 'before',
+          id: layerId,
+        });
+      } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
+        this.setDragPosition({
+          position: 'after',
+          id: layerId,
+        })
+      } else {
+        this.setDragPosition({
+          position: 'inside',
+          id: layerId,
+        });
+
+        console.warn('Dropping inside a layer is not supported yet, it will be dropped as sibling of the target layer');
+      }
+    });
+
     this.dragDroppedEvent
-      .pipe(withLatestFrom(toObservable(this.dragPosition)))
-      .subscribe(([event, movedEvent]) => {
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        const dragPosition = this.dragPosition();
+
+
+        if (!dragPosition) {
+          return;
+        }
+
+        const currentIndex = dragPosition
+        ? this.appState.appViewSchema.layersMap[dragPosition.id].index
+        : event.currentIndex;
+
+        if (event.previousIndex === currentIndex) {
+          this.clearDragInfo();
+          return;
+        }
+
+        if (event.previousIndex < currentIndex && dragPosition.position === 'before' || event.previousIndex > currentIndex && dragPosition.position === 'after') {
+          this.clearDragInfo();
+          return;
+        }
+
+        if (dragPosition.position === 'inside') {
+          this.clearDragInfo();
+          return;
+        }
+
         const swapedLayers = this.layerReordering.handleDragAndDrop(
           {
             ...event,
-            currentIndex: movedEvent
-              ? this.appState.appViewSchema.layersMap[movedEvent.id].index
-              : event.currentIndex,
+            currentIndex,
           },
           this.layers,
         );
 
-        if (swapedLayers === this.layers) {
-          console.info('No changes from drag-drop');
-          return;
-        }
-
-        if (!movedEvent) {
-          return;
-        }
-
-        const targetLayer = this.appState.appViewSchema.layersMap[movedEvent.id];
+        const targetLayer = this.appState.appViewSchema.layersMap[dragPosition.id];
 
         const updatedLayersTree = this.layersEditor.recalculateLayersIndex(
           this.layersEditor.batchReplaceChildrenLayersInSchema(
@@ -175,6 +176,8 @@ export class ApplicationProjectEditor {
           },
           selectedLayer: updatedMap[this.selectedLayer?.id || ''],
         });
+
+        this.clearDragInfo();
       });
   }
 
@@ -442,7 +445,13 @@ export class ApplicationProjectEditor {
     this.dragMovedEvent.next(event);
   }
 
-  clearDragInfo() {}
+  clearDragInfo() {
+    this._dragPosition.set(null);
+  }
+
+  setDragPosition(position: { position: 'before' | 'after' | 'inside'; id: string } | null) {
+    this._dragPosition.set(position);
+  }
 
   /**
    * Handle CDK drag-drop from layer tree

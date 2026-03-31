@@ -119,21 +119,14 @@
 </div>
 
 <ng-template #layerTemplate let-layerItem>
-  <!-- Drop zone: BEFORE this layer -->
-  <!-- <div
-        class="h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
-        cdkDropList
-        [cdkDropListData]="[layer]"
-        (cdkDropListDropped)="handleDropZone($event, layer.id, 'before')"
-      ></div> -->
-  @let pos = dragPosition();
+  @let position = dragPosition();
 
   <div
-    class="flex items-center"
+    class="flex items-center border border-transparent"
     [ngClass]="{
-      inside: pos && pos.id === layerItem.id && pos.position === 'inside',
-      before: pos && pos.id === layerItem.id && pos.position === 'before',
-      after: pos && pos.id === layerItem.id && pos.position === 'after',
+      inside: position && position.id === layerItem.id && position.position === 'inside',
+      before: position && position.id === layerItem.id && position.position === 'before',
+      after: position && position.id === layerItem.id && position.position === 'after',
     }"
   >
     @let layerName =
@@ -156,7 +149,7 @@
       <span
         class="pl-1 pr-1 flex items-center cursor-pointer justify-between grow h-full"
         [ngClass]="{
-          'bg-blue-300/50': layerItem.id === highlightedLayer()?.id,
+          'bg-blue-300/20': layerItem.id === highlightedLayer()?.id,
           'text-blue-500': layerItem.id === selectedLayer.id,
           'opacity-50': !!layerItem.isVisible === false,
         }"
@@ -206,14 +199,6 @@
     }
   </div>
 
-  <!-- Drop zone: AFTER this layer -->
-  <!-- <div
-        class="h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
-        cdkDropList
-        [cdkDropListData]="[layer]"
-        (cdkDropListDropped)="handleDropZone($event, layer.id, 'after')"
-      ></div> -->
-
   @if (layerItem.children && layerItem.children.length > 0 && isLayerExpanded(layerItem.id)) {
     <div class="w-full pl-2 mt-1 border-l-2 border-gray-200 pl-2">
       <ng-container
@@ -225,17 +210,5 @@
         "
       ></ng-container>
     </div>
-  } @else if (
-    layerItem.children && layerItem.children.length === 0 && isLayerExpanded(layerItem.id)
-  ) {
-    <!-- Empty drop zone for INSIDE -->
-    <!-- <div
-          class="ml-4 mt-1 border-l-2 border-dashed border-gray-300 pl-2 p-4 rounded bg-gray-50/50 text-center text-gray-400 text-xs"
-          cdkDropList
-          [cdkDropListData]="[]"
-          (cdkDropListDropped)="handleDropZone($any($event), layer.id, 'inside')"
-        >
-          Drop here to add child
-        </div> -->
   }
 </ng-template>

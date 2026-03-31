@@ -99,6 +99,7 @@ export class LayersEditor {
     });
   }
 
+
   batchReplaceChildrenLayersInSchema(
     layers: Layer[],
     destinationId: string,

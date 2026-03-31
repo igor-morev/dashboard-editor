@@ -7,7 +7,8 @@
 ::ng-deep {
   // CDK Drag Drop styles
   .cdk-drag-preview {
-    // @apply bg-blue-500 text-white px-3 py-2 rounded-lg shadow-xl opacity-90 z-50;
+
+    @apply opacity-50;
   }
 
   .cdk-drop-list-dragging {
@@ -55,13 +56,13 @@
 }
 
 .after {
-  @apply border-b border-gray-300;
+  @apply border-dashed border-b-black;
 }
 
 .before {
-  @apply border-t border-gray-300;
+  @apply border-dashed border-t-black;
 }
 
 .inside {
-  @apply bg-green-200;
+  @apply border-blue-300;
 }
