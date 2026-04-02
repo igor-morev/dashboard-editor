@@ -22,11 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Autofocus } from './ui/directives/autofocus';
 import { LayersEditor } from './services/layers-editor';
-import { LayerReordering } from './services/layer-reordering';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
-import {
-  Subject,
-} from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -57,7 +54,6 @@ export class ApplicationProjectEditor {
   private readonly widgetsState = inject(WidgetsState);
 
   private layersEditor = inject(LayersEditor);
-  private layerReordering = inject(LayerReordering);
 
   private expandedLayers = signal<Set<string>>(new Set());
 
@@ -68,117 +64,19 @@ export class ApplicationProjectEditor {
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
 
-  private _dragPosition = signal<{ position: 'before' | 'after' | 'inside'; id: string } | null>(null);
+  private _dragPosition = signal<{ position: 'before' | 'after' | 'inside'; id: string } | null>(
+    null,
+  );
   dragPosition = this._dragPosition.asReadonly();
 
   constructor() {
-    this.dragMovedEvent.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((event) => {
-      const elementByPositionRef = this.document.elementFromPoint(
-        event.pointerPosition.x,
-        event.pointerPosition.y,
-      );
-
-      if (!elementByPositionRef) {
-        this.clearDragInfo();
-        return;
-      }
-
-      const nodeContainer = elementByPositionRef.classList.contains('[data-layer-id]')
-        ? elementByPositionRef
-        : elementByPositionRef.closest('[data-layer-id]');
-
-      if (!nodeContainer) {
-        this.clearDragInfo();
-        return;
-      }
-
-      const layerId = nodeContainer.getAttribute('data-layer-id')!;
-
-      const targetRect = nodeContainer.getBoundingClientRect();
-      const oneThird = targetRect.height / 3;
-
-      if (event.pointerPosition.y - targetRect.top < oneThird) {
-        this.setDragPosition({
-          position: 'before',
-          id: layerId,
-        });
-      } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
-        this.setDragPosition({
-          position: 'after',
-          id: layerId,
-        })
-      } else {
-        this.setDragPosition({
-          position: 'inside',
-          id: layerId,
-        });
-
-        console.warn('Dropping inside a layer is not supported yet, it will be dropped as sibling of the target layer');
-      }
+    this.dragMovedEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
+      this.handleDragMove(event);
     });
 
-    this.dragDroppedEvent
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => {
-        const dragPosition = this.dragPosition();
-
-
-        if (!dragPosition) {
-          return;
-        }
-
-        const currentIndex = dragPosition
-        ? this.appState.appViewSchema.layersMap[dragPosition.id].index
-        : event.currentIndex;
-
-        if (event.previousIndex === currentIndex) {
-          this.clearDragInfo();
-          return;
-        }
-
-        if (event.previousIndex < currentIndex && dragPosition.position === 'before' || event.previousIndex > currentIndex && dragPosition.position === 'after') {
-          this.clearDragInfo();
-          return;
-        }
-
-        if (dragPosition.position === 'inside') {
-          this.clearDragInfo();
-          return;
-        }
-
-        const swapedLayers = this.layerReordering.handleDragAndDrop(
-          {
-            ...event,
-            currentIndex,
-          },
-          this.layers,
-        );
-
-        const targetLayer = this.appState.appViewSchema.layersMap[dragPosition.id];
-
-        const updatedLayersTree = this.layersEditor.recalculateLayersIndex(
-          this.layersEditor.batchReplaceChildrenLayersInSchema(
-            this.appState.appViewSchema.layers,
-            targetLayer.parentId!,
-            swapedLayers,
-          ),
-        );
-
-        const updatedMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
-
-        this.state.updateAppState({
-          appViewSchema: {
-            ...this.appState.appViewSchema,
-            layers: updatedLayersTree,
-            layersMap: updatedMap,
-          },
-          selectedLayer: updatedMap[this.selectedLayer?.id || ''],
-        });
-
-        this.clearDragInfo();
-      });
+    this.dragDroppedEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
+      this.handleDragDrop(event);
+    });
   }
 
   get appState() {
@@ -215,9 +113,151 @@ export class ApplicationProjectEditor {
     return parent;
   }
 
-  // ============================================================================
-  // Layer Expansion
-  // ============================================================================
+  handleDragMove(event: CdkDragMove<Layer>) {
+    const elementByPositionRef = this.document.elementFromPoint(
+      event.pointerPosition.x,
+      event.pointerPosition.y,
+    );
+
+    if (!elementByPositionRef) {
+      this.clearDragInfo();
+      return;
+    }
+
+    const nodeContainer = elementByPositionRef.classList.contains('[data-layer-id]')
+      ? elementByPositionRef
+      : elementByPositionRef.closest('[data-layer-id]');
+
+    if (!nodeContainer) {
+      this.clearDragInfo();
+      return;
+    }
+
+    const layerId = nodeContainer.getAttribute('data-layer-id')!;
+
+    const targetRect = nodeContainer.getBoundingClientRect();
+    const oneThird = targetRect.height / 3;
+
+    if (event.pointerPosition.y - targetRect.top < oneThird) {
+      this.setDragPosition({
+        position: 'before',
+        id: layerId,
+      });
+    } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
+      this.setDragPosition({
+        position: 'after',
+        id: layerId,
+      });
+    } else {
+      this.setDragPosition({
+        position: 'inside',
+        id: layerId,
+      });
+    }
+  }
+
+  handleDragDrop(event: CdkDragDrop<Layer[]>) {
+    const dragPosition = this.dragPosition();
+
+    if (!dragPosition) {
+      return;
+    }
+
+    const dragPositionLayer = this.appState.appViewSchema.layersMap[dragPosition.id];
+
+    const targetIndex = this.calculateTargetIndex(
+      dragPositionLayer,
+      dragPosition.position,
+      event.item.data,
+    );
+
+    if (event.item.data.id === dragPositionLayer.id) {
+      this.clearDragInfo();
+      return;
+    }
+
+    if (
+      (dragPosition.position === 'before' || dragPosition.position === 'after') &&
+      event.container.data.length === 1
+    ) {
+      this.clearDragInfo();
+      return;
+    }
+
+    if (
+      (dragPosition.position === 'before' || dragPosition.position === 'after') &&
+      event.previousIndex === targetIndex &&
+      event.item.data.parentId === dragPositionLayer.parentId
+    ) {
+      this.clearDragInfo();
+      return;
+    }
+
+    if (
+      ((dragPosition.position === 'before' && event.previousIndex < targetIndex) ||
+        (dragPosition.position === 'after' && event.previousIndex > targetIndex)) &&
+      event.item.data.parentId === dragPositionLayer.parentId
+    ) {
+      this.clearDragInfo();
+      return;
+    }
+
+    if (
+      dragPosition.position === 'inside' &&
+      dragPositionLayer.widgetReference.canNotBeAddedInside?.(event.item.data.widgetReference)
+    ) {
+      this.clearDragInfo();
+      return;
+    }
+
+    const updatedLayers =
+      dragPosition.position === 'inside'
+        ? this.layersEditor.moveLayerInSchema(
+            this.appState.appViewSchema.layers,
+            event.item.data,
+            dragPositionLayer.id,
+          )
+        : this.layersEditor.moveLayerInSchema(
+            this.appState.appViewSchema.layers,
+            event.item.data,
+            dragPositionLayer.parentId!,
+            targetIndex,
+          );
+    const updatedLayersTree = this.layersEditor.recalculateLayersIndex(updatedLayers);
+
+    const updatedMap = this.layersEditor.updateLayersMap(updatedLayersTree, {});
+
+    this.state.updateAppState({
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: updatedLayersTree,
+        layersMap: updatedMap,
+      },
+      selectedLayer: updatedMap[this.selectedLayer?.id || ''],
+    });
+
+    if (dragPosition.position === 'inside') {
+      this.expandedLayers.update((expanded) => new Set(expanded).add(dragPositionLayer.id));
+    }
+
+    this.clearDragInfo();
+  }
+
+  calculateTargetIndex(
+    targetLayer: Layer,
+    position: 'before' | 'after' | 'inside',
+    movingLayer: Layer,
+  ): number {
+    if (position === 'inside') {
+      return targetLayer.children.length;
+    }
+
+    if (targetLayer.parentId === movingLayer.parentId) {
+      return targetLayer.index;
+    }
+
+    return position === 'before' ? targetLayer.index : targetLayer.index + 1;
+  }
 
   isLayerExpanded(layerId: string): boolean {
     return this.expandedLayers().has(layerId);

@@ -99,8 +99,7 @@ export class LayersEditor {
     });
   }
 
-
-  batchReplaceChildrenLayersInSchema(
+  batchUpdateChildrenLayersInSchema(
     layers: Layer[],
     destinationId: string,
     newChildrenLayers: Layer[],
@@ -114,7 +113,7 @@ export class LayersEditor {
       } else if (layer.children.length > 0) {
         return {
           ...layer,
-          children: this.batchReplaceChildrenLayersInSchema(
+          children: this.batchUpdateChildrenLayersInSchema(
             layer.children,
             destinationId,
             newChildrenLayers,
@@ -124,6 +123,24 @@ export class LayersEditor {
         return layer;
       }
     });
+  }
+
+  moveLayerInSchema(
+    layers: Layer[],
+    layer: Layer,
+    destinationId: string,
+    insertIndex?: number,
+  ): Layer[] {
+    const layersWithoutMovedLayer = this.removeLayerInSchema(layers, layer.id);
+    return this.insertLayerInSchema(
+      layersWithoutMovedLayer,
+      destinationId,
+      {
+        ...layer,
+        parentId: destinationId,
+      },
+      insertIndex,
+    );
   }
 
   removeLayerInSchema(layers: Layer[], forDeleteId: string): Layer[] {
