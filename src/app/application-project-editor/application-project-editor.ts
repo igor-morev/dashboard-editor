@@ -529,6 +529,8 @@ export class ApplicationProjectEditor {
         layersMap: this.layersEditor.updateLayersMap(updatedLayers, {}),
       },
     });
+
+    this.expandedLayers.update((expanded) => new Set(expanded).add(this.selectedLayer.id));
   }
 
   private duplicateLayer() {

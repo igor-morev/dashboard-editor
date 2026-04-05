@@ -12,7 +12,8 @@
           @for (widget of widgets; track widget.id) {
             <button
               (click)="moveWidgetOnScaffold($event, widget)"
-              class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left"
+              class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+              [title]="widget.widgetName"
             >
               {{ widget.widgetName }}
             </button>
@@ -30,7 +31,8 @@
                 <a
                   [routerLink]="['page', page.id]"
                   routerLinkActive="text-blue-500"
-                  class="pl-1 hover:bg-blue-300/50 block"
+                  class="pl-1 hover:bg-blue-300/50 block whitespace-nowrap overflow-hidden text-ellipsis"
+                  [title]="page.pageName"
                   >{{ page.pageName }}</a
                 >
               </li>
@@ -147,7 +149,8 @@
 
     @if (editingLayerId() !== layerItem.id) {
       <span
-        class="pl-1 pr-1 flex items-center cursor-pointer justify-between grow h-full"
+        class="pl-1 pr-1 flex items-center cursor-pointer justify-between grow h-full whitespace-nowrap overflow-hidden text-ellipsis"
+        [title]="layerName"
         [ngClass]="{
           'bg-blue-300/20': layerItem.id === highlightedLayer()?.id,
           'text-blue-500': layerItem.id === selectedLayer.id,
