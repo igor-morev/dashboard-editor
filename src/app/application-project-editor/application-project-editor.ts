@@ -237,7 +237,7 @@ export class ApplicationProjectEditor {
     });
 
     if (dragPosition.position === 'inside') {
-      this.expandedLayers.update((expanded) => new Set(expanded).add(dragPositionLayer.id));
+      this.expandLayer(dragPositionLayer.id);
     }
 
     this.clearDragInfo();
@@ -305,6 +305,23 @@ export class ApplicationProjectEditor {
 
     if (id) {
       this.selectLayer(this.appState.appViewSchema.layersMap[id]);
+      if (this.selectedLayer.parentId) {
+        this.expandByLayer(this.selectedLayer);
+      }
+    }
+  }
+
+  expandLayer(layerId: string) {
+    this.expandedLayers.update((expanded) => new Set(expanded).add(layerId));
+  }
+
+  expandByLayer(layer: Layer) {
+    if (layer.parentId) {
+      this.expandLayer(layer.parentId);
+      const parentLayer = this.appState.appViewSchema.layersMap[layer.parentId];
+      if (parentLayer) {
+        this.expandByLayer(parentLayer);
+      }
     }
   }
 
@@ -530,7 +547,7 @@ export class ApplicationProjectEditor {
       },
     });
 
-    this.expandedLayers.update((expanded) => new Set(expanded).add(this.selectedLayer.id));
+    this.expandLayer(newLayer.parentId!);
   }
 
   private duplicateLayer() {

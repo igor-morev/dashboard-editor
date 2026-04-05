@@ -5,7 +5,6 @@ interface AbstractBaseWidget {
   propertyConfig?: WidgetPropertyConfig;
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
-  canHaveChildren?: boolean;
   children?: Widget[];
 }
 
@@ -21,7 +20,8 @@ export interface GenericWidget extends AbstractBaseWidget {
     | 'icon'
     | 'list'
     | 'list-item'
-    | 'header';
+    | 'header'
+    | 'block';
 }
 
 export interface LinkWidget extends AbstractBaseWidget {
@@ -190,8 +190,7 @@ export type WidgetPropertyModel = Partial<{
         name: ColorName;
         range: ColorRange;
       };
-      radius: 0 | 1 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32;
-      width: 0 | 1 | 2 | 4 | 8;
+      radius: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
       style: 'solid' | 'dashed' | 'dotted';
     };
     padding: Spaces;

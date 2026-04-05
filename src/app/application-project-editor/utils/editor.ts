@@ -48,8 +48,8 @@ export function scaffoldLayer(): Layer {
         class: 'pl-2 pr-2 min-h-48',
         styles: {
           backgroundColor: {
-            name: 'white',
-            range: null,
+            name: 'gray',
+            range: 100,
           },
           color: {
             name: 'black',

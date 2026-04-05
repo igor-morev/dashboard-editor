@@ -16,7 +16,7 @@ export function textWidget(defaultWidgetPropertyModel: WidgetPropertyModel = {})
       return true;
     },
     defaultWidgetPropertyModel: {
-      class: 'text-base mb-2',
+      class: 'mb-2',
       ...defaultWidgetPropertyModel,
     },
     propertyConfig: {

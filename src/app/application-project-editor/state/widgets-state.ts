@@ -15,9 +15,11 @@ import { columnWidget } from './widgets-lib/column';
 import { rowWidget } from './widgets-lib/row';
 import {
   baseFeatureSectionWidget,
+  featureSectionBenefitsWidget,
   featureSectionWidget1,
   featureSectionWidget2,
 } from './widgets-lib/feature-section';
+import { cardWidget } from './widgets-lib/card';
 
 @Injectable({
   providedIn: 'root',
@@ -47,9 +49,11 @@ export class WidgetsState {
     },
     bannerWidget(),
     headerWidget(),
+    cardWidget({}),
     baseFeatureSectionWidget(),
     featureSectionWidget1(),
     featureSectionWidget2(),
+    featureSectionBenefitsWidget(),
   ];
 
   get widgets() {
