@@ -30,8 +30,6 @@ export class HistoryEditorState {
       this.history.shift();
       this.currentIndex--;
     }
-
-    console.log('State pushed to history:', this.history);
   }
 
   undo(): HistoryState | null {

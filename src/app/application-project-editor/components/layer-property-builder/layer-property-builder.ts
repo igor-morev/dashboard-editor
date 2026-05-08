@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { LayersEditor } from '@app/application-project-editor/services/layers-editor';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import {
   ColorName,
@@ -9,6 +17,7 @@ import {
   Layer,
   LinkWidget,
   LinkWidgetPropertyModel,
+  Widget,
   WidgetPropertyModel,
 } from '@app/application-project-editor/types/application-editor.type';
 import { ColorPalleteSelect } from '@app/application-project-editor/ui/color-pallete-select/color-pallete-select';
@@ -22,8 +31,10 @@ import { auditTime } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerPropertyBuilder {
+  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private state = inject(ApplicationEditorState);
+  private layersEditor = inject(LayersEditor);
 
   get appState() {
     return this.state.appState;
@@ -33,7 +44,7 @@ export class LayerPropertyBuilder {
     return this.state.selectedlayer;
   }
 
-  formGroup = new FormGroup({
+  readonly formGroup = new FormGroup({
     backgroundColor: new FormControl<{
       name: ColorName;
       range: ColorRange;
@@ -49,6 +60,7 @@ export class LayerPropertyBuilder {
       range: null as ColorRange,
     }),
     content: new FormControl(),
+    layout: new FormControl(),
     textAlign: new FormControl(),
     background: new FormGroup({
       color: new FormControl<{
@@ -93,6 +105,7 @@ export class LayerPropertyBuilder {
               widgetPropertyModel?.styles?.backgroundColor?.range,
           },
           content: this.selectedLayer().layerPropertyModel.content,
+          layout: this.selectedLayer().layerPropertyModel.layout,
           textAlign: this.selectedLayer().layerPropertyModel.styles?.textAlign,
           textColor: {
             name:
@@ -178,6 +191,7 @@ export class LayerPropertyBuilder {
             },
           },
           content: value.content,
+          layout: value.layout,
           href: value.link?.url,
           target: value.link?.openInNewTab ? '_blank' : '_self',
         });
@@ -190,13 +204,15 @@ export class LayerPropertyBuilder {
   ) {
     const layer = this.selectedLayer();
     if (layer) {
-      const updatedLayer = {
+      const updatedLayer = this.postprocessLayer({
         ...layer,
         layerPropertyModel: {
           ...layer.layerPropertyModel,
           ...newPropertyModel,
         },
-      };
+      } as Layer);
+
+      console.log('Updated Layer:', updatedLayer);
 
       const updatedLayersTree = this.updateLayerInTree(
         this.appState.appViewSchema.layers,
@@ -215,15 +231,38 @@ export class LayerPropertyBuilder {
     }
   }
 
+  postprocessLayer(layer: Layer): Layer {
+    if (!layer.widgetReference.layoutTransformer) {
+      return layer;
+    }
+
+    const updatedWidgetReference = {
+      ...layer.widgetReference,
+      children: layer.widgetReference.layoutTransformer(this.formGroup.controls.layout.value),
+    } as Widget;
+
+    const newLayer = this.layersEditor.createLayerForWidget(updatedWidgetReference, layer.id, 0);
+
+    return {
+      ...layer,
+      children: newLayer.children.map((child) => ({
+        ...child,
+        parentId: layer.id,
+      })),
+    };
+  }
+
   updateLayerInTree(layers: Layer[], layerId: string, updatedLayer: Layer): Layer[] {
     return layers.map((layer) => {
       if (layer.id === layerId) {
+        console.log(1);
         return {
           ...layer,
           layerPropertyModel: {
             ...layer.layerPropertyModel,
             ...updatedLayer.layerPropertyModel,
           },
+          children: updatedLayer.children,
         };
       } else if (layer.children.length > 0) {
         return {

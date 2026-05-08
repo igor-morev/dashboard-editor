@@ -4,7 +4,10 @@ import {
 } from '@app/application-project-editor/constants/application-editor.constant';
 import { Widget } from '@app/application-project-editor/types/application-editor.type';
 
-export function containerWidget(children?: Widget[]): Widget {
+export function containerWidget(
+  children: Widget[] = [],
+  model: Widget['defaultWidgetPropertyModel'] = {},
+): Widget {
   return {
     id: 'container-widget',
     widgetName: 'Container',
@@ -27,7 +30,8 @@ export function containerWidget(children?: Widget[]): Widget {
     defaultWidgetPropertyModel: {
       class: 'pl-3 pr-3',
       styles: {},
+      ...model,
     },
-    children: children ? children : [],
+    children: children,
   };
 }

@@ -14,6 +14,17 @@
       </div>
     }
 
+    @if (widget.propertyConfig?.layout) {
+      <div class="mb-4">
+        <div>Layout</div>
+        <select class="de-input" name="layout" id="" formControlName="layout" required>
+          @for (option of widget.propertyConfig?.layout?.options; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+    }
+
     @if (widget.propertyConfig?.styles?.textAlign) {
       <div class="mb-4">
         <div>Text Align</div>

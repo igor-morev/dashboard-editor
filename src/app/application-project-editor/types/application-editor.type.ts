@@ -5,6 +5,7 @@ interface AbstractBaseWidget {
   propertyConfig?: WidgetPropertyConfig;
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
+  layoutTransformer?: (layout: string | undefined) => Widget[];
   children?: Widget[];
 }
 
@@ -119,7 +120,7 @@ export type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
 export type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
 export type BackgroundSize = 'cover' | 'contain' | 'auto';
 
-type WidgetPropertyConfig = Partial<{
+export type WidgetPropertyConfig = Partial<{
   styles: Partial<{
     backgroundColor: {
       nameOptions: ColorName[];
@@ -163,6 +164,9 @@ type WidgetPropertyConfig = Partial<{
     textAlign: TextAlign[];
   }>;
   hasContent: boolean;
+  layout?: {
+    options: string[];
+  };
 }>;
 
 export type WidgetPropertyModel = Partial<{
@@ -198,6 +202,7 @@ export type WidgetPropertyModel = Partial<{
     textAlign: TextAlign;
   }>;
   class: string;
+  layout?: string;
   content?: string;
 }>;
 

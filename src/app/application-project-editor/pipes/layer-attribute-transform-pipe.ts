@@ -8,8 +8,6 @@ export class LayerAttributeTransformPipe implements PipeTransform {
   transform(value: WidgetPropertyModel, transformFn: (...args: any[]) => string): string {
     const result = Object.entries(value).reduce(transformFn, '');
 
-    console.log(result);
-
     return result;
   }
 }
