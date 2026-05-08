@@ -236,26 +236,12 @@ export class LayerPropertyBuilder {
       return layer;
     }
 
-    const updatedWidgetReference = {
-      ...layer.widgetReference,
-      children: layer.widgetReference.layoutTransformer(this.formGroup.controls.layout.value),
-    } as Widget;
-
-    const newLayer = this.layersEditor.createLayerForWidget(updatedWidgetReference, layer.id, 0);
-
-    return {
-      ...layer,
-      children: newLayer.children.map((child) => ({
-        ...child,
-        parentId: layer.id,
-      })),
-    };
+    return this.layersEditor.rebuildLayerByLayout(layer, this.formGroup.value.layout!);
   }
 
   updateLayerInTree(layers: Layer[], layerId: string, updatedLayer: Layer): Layer[] {
     return layers.map((layer) => {
       if (layer.id === layerId) {
-        console.log(1);
         return {
           ...layer,
           layerPropertyModel: {

@@ -181,4 +181,25 @@ export class LayersEditor {
       children: this.recalculateLayersIndex(layer.children),
     }));
   }
+
+  rebuildLayerByLayout<T extends string>(layer: Layer, layout: T): Layer {
+    if (!layer.widgetReference.layoutTransformer) {
+      return layer;
+    }
+
+    const updatedWidgetReference = {
+      ...layer.widgetReference,
+      children: layer.widgetReference.layoutTransformer(layout),
+    } as Widget;
+
+    const newLayer = this.createLayerForWidget(updatedWidgetReference, layer.id, 0);
+
+    return {
+      ...layer,
+      children: newLayer.children.map((child) => ({
+        ...child,
+        parentId: layer.id,
+      })),
+    };
+  }
 }
