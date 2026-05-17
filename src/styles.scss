@@ -121,3 +121,7 @@ body {
 .overlay-panel {
   @apply bg-white border border-gray-300 rounded z-50 py-2;
 }
+
+img {
+  display: inline-flex;
+}

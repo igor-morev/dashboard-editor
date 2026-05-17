@@ -7,8 +7,98 @@ import {
 import { headingWidget } from './heading';
 import { textWidget } from './text';
 import { linkButtonWidget } from './link-button';
+import { columnWidget } from './column';
+import { imageWidget } from './image';
+import { rowWidget } from './row';
 
-export function heroWidget(): Widget {
+export interface HeroContent {
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  imageSrc?: string; // Для лейаутов со сплитом
+  videoUrl?: string; // Опционально
+}
+
+export type HeroLayout = 'centered-overlay' | 'split-right' | 'split-left' | 'bottom-aligned' | 'minimal-box';
+
+export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: HeroContent): Widget {
+  
+  const layoutTransformer = (currentLayout: HeroLayout, data: HeroContent) => {
+    const heading = headingWidget({ 
+      content: data.title, 
+      class: 'font-bold text-3xl mb-4'
+    });
+    const text = textWidget({ 
+      content: data.subtitle, 
+      class: 'text-lg mb-4'
+    });
+    const button = linkButtonWidget({ 
+      content: data.ctaText,
+    });
+
+    const contentStack = [heading, text, button];
+
+    const layouts: Record<HeroLayout, Widget[]> = {
+      // 1. Контент по центру поверх фона
+      'centered-overlay': [
+        containerWidget([
+          rowWidget([
+            columnWidget(contentStack, { class: 'flex flex-col items-center text-center' })
+          ])
+        ], { class: 'py-40' })
+      ],
+
+      // 2. Сплит: Текст слева, Картина справа (актуально, если фон пустой)
+      'split-right': [
+        containerWidget([
+          rowWidget([
+            columnWidget(contentStack, { class: 'w-full flex flex-col justify-center items-start text-left' }),
+            columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], { class: 'w-full' })
+          ])
+        ], { class: 'py-40' })
+      ],
+
+      // 3. Сплит: Картина слева, Текст справа
+      'split-left': [
+        containerWidget([
+          rowWidget([
+            columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], { class: 'w-full' }),
+            columnWidget(contentStack, { class: 'w-full flex flex-col justify-center items-start text-left' })
+          ])
+        ], { class: 'py-40' })
+      ],
+
+      // 4. Прижатый к низу контент (эффект кино)
+      'bottom-aligned': [
+        containerWidget([
+          rowWidget(
+            [columnWidget(contentStack, { class: 'flex flex-col items-start text-left mt-auto' })]
+          )
+        ], { class: 'min-h-[70vh] pt-20 flex' })
+      ],
+
+      // 5. Контент в "коробке" (Glassmorphism / Card)
+      'minimal-box': [
+        containerWidget([
+          rowWidget([
+            columnWidget(contentStack, { 
+              class: 'bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-4' 
+            })
+          ])
+        ], { class: 'py-40' })
+      ]
+    };
+
+    return layouts[currentLayout];
+  };
+
+  const defaultContent: HeroContent = content || {
+    title: 'Discover Your Inner Peace with Our Meditation App',
+    subtitle: 'Welcome to our website! We are glad to have you here.',
+    ctaText: 'Get Started',
+    imageSrc: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
+  };
+
   return {
     id: 'hero-widget',
     widgetName: 'Hero',
@@ -17,53 +107,24 @@ export function heroWidget(): Widget {
       return widget.widgetType === 'section';
     },
     propertyConfig: {
-      styles: {
-        background: {
-          color: {
-            name: colorPalette,
-            range: colorRange,
-          },
-          image: '',
-          position: ['center', 'top', 'bottom', 'left', 'right'],
-          repeat: ['no-repeat', 'repeat'],
-          size: ['cover', 'contain', 'auto'],
-        },
-        color: {
-          nameOptions: colorPalette,
-          rangeOptions: colorRange,
-        },
-        textAlign: ['left', 'center', 'right', 'justify'],
-      },
+      layout: { options: ['centered-overlay', 'split-right', 'split-left', 'bottom-aligned', 'minimal-box'] },
+      // ... твои стили фона и текста
     },
     defaultWidgetPropertyModel: {
-      class: 'pt-20 pb-20',
+      layout,
+      class: 'relative overflow-hidden',
       styles: {
         background: {
-          image:
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFkaWF0aW9uJTIwYmFubmVyfGVufDB8fDB8fHww',
-          repeat: 'no-repeat',
+          image: defaultContent.imageSrc,
           size: 'cover',
+          position: 'center'
         },
-        textAlign: 'center',
-        color: {
-          name: 'white',
-          range: null,
-        },
+        color: { name: 'white', range: null },
+        textAlign: layout.includes('centered') ? 'center' : 'left'
       },
+      content: defaultContent as Record<string, any> // Сохраняем весь контент в модели для удобства
     },
-    children: [
-      containerWidget([
-        headingWidget({
-          content: 'Discover Your Inner Peace with Our Meditation App',
-        }),
-        textWidget({
-          class: 'mb-4',
-          content: 'Welcome to our website! We are glad to have you here.',
-        }),
-        linkButtonWidget({
-          content: 'Get Started',
-        }),
-      ]),
-    ],
-  };
+    layoutTransformer,
+    children: layoutTransformer(layout, defaultContent)
+  } as Widget;
 }

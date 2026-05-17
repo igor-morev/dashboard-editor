@@ -202,6 +202,7 @@ export type WidgetPropertyModel = Partial<{
     margin: Spaces;
     textAlign: TextAlign;
   }>;
+  defaultClass?: string;
   class: string;
   layout?: string;
   content?: string | Record<string, any>;

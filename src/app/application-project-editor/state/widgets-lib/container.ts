@@ -28,6 +28,7 @@ export function containerWidget(
       },
     },
     defaultWidgetPropertyModel: {
+      defaultClass: 'pl-3 pr-3',
       class: 'pl-3 pr-3',
       styles: {},
       ...model,

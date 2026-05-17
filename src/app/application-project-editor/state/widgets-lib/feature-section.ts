@@ -134,14 +134,6 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack', content: F
     propertyConfig: sharedConfig,
     defaultWidgetPropertyModel: {
       ...sectionWidget().defaultWidgetPropertyModel,
-      ...{
-        styles: {
-          backgroundColor: {
-            name: 'gray',
-            range: 300,
-          },
-        },
-      },
       layout,
       class: 'pt-10 pb-10',
       content: content as Record<string, any>,

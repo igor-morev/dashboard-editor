@@ -16,6 +16,8 @@ import { rowWidget } from './widgets-lib/row';
 import { featureSectionWidget } from './widgets-lib/feature-section';
 import { cardWidget } from './widgets-lib/card';
 import { footerWidget } from './widgets-lib/footer';
+import { testimonialsWidget } from './widgets-lib/testimonials';
+import { faqWidget } from './widgets-lib/faq';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +50,8 @@ export class WidgetsState {
     footerWidget(),
     cardWidget({}),
     featureSectionWidget(),
-    // featureSectionBenefitsWidget(),
+    testimonialsWidget(),
+    faqWidget()
   ];
 
   get widgets() {

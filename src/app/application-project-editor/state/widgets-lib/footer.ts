@@ -67,7 +67,7 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
     const createLinkColumn = (group: { title: string, links: any[] }) => columnWidget([
       headingWidget({ content: group.title, class: 'text-sm font-semibold uppercase mb-4' }),
       listWidget(group.links.map(l => listItemWidget(linkWidget(l.label))), 'space-y-2 list-none')
-    ], { class: 'w-full md:w-1/4' });
+    ]);
 
     const layouts: Record<FooterLayout, Widget[]> = {
       // 1. По центру: Лого -> Ссылки в ряд -> Копирайт
@@ -77,7 +77,7 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
             imageWidget({ src: data.logoSrc, class: 'mx-auto h-10 mb-6' }),
             listWidget(data.linkGroups[0].links.map(l => listItemWidget(linkWidget(l.label))), 'flex justify-center gap-6 mb-6 list-none'),
             textWidget({ content: data.copyright, class: 'text-center opacity-60' })
-          ], { class: 'w-full' })
+          ])
         ])
       ],
 
@@ -88,7 +88,7 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
             columnWidget([
               imageWidget({ src: data.logoSrc, class: 'h-8 mb-4' }),
               textWidget({ content: data.brandName, class: 'text-sm' })
-            ], { class: 'w-1/3' }),
+            ]),
             ...data.linkGroups.slice(0, 2).map(createLinkColumn)
           ])
         ])
@@ -97,7 +97,7 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
       // 3. Мульти-колоночный (для больших сайтов/Fintech)
       'multi-column': [
         containerWidget([
-          rowWidget(data.linkGroups.map(createLinkColumn), { class: 'flex-wrap gap-y-8' }),
+          rowWidget(data.linkGroups.map(createLinkColumn)),
           rowWidget([textWidget({ content: data.copyright, class: 'mt-10 pt-6 border-t w-full' })])
         ])
       ],
@@ -119,7 +119,7 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
           rowWidget([
             textWidget({ content: data.copyright }),
             listWidget(data.linkGroups[0].links.map(l => listItemWidget(linkWidget(l.label))), 'list-none')
-          ], { class: 'flex justify-between items-center' })
+          ])
         ])
       ]
     };
