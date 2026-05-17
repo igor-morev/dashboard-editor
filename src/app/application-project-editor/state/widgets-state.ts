@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Widget } from '../types/application-editor.type';
 import { containerWidget } from './widgets-lib/container';
 import { sectionWidget } from './widgets-lib/section';
-import { bannerWidget } from './widgets-lib/banner';
+import { heroWidget } from './widgets-lib/hero';
 import { linkWidget } from './widgets-lib/link';
 import { listWidget } from './widgets-lib/list';
 import { listItemWidget } from './widgets-lib/list-item';
@@ -13,8 +13,9 @@ import { textWidget } from './widgets-lib/text';
 import { imageWidget } from './widgets-lib/image';
 import { columnWidget } from './widgets-lib/column';
 import { rowWidget } from './widgets-lib/row';
-import { featureSectionBenefitsWidget, featureSectionWidget } from './widgets-lib/feature-section';
+import { featureSectionWidget } from './widgets-lib/feature-section';
 import { cardWidget } from './widgets-lib/card';
+import { footerWidget } from './widgets-lib/footer';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +43,9 @@ export class WidgetsState {
         class: '',
       },
     },
-    bannerWidget(),
+    heroWidget(),
     headerWidget(),
+    footerWidget(),
     cardWidget({}),
     featureSectionWidget(),
     // featureSectionBenefitsWidget(),

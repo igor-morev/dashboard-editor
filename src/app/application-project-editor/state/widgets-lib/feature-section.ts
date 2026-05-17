@@ -23,7 +23,25 @@ export type FeatureLayout =
   | 'card-centered'
   | 'side-by-side';
 
-export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
+export interface FeatureContent {
+  heading: string,
+  description: string,
+  buttonText: string,
+  image: {
+    src: string,
+    alt: string,
+  }
+}
+
+export function featureSectionWidget(layout: FeatureLayout = 'stack', content: FeatureContent = {
+  heading: 'Feature Heading',
+  description: 'Description text goes here...',
+  buttonText: 'Action Button',
+  image: {
+    src: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+    alt: 'Feature Image',
+  }
+}): Widget {
   // Базовая конфигурация редактора (одинаковая для всех)
   const sharedConfig: WidgetPropertyConfig = {
     styles: {
@@ -37,12 +55,18 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
     },
   };
 
-  const layoutTransformer = (layout: FeatureLayout) => {
+  const layoutTransformer = (layout: FeatureLayout, content: FeatureContent) => {
     // Контентные блоки
     const contentStack = [
-      headingWidget({ class: 'font-bold text-3xl mb-4', content: 'Feature Heading' }),
-      textWidget({ class: 'text-base mb-6 opacity-80', content: 'Description text goes here...' }),
-      linkButtonWidget({ content: 'Action Button' }),
+      headingWidget({ class: 'font-bold text-3xl mb-4', content: content.heading, onUpdate: (newContent) => {
+        // TODO: оптимизировать обновление контента (может быть через useState в реальной реализации)
+        console.log(content);
+        content.heading = newContent;
+      } }),
+      textWidget({ class: 'text-base mb-6 opacity-80', content: content.description, onUpdate: (newContent) => {
+        content.description = newContent;
+      } }),
+      linkButtonWidget({ content: content.buttonText }),
     ];
 
     // Маппинг структур через "вшитые" классы
@@ -55,7 +79,7 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
         containerWidget([
           rowWidget([
             columnWidget(contentStack),
-            columnWidget([imageWidget({ class: 'w-full rounded-lg' })]),
+            columnWidget([imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt })]),
           ]),
         ]),
       ],
@@ -64,7 +88,7 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
       'split-left': [
         containerWidget([
           rowWidget([
-            columnWidget([imageWidget({ class: 'w-full rounded-lg' })]),
+            columnWidget([imageWidget({ class: 'w-full rounded-lg', src: content.image.src })]),
             columnWidget(contentStack),
           ]),
         ]),
@@ -82,18 +106,18 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
         containerWidget([
           rowWidget([
             columnWidget([
-              headingWidget({ content: 'Feature A' }),
+              headingWidget({ content: content.heading }),
               textWidget({
-                content: 'Description text goes here...',
+                content: content.description,
               }),
-              imageWidget({ class: 'w-full rounded-lg' }),
+              imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt }),
             ]),
             columnWidget([
-              headingWidget({ content: 'Feature B' }),
+              headingWidget({ content: content.heading }),
               textWidget({
-                content: 'Description text goes here...',
+                content: content.description,
               }),
-              imageWidget({ class: 'w-full rounded-lg' }),
+              imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt}),
             ]),
           ]),
         ]),
@@ -120,40 +144,12 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack'): Widget {
       },
       layout,
       class: 'pt-10 pb-10',
+      content: content as Record<string, any>,
     },
     layoutTransformer,
-    children: layoutTransformer(layout),
+    children: layoutTransformer(layout, content),
   } as Widget;
 }
-
-// export function featureSectionWidget2(): Widget {
-//   return {
-//     ...sectionWidget(),
-//     id: 'feature-section-widget2',
-//     widgetName: 'Feature Section With Button and Image',
-//     children: [
-//       containerWidget([
-//         headingWidget({
-//           class: 'font-bold mb-2',
-//           content: 'One platform, proprietary software, no middlemen',
-//         }),
-//         textWidget({
-//           class: 'mb-6',
-//           content:
-//             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel gravida arcu. Vestibulum feugiat, sapien ultrices fermentum congue, quam velit venenatis sem',
-//         }),
-//         linkButtonWidget({
-//           content: 'Explore',
-//         }),
-//         imageWidget({
-//           class: 'w-full mt-4',
-//           src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFkaWF0aW9uJTIwYmFubmVyfGVufDB8fDB8fHww',
-//           alt: 'Feature Image',
-//         }),
-//       ]),
-//     ],
-//   };
-// }
 
 export function featureSectionBenefitsWidget(): Widget {
   return {

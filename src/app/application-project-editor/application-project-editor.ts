@@ -316,7 +316,6 @@ export class ApplicationProjectEditor {
   }
 
   expandByLayer(layer: Layer) {
-    console.log('Expanding layer:', layer);
     if (layer.parentId) {
       this.expandLayer(layer.parentId);
       const parentLayer = this.appState.appViewSchema.layersMap[layer.parentId];

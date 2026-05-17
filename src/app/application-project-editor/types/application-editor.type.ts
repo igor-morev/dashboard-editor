@@ -5,7 +5,7 @@ interface AbstractBaseWidget {
   propertyConfig?: WidgetPropertyConfig;
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
-  layoutTransformer?: (layout: string | undefined) => Widget[];
+  layoutTransformer?: (layout: string | undefined, content?: string | Record<string, any>) => Widget[];
   children?: Widget[];
 }
 
@@ -22,6 +22,7 @@ export interface GenericWidget extends AbstractBaseWidget {
     | 'list'
     | 'list-item'
     | 'header'
+    | 'footer'
     | 'block';
 }
 
@@ -203,7 +204,8 @@ export type WidgetPropertyModel = Partial<{
   }>;
   class: string;
   layout?: string;
-  content?: string;
+  content?: string | Record<string, any>;
+  onUpdate(value: string): void;
 }>;
 
 export type LinkWidgetPropertyModel = WidgetPropertyModel & {

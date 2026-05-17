@@ -8,10 +8,10 @@ import { headingWidget } from './heading';
 import { textWidget } from './text';
 import { linkButtonWidget } from './link-button';
 
-export function bannerWidget(): Widget {
+export function heroWidget(): Widget {
   return {
-    id: 'banner-widget',
-    widgetName: 'Banner',
+    id: 'hero-widget',
+    widgetName: 'Hero',
     widgetType: 'section',
     canNotBeAddedInside: (widget) => {
       return widget.widgetType === 'section';

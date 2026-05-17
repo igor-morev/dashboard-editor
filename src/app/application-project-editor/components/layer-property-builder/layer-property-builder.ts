@@ -232,6 +232,8 @@ export class LayerPropertyBuilder {
   }
 
   postprocessLayer(layer: Layer): Layer {
+    layer.widgetReference.defaultWidgetPropertyModel?.onUpdate ? layer.widgetReference.defaultWidgetPropertyModel.onUpdate(layer.layerPropertyModel.content as string) : null;
+
     if (!layer.widgetReference.layoutTransformer) {
       return layer;
     }
