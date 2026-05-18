@@ -28,35 +28,31 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
         content: data.logoUrl || 'https://cdn-icons-png.freepik.com/512/5200/5200787.png',
         class: 'w-[50px] object-contain' 
       })
-    ], {
-      class: 'flex grow pl-2 pr-2 h-full items-center'
-    });
+    ]);
 
     const brand = columnWidget([
       textWidget({ content: data.brandName || 'Discover', class: 'font-bold text-lg' })
-    ], {
-      class: 'flex grow pl-2 pr-2 h-full items-center'
-    });
+    ]);
 
     const nav = columnWidget([
       listWidget(
         data.navLinks.map(link => listItemWidget(linkWidget(link.label))),
         'flex gap-x-2 list-none'
       )
-    ], {
-      class: 'flex grow pl-2 pr-2 h-full items-center'
-    });
+    ]);
 
     const cta = columnWidget([
       linkButtonWidget({ content: data.cta?.label || 'Get Started' })
     ], {
-      class: 'flex pl-2 pr-2 h-full items-center text-right'
+      class: 'text-right'
     });
 
     const layouts: Record<HeaderLayout, Widget[]> = {
       // 1. Лого (слева) --- Навигация (центр) --- Кнопка (справа)
       'classic': [
-        rowWidget([logo, brand, nav, cta])
+        rowWidget([logo, brand, nav, cta], {
+          class: 'items-center justify-between'
+        })
       ],
 
       // 2. Лого (по центру) --- Навигация и кнопка по бокам
@@ -65,7 +61,9 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
           nav,
           logo,
           cta
-        ])
+        ], {
+          class: 'items-center justify-between'
+        })
       ],
 
       // 3. Лого (слева) --- Пустота --- Навигация (справа)
@@ -74,19 +72,23 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
           logo,
           nav, // grow заставит навигацию занять центр
           cta
-        ])
+        ], {
+          class: 'items-center justify-between'
+        })
       ],
 
       // 4. Только лого и навигация (без кнопок)
       'minimal': [
-        rowWidget([logo, brand, nav])
+        rowWidget([logo, brand, nav], {
+          class: 'items-center justify-between'
+        })
       ],
 
       // 5. Двухэтажный (Лого вверху, меню внизу)
       'stacked': [
         containerWidget([
-          rowWidget([logo, brand], { class: 'flex justify-center py-2' }),
-          rowWidget([nav], { class: 'flex justify-center border-t py-2' })
+          rowWidget([logo, brand], { class: 'justify-center items-center py-2' }),
+          rowWidget([nav], { class: 'justify-center border-t py-2' })
         ], { class: 'w-full' })
       ]
     };
@@ -113,7 +115,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
     defaultWidgetPropertyModel: {
       layout,
       content: defaultContent as Record<string, any>,
-      class: 'bg-white shadow-sm flex items-center px-6 py-2 sticky top-0 z-50',
+      class: 'bg-white shadow-sm block px-6 py-2 w-full',
     },
     layoutTransformer,
     children: layoutTransformer(layout, defaultContent)

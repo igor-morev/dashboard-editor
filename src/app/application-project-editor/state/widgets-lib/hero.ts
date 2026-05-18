@@ -43,7 +43,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
       'centered-overlay': [
         containerWidget([
           rowWidget([
-            columnWidget(contentStack, { class: 'flex flex-col items-center text-center' })
+            columnWidget(contentStack, { class: 'text-center' })
           ])
         ], { class: 'py-40' })
       ],
@@ -52,7 +52,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
       'split-right': [
         containerWidget([
           rowWidget([
-            columnWidget(contentStack, { class: 'w-full flex flex-col justify-center items-start text-left' }),
+            columnWidget(contentStack, { class: 'w-full text-left' }),
             columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], { class: 'w-full' })
           ])
         ], { class: 'py-40' })
@@ -63,7 +63,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
         containerWidget([
           rowWidget([
             columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], { class: 'w-full' }),
-            columnWidget(contentStack, { class: 'w-full flex flex-col justify-center items-start text-left' })
+            columnWidget(contentStack, { class: 'w-full text-left' })
           ])
         ], { class: 'py-40' })
       ],
@@ -72,9 +72,9 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
       'bottom-aligned': [
         containerWidget([
           rowWidget(
-            [columnWidget(contentStack, { class: 'flex flex-col items-start text-left mt-auto' })]
+            [columnWidget(contentStack, { class: 'text-left mt-auto' })]
           )
-        ], { class: 'min-h-[70vh] pt-20 flex' })
+        ], { class: 'min-h-[70vh] pt-20 pb-8 flex' })
       ],
 
       // 5. Контент в "коробке" (Glassmorphism / Card)
@@ -112,7 +112,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
     },
     defaultWidgetPropertyModel: {
       layout,
-      class: 'relative overflow-hidden',
+      class: 'relative',
       styles: {
         background: {
           image: defaultContent.imageSrc,

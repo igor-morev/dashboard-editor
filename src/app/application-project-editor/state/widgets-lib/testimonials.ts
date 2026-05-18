@@ -37,13 +37,18 @@ export function testimonialsWidget(layout: TestimonialsLayout = 'grid', content?
       textWidget({ content: `"${rev.text}"`, class: 'text-lg italic mb-6 opacity-90' }),
       // Блок автора
       rowWidget([
-        imageWidget({ src: rev.avatar, class: 'w-12 h-12 rounded-full object-cover' }),
+        imageWidget({ src: rev.avatar, class: 'w-12 h-12 min-w-12 min-h-12 rounded-full object-cover' }),
         columnWidget([
           textWidget({ content: rev.author, class: 'font-bold' }),
-          textWidget({ content: rev.role, class: 'text-sm opacity-60' })
-        ], { class: 'flex flex-col' })
+          textWidget({ content: rev.role, class: 'text-sm', styles: {
+            color: {
+              name: 'gray',
+              range: 500
+            }
+          } })
+        ], { class: 'inline-flex flex-col' })
       ], { class: 'items-center gap-4 mt-auto' })
-    ], { class: classes });
+    ], { defaultClass: '', class: classes });
 
     const layouts: Record<TestimonialsLayout, Widget[]> = {
       // 1. Классическая сетка (для Grooming или Healthcare)
@@ -51,10 +56,19 @@ export function testimonialsWidget(layout: TestimonialsLayout = 'grid', content?
         containerWidget([
           columnWidget([
             headingWidget({ content: data.title, class: 'text-3xl font-bold text-center mb-4' }),
-            textWidget({ content: data.subtitle, class: 'text-center mb-12 opacity-70' })
+            textWidget({ 
+              content: data.subtitle, 
+              class: 'text-center mb-12',
+              styles: {
+                color: {
+                  name: 'gray',
+                  range: 500
+                }
+              }
+            })
           ]),
           rowWidget(
-            data.items.map(rev => createReviewCard(rev, 'w-1/2 p-8 border rounded-2xl flex flex-col bg-white shadow-sm')),
+            data.items.map(rev => createReviewCard(rev, 'grow w-[calc(50%-0.5rem)] p-4 border rounded-2xl flex flex-col bg-white shadow-sm')),
             { class: 'flex-wrap' }
           )
         ])
@@ -70,7 +84,12 @@ export function testimonialsWidget(layout: TestimonialsLayout = 'grid', content?
               imageWidget({ src: data.items[0].avatar, class: 'w-16 h-16 rounded-full' }),
               columnWidget([
                 textWidget({ content: data.items[0].author, class: 'font-bold text-xl' }),
-                textWidget({ content: data.items[0].role, class: 'opacity-70' })
+                textWidget({ content: data.items[0].role, styles: {
+                  color: {
+                    name: 'gray',
+                    range: 500
+                  }
+                } })
               ])
             ], { class: 'items-center gap-4 justify-center' })
           ], { class: 'text-center max-w-4xl mx-auto' })
@@ -83,10 +102,15 @@ export function testimonialsWidget(layout: TestimonialsLayout = 'grid', content?
           rowWidget([
             columnWidget([
               headingWidget({ content: data.title, class: 'text-4xl font-bold mb-6' }),
-              textWidget({ content: data.subtitle, class: 'text-lg opacity-80' })
+              textWidget({ content: data.subtitle, class: 'text-lg', styles: {
+                color: {
+                  name: 'gray',
+                  range: 500
+                }
+              } })
             ], { class: 'w-full' }),
             columnWidget(
-              data.items.slice(0, 2).map(rev => createReviewCard(rev, 'p-6 border-b last:border-0')),
+              data.items.slice(0, 2).map(rev => createReviewCard(rev, 'p-4 border-b last:border-0')),
               { class: 'w-full' }
             )
           ])
@@ -97,8 +121,8 @@ export function testimonialsWidget(layout: TestimonialsLayout = 'grid', content?
       'bubbles': [
         containerWidget([
           rowWidget(
-            data.items.map((rev, i) => createReviewCard(rev, `w-full p-10 rounded-[40px] bg-gray-100 ${i % 2 === 0 ? '' : 'mt-12'}`)),
-            { class: ' gap-8 flex-wrap' }
+            data.items.map((rev, i) => createReviewCard(rev, `grow w-[calc(50%-1rem)] p-6 rounded-[40px] bg-gray-100 ${i % 2 === 0 ? '' : 'mt-12'}`)),
+            { class: 'gap-8 flex-wrap' }
           )
         ])
       ]

@@ -1,7 +1,7 @@
 @if (this.selected()) {
   <div class="frame absolute w-full h-full top-0 right-0 border border-blue-400 block">
     <div
-      class="bg-blue-400 text-white inline-flex pl-2 pr-2 text-xs absolute -top-4 left-[-1px] mt-[-1px] z-10"
+      class="bg-blue-400 font-sans not-italic text-white font-normal normal-case inline-flex pl-2 pr-2 text-xs absolute -top-4 left-[-1px] mt-[-1px] z-10"
       (dblclick)="startEditingLayer()"
     >
       @if (editingLayer()) {

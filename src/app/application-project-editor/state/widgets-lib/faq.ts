@@ -64,7 +64,7 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
         containerWidget([
           headingWidget({ content: data.title, class: 'text-3xl font-bold text-center mb-12' }),
           rowWidget(
-            data.items.map(item => createFAQItem(item, 'w-1/2 p-4')),
+            data.items.map(item => createFAQItem(item, 'grow w-[calc(50%-0.5rem)] p-4')),
             { class: 'flex-wrap gap-y-8' }
           )
         ])

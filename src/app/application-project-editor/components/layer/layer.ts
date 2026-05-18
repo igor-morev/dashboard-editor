@@ -61,10 +61,7 @@ export class LayerComponent {
   buildLayerStyleAttribute = buildLayerStyleAttribute;
 
   ngOnInit() {
-    const l = this.layer();
-    if (l.widgetReference.widgetType === 'link') {
-      const a = l.widgetReference;
-    }
+
   }
 
   get linkWidgetReference() {

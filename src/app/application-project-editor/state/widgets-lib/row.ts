@@ -12,7 +12,7 @@ export function rowWidget(children: Widget[] = [], model: WidgetPropertyModel = 
       return widget.widgetType === 'row'; // TBD;
     },
     defaultWidgetPropertyModel: {
-      defaultClass: 'flex gap-4',
+      defaultClass: 'flex gap-4 w-full',
       class: 'flex gap-4',
       ...model,
     },

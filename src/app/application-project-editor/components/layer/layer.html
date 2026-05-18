@@ -1,7 +1,7 @@
 @switch (layer().widgetReference.widgetType) {
   @case ('section') {
-    <de-layer-content>
       <section
+        deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
         [style]="layer().layerPropertyModel | layerAttributeTransform: buildLayerStyleAttribute"
@@ -17,54 +17,51 @@
           ></ng-container>
         }
       </section>
-    </de-layer-content>
   }
 
   @case ('heading') {
-    <de-layer-content>
       <h1
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
         {{ layer().layerPropertyModel.content }}
       </h1>
-    </de-layer-content>
   }
 
   @case ('text') {
-    <de-layer-content>
       <p
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
         {{ layer().layerPropertyModel.content }}
       </p>
-    </de-layer-content>
   }
 
   @case ('image') {
-    <de-layer-content>
+    <div deLayerContent>
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [src]="layer().layerPropertyModel.content"
       />
-    </de-layer-content>
+    </div>
+      
   }
 
   @case ('link') {
-    <de-layer-content>
       <a
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [href]="linkLayerPropertyModel.href"
         [target]="linkLayerPropertyModel.target"
         >{{ layer().layerPropertyModel.content }}</a
       >
-    </de-layer-content>
   }
 
   @case ('list') {
-    <de-layer-content>
       <ul
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
@@ -79,12 +76,11 @@
           ></ng-container>
         }
       </ul>
-    </de-layer-content>
   }
 
   @case ('list-item') {
-    <de-layer-content>
       <li
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       >
@@ -101,12 +97,11 @@
           {{ layer().layerPropertyModel.content }}
         }
       </li>
-    </de-layer-content>
   }
 
   @default {
-    <de-layer-content>
       <div
+      deLayerContent
         [class]="layer().widgetReference.defaultWidgetPropertyModel.defaultClass"
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -122,6 +117,5 @@
           ></ng-container>
         }
       </div>
-    </de-layer-content>
   }
 }

@@ -8,7 +8,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
  * It uses the LAYER_REF injection token to access the layer's properties and actions, such as starting to edit the layer name, saving the new name, and canceling the editing process.
  */
 @Component({
-  selector: 'de-layer-content',
+  selector: '[deLayerContent]',
   imports: [Autofocus, ReactiveFormsModule],
   templateUrl: './layer-content.html',
   styleUrl: './layer-content.scss',

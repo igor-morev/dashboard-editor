@@ -1,14 +1,14 @@
 <div class="h-screen w-screen flex">
-  <div class="w-68 h-full bg-white border-0 border-r border-gray-300 border-solid">
+  <div class="flex flex-col w-80 bg-white border-0 border-r border-gray-300 border-solid">
     <div
       class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12"
     >
       Project Name
     </div>
-    <div class="h-full grid grid-rows-[200px_100px_2fr]">
-      <div class="overflow-auto">
+    <div class="grow grid grid-rows-[200px_100px_2fr]">
+      <div class="flex flex-col">
         <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
-        <div class="py-2 px-4">
+        <div class="py-2 px-4 overflow-auto h-0 grow">
           @for (widget of widgets; track widget.id) {
             <button
               (click)="moveWidgetOnScaffold($event, widget)"
@@ -20,11 +20,11 @@
           }
         </div>
       </div>
-      <div class="overflow-auto">
+      <div class="flex flex-col">
         <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
           Pages
         </div>
-        <div class="py-2 px-4 overflow-auto">
+        <div class="py-2 px-4 overflow-auto h-0 grow">
           <ul>
             @for (page of pages; track page.id) {
               <li>
@@ -40,11 +40,11 @@
           </ul>
         </div>
       </div>
-      <div class="overflow-auto">
+      <div class="flex flex-col">
         <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
           Layers
         </div>
-        <div class="py-2 px-4">
+        <div class="py-2 px-4 overflow-y-auto h-0 grow">
           @if (layers.length > 0) {
             <ng-container
               *ngTemplateOutlet="

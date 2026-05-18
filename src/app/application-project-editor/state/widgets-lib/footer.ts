@@ -78,7 +78,9 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
             listWidget(data.linkGroups[0].links.map(l => listItemWidget(linkWidget(l.label))), 'flex justify-center gap-6 mb-6 list-none'),
             textWidget({ content: data.copyright, class: 'text-center opacity-60' })
           ])
-        ])
+        ], {
+          class: 'text-center'
+        })
       ],
 
       // 2. Классика: Лого слева, 2-3 колонки ссылок справа
