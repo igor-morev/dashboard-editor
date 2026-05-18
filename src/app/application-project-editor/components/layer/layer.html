@@ -1,121 +1,128 @@
 @switch (layer().widgetReference.widgetType) {
   @case ('section') {
-      <section
-        deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-        [style]="layer().layerPropertyModel | layerAttributeTransform: buildLayerStyleAttribute"
-      >
-        @if (layer().children) {
-          <ng-container
-            *ngTemplateOutlet="
-              layersTemplate();
-              context: {
-                $implicit: layer().children,
-              }
-            "
-          ></ng-container>
-        }
-      </section>
+    <section
+      deLayerContent
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      [style]="layer().layerPropertyModel | layerAttributeTransform: buildLayerStyleAttribute"
+    >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+    </section>
   }
 
   @case ('heading') {
-      <h1
+    <h1
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-      >
-        {{ layer().layerPropertyModel.content }}
-      </h1>
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+    >
+      {{ layer().layerPropertyModel.content }}
+    </h1>
   }
 
   @case ('text') {
-      <p
+    <p
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-      >
-        {{ layer().layerPropertyModel.content }}
-      </p>
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+    >
+      {{ layer().layerPropertyModel.content }}
+    </p>
   }
 
   @case ('image') {
-    <div deLayerContent>
+    <div deLayerContent class="inline-flex">
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
         [src]="layer().layerPropertyModel.content"
       />
     </div>
-      
   }
 
   @case ('link') {
-      <a
+    <a
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [href]="linkLayerPropertyModel.href"
-        [target]="linkLayerPropertyModel.target"
-        >{{ layer().layerPropertyModel.content }}</a
-      >
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [href]="linkLayerPropertyModel.href"
+      [target]="linkLayerPropertyModel.target"
+      >{{ layer().layerPropertyModel.content }}</a
+    >
+  }
+
+  @case ('icon') {
+    <div deLayerContent class="inline-flex">
+      <mat-icon [class]="layer().widgetReference.defaultWidgetPropertyModel.class">{{
+        layer().layerPropertyModel.content
+      }}</mat-icon>
+    </div>
   }
 
   @case ('list') {
-      <ul
+    <ul
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-      >
-        @if (layer().children) {
-          <ng-container
-            *ngTemplateOutlet="
-              layersTemplate();
-              context: {
-                $implicit: layer().children,
-              }
-            "
-          ></ng-container>
-        }
-      </ul>
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+    >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+    </ul>
   }
 
   @case ('list-item') {
-      <li
+    <li
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-      >
-        @if (layer().children.length) {
-          <ng-container
-            *ngTemplateOutlet="
-              layersTemplate();
-              context: {
-                $implicit: layer().children,
-              }
-            "
-          ></ng-container>
-        } @else {
-          {{ layer().layerPropertyModel.content }}
-        }
-      </li>
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+    >
+      @if (layer().children.length) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      } @else {
+        {{ layer().layerPropertyModel.content }}
+      }
+    </li>
   }
 
   @default {
-      <div
+    <div
       deLayerContent
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.defaultClass"
-        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
-      >
-        @if (layer().children) {
-          <ng-container
-            *ngTemplateOutlet="
-              layersTemplate();
-              context: {
-                $implicit: layer().children,
-              }
-            "
-          ></ng-container>
-        }
-      </div>
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.defaultClass"
+      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+    >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+    </div>
   }
 }

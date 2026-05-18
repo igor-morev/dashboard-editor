@@ -7,8 +7,7 @@ export function buildLayerTailwindClasses(
   if (val !== undefined && val !== null) {
     if (key === 'defaultClass') {
       classes += ` ${val}`;
-    }
-    else if (key === 'class') {
+    } else if (key === 'class') {
       classes += ` ${val}`;
     } else if (key === 'styles') {
       // Assuming styles is an object where keys are CSS properties and values are their corresponding values

@@ -55,32 +55,48 @@ const FooterDefaultContent: FooterContent = {
     { icon: 'twitter', href: '#' },
     { icon: 'linkedin', href: '#' },
   ],
+};
 
-}
+export type FooterLayout =
+  | 'simple-center'
+  | 'logo-left-links-right'
+  | 'multi-column'
+  | 'newsletter-split'
+  | 'minimal-split';
 
-export type FooterLayout = 'simple-center' | 'logo-left-links-right' | 'multi-column' | 'newsletter-split' | 'minimal-split';
-
-export function footerWidget(layout: FooterLayout = 'simple-center', content: FooterContent = FooterDefaultContent): Widget {
-  
+export function footerWidget(
+  layout: FooterLayout = 'simple-center',
+  content: FooterContent = FooterDefaultContent,
+): Widget {
   const layoutTransformer = (currentLayout: FooterLayout, data: FooterContent) => {
     // Хелпер для создания колонки ссылок
-    const createLinkColumn = (group: { title: string, links: any[] }) => columnWidget([
-      headingWidget({ content: group.title, class: 'text-sm font-semibold uppercase mb-4' }),
-      listWidget(group.links.map(l => listItemWidget(linkWidget(l.label))), 'space-y-2 list-none')
-    ]);
+    const createLinkColumn = (group: { title: string; links: any[] }) =>
+      columnWidget([
+        headingWidget({ content: group.title, class: 'text-sm font-semibold uppercase mb-4' }),
+        listWidget(
+          group.links.map((l) => listItemWidget(linkWidget(l.label))),
+          'space-y-2 list-none',
+        ),
+      ]);
 
     const layouts: Record<FooterLayout, Widget[]> = {
       // 1. По центру: Лого -> Ссылки в ряд -> Копирайт
       'simple-center': [
-        containerWidget([
-          columnWidget([
-            imageWidget({ src: data.logoSrc, class: 'mx-auto h-10 mb-6' }),
-            listWidget(data.linkGroups[0].links.map(l => listItemWidget(linkWidget(l.label))), 'flex justify-center gap-6 mb-6 list-none'),
-            textWidget({ content: data.copyright, class: 'text-center opacity-60' })
-          ])
-        ], {
-          class: 'text-center'
-        })
+        containerWidget(
+          [
+            columnWidget([
+              imageWidget({ src: data.logoSrc, class: 'mx-auto h-10 mb-6' }),
+              listWidget(
+                data.linkGroups[0].links.map((l) => listItemWidget(linkWidget(l.label))),
+                'flex justify-center gap-6 mb-6 list-none',
+              ),
+              textWidget({ content: data.copyright, class: 'text-center opacity-60' }),
+            ]),
+          ],
+          {
+            class: 'text-center',
+          },
+        ),
       ],
 
       // 2. Классика: Лого слева, 2-3 колонки ссылок справа
@@ -89,30 +105,44 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
           rowWidget([
             columnWidget([
               imageWidget({ src: data.logoSrc, class: 'h-8 mb-4' }),
-              textWidget({ content: data.brandName, class: 'text-sm' })
+              textWidget({ content: data.brandName, class: 'text-sm' }),
             ]),
-            ...data.linkGroups.slice(0, 2).map(createLinkColumn)
-          ])
-        ])
+            ...data.linkGroups.slice(0, 2).map(createLinkColumn),
+          ]),
+        ]),
       ],
 
       // 3. Мульти-колоночный (для больших сайтов/Fintech)
       'multi-column': [
         containerWidget([
           rowWidget(data.linkGroups.map(createLinkColumn)),
-          rowWidget([textWidget({ content: data.copyright, class: 'mt-10 pt-6 border-t w-full' })])
-        ])
+          rowWidget([textWidget({ content: data.copyright, class: 'mt-10 pt-6 border-t w-full' })]),
+        ]),
       ],
 
       // 4. С формой подписки (Banner + Footer)
       'newsletter-split': [
         containerWidget([
-          rowWidget([
-            columnWidget([headingWidget({content: 'Stay updated'}), textWidget({content: 'Join our list'})], {class: 'w-1/2'}),
-            columnWidget([/* Тут будет виджет формы или инпут */], {class: 'w-1/2'})
-          ], {class: 'mb-12 pb-12 border-b'}),
-          rowWidget([textWidget({content: data.copyright})])
-        ])
+          rowWidget(
+            [
+              columnWidget(
+                [
+                  headingWidget({ content: 'Stay updated' }),
+                  textWidget({ content: 'Join our list' }),
+                ],
+                { class: 'w-1/2' },
+              ),
+              columnWidget(
+                [
+                  /* Тут будет виджет формы или инпут */
+                ],
+                { class: 'w-1/2' },
+              ),
+            ],
+            { class: 'mb-12 pb-12 border-b' },
+          ),
+          rowWidget([textWidget({ content: data.copyright })]),
+        ]),
       ],
 
       // 5. Минимализм в одну строку
@@ -120,10 +150,13 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
         containerWidget([
           rowWidget([
             textWidget({ content: data.copyright }),
-            listWidget(data.linkGroups[0].links.map(l => listItemWidget(linkWidget(l.label))), 'list-none')
-          ])
-        ])
-      ]
+            listWidget(
+              data.linkGroups[0].links.map((l) => listItemWidget(linkWidget(l.label))),
+              'list-none',
+            ),
+          ]),
+        ]),
+      ],
     };
 
     return layouts[currentLayout];
@@ -134,18 +167,26 @@ export function footerWidget(layout: FooterLayout = 'simple-center', content: Fo
     widgetName: 'Footer',
     widgetType: 'footer',
     propertyConfig: {
-      layout: { options: ['simple-center', 'logo-left-links-right', 'multi-column', 'newsletter-split', 'minimal-split'] },
+      layout: {
+        options: [
+          'simple-center',
+          'logo-left-links-right',
+          'multi-column',
+          'newsletter-split',
+          'minimal-split',
+        ],
+      },
       styles: {
         backgroundColor: { nameOptions: colorPalette, rangeOptions: colorRange },
         color: { nameOptions: colorPalette, rangeOptions: colorRange },
-      }
+      },
     },
     defaultWidgetPropertyModel: {
       layout,
       class: 'py-12',
-      content: content as Record<string, any> // Дефолтные данные, если ничего не передано
+      content: content as Record<string, any>, // Дефолтные данные, если ничего не передано
     },
     layoutTransformer,
-    children: layoutTransformer(layout, content!)
+    children: layoutTransformer(layout, content!),
   } as Widget;
 }

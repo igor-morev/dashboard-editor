@@ -5,7 +5,10 @@ interface AbstractBaseWidget {
   propertyConfig?: WidgetPropertyConfig;
   defaultWidgetPropertyModel: WidgetPropertyModel;
   canNotBeAddedInside?: (widget: Widget) => boolean;
-  layoutTransformer?: (layout: string | undefined, content?: string | Record<string, any>) => Widget[];
+  layoutTransformer?: (
+    layout: string | undefined,
+    content?: string | Record<string, any>,
+  ) => Widget[];
   children?: Widget[];
 }
 

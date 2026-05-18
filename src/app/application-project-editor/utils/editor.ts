@@ -45,7 +45,7 @@ export function scaffoldLayer(): Layer {
         },
       },
       defaultWidgetPropertyModel: {
-        class: 'pl-2 pr-2 min-h-48',
+        class: 'pl-2 pr-2',
         styles: {
           backgroundColor: {
             name: 'gray',

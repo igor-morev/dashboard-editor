@@ -20,12 +20,13 @@ import {
   buildLayerStyleAttribute,
   buildLayerTailwindClasses,
 } from '../../pipes/layer-attribute.util';
+import { MatIconModule } from '@angular/material/icon';
 
 export const LAYER_REF = new InjectionToken<LayerComponent>('LAYER');
 
 @Component({
   selector: 'de-layer',
-  imports: [NgTemplateOutlet, LayerContent, LayerAttributeTransformPipe],
+  imports: [NgTemplateOutlet, MatIconModule, LayerContent, LayerAttributeTransformPipe],
   templateUrl: './layer.html',
   styleUrl: './layer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,9 +61,7 @@ export class LayerComponent {
   buildLayerTailwindClasses = buildLayerTailwindClasses;
   buildLayerStyleAttribute = buildLayerStyleAttribute;
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   get linkWidgetReference() {
     return this.layer().widgetReference as LinkWidget;

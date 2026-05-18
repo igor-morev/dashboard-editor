@@ -18,6 +18,7 @@ import { cardWidget } from './widgets-lib/card';
 import { footerWidget } from './widgets-lib/footer';
 import { testimonialsWidget } from './widgets-lib/testimonials';
 import { faqWidget } from './widgets-lib/faq';
+import { iconWidget } from './widgets-lib/icon';
 
 @Injectable({
   providedIn: 'root',
@@ -34,24 +35,14 @@ export class WidgetsState {
     listWidget([listItemWidget()]),
     linkButtonWidget(),
     linkWidget('Home'),
-    {
-      id: 'icon-widget',
-      widgetName: 'Icon',
-      widgetType: 'icon',
-      canNotBeAddedInside: (widget) => {
-        return true;
-      },
-      defaultWidgetPropertyModel: {
-        class: '',
-      },
-    },
+    iconWidget(),
     heroWidget(),
     headerWidget(),
     footerWidget(),
     cardWidget({}),
     featureSectionWidget(),
     testimonialsWidget(),
-    faqWidget()
+    faqWidget(),
   ];
 
   get widgets() {

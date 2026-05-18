@@ -24,24 +24,27 @@ export type FeatureLayout =
   | 'side-by-side';
 
 export interface FeatureContent {
-  heading: string,
-  description: string,
-  buttonText: string,
+  heading: string;
+  description: string;
+  buttonText: string;
   image: {
-    src: string,
-    alt: string,
-  }
+    src: string;
+    alt: string;
+  };
 }
 
-export function featureSectionWidget(layout: FeatureLayout = 'stack', content: FeatureContent = {
-  heading: 'Feature Heading',
-  description: 'Description text goes here...',
-  buttonText: 'Action Button',
-  image: {
-    src: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
-    alt: 'Feature Image',
-  }
-}): Widget {
+export function featureSectionWidget(
+  layout: FeatureLayout = 'stack',
+  content: FeatureContent = {
+    heading: 'Feature Heading',
+    description: 'Description text goes here...',
+    buttonText: 'Action Button',
+    image: {
+      src: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+      alt: 'Feature Image',
+    },
+  },
+): Widget {
   // Базовая конфигурация редактора (одинаковая для всех)
   const sharedConfig: WidgetPropertyConfig = {
     styles: {
@@ -58,14 +61,22 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack', content: F
   const layoutTransformer = (layout: FeatureLayout, content: FeatureContent) => {
     // Контентные блоки
     const contentStack = [
-      headingWidget({ class: 'font-bold text-3xl mb-4', content: content.heading, onUpdate: (newContent) => {
-        // TODO: оптимизировать обновление контента (может быть через useState в реальной реализации)
-        console.log(content);
-        content.heading = newContent;
-      } }),
-      textWidget({ class: 'text-base mb-6 opacity-80', content: content.description, onUpdate: (newContent) => {
-        content.description = newContent;
-      } }),
+      headingWidget({
+        class: 'font-bold text-3xl mb-4',
+        content: content.heading,
+        onUpdate: (newContent) => {
+          // TODO: оптимизировать обновление контента (может быть через useState в реальной реализации)
+          console.log(content);
+          content.heading = newContent;
+        },
+      }),
+      textWidget({
+        class: 'text-base mb-6 opacity-80',
+        content: content.description,
+        onUpdate: (newContent) => {
+          content.description = newContent;
+        },
+      }),
       linkButtonWidget({ content: content.buttonText }),
     ];
 
@@ -79,7 +90,13 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack', content: F
         containerWidget([
           rowWidget([
             columnWidget(contentStack),
-            columnWidget([imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt })]),
+            columnWidget([
+              imageWidget({
+                class: 'w-full rounded-lg',
+                src: content.image.src,
+                alt: content.image.alt,
+              }),
+            ]),
           ]),
         ]),
       ],
@@ -110,14 +127,22 @@ export function featureSectionWidget(layout: FeatureLayout = 'stack', content: F
               textWidget({
                 content: content.description,
               }),
-              imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt }),
+              imageWidget({
+                class: 'w-full rounded-lg',
+                src: content.image.src,
+                alt: content.image.alt,
+              }),
             ]),
             columnWidget([
               headingWidget({ content: content.heading }),
               textWidget({
                 content: content.description,
               }),
-              imageWidget({ class: 'w-full rounded-lg', src: content.image.src, alt: content.image.alt}),
+              imageWidget({
+                class: 'w-full rounded-lg',
+                src: content.image.src,
+                alt: content.image.alt,
+              }),
             ]),
           ]),
         ]),

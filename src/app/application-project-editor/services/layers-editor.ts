@@ -166,12 +166,15 @@ export class LayersEditor {
       id: layerId,
       parentId,
       layerPropertyModel: Object.assign({}, layer.layerPropertyModel),
-      widgetReference: Object.assign({}, {
-        ...layer.widgetReference,
-        defaultWidgetPropertyModel: {
-          ...layer.widgetReference.defaultWidgetPropertyModel,
+      widgetReference: Object.assign(
+        {},
+        {
+          ...layer.widgetReference,
+          defaultWidgetPropertyModel: {
+            ...layer.widgetReference.defaultWidgetPropertyModel,
+          },
         },
-      }) as Widget,
+      ) as Widget,
       children: layer.children
         ? layer.children.map((layerChild) => this.duplicateLayerTree(layerChild, layerId))
         : [],
@@ -197,7 +200,6 @@ export class LayersEditor {
       ...layer.widgetReference,
       children: layer.widgetReference.layoutTransformer(layout, layer.layerPropertyModel.content),
     } as Widget;
-
 
     const newLayer = this.createLayerForWidget(updatedWidgetReference, layer.id, 0);
 
