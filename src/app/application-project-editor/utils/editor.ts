@@ -5,7 +5,7 @@ export function generateUniqueId() {
   return 'layer-' + Math.random().toString(36).substr(2, 9);
 }
 
-export function layer(id: string, parentId = null, classNames = ''): Layer {
+export function layer(id: string, parentId = null): Layer {
   return {
     id,
     parentId,
@@ -14,11 +14,11 @@ export function layer(id: string, parentId = null, classNames = ''): Layer {
       id: 'scaffold-widget',
       widgetName: 'Scaffold',
       widgetType: 'scaffold',
-      defaultWidgetPropertyModel: {},
+      defaultWidgetPropertyModel: {
+        defaultClass: 'font-body color-primary bg-surface text-project-body',
+      },
     },
-    layerPropertyModel: {
-      class: classNames,
-    },
+    layerPropertyModel: {},
     children: [],
     index: 0,
     isVisible: true,
@@ -28,10 +28,10 @@ export function layer(id: string, parentId = null, classNames = ''): Layer {
 
 export function scaffoldLayer(): Layer {
   return {
-    ...layer('scaffold', null),
+    ...layer('scaffold'),
     locked: true,
     widgetReference: {
-      ...layer('scaffold', null).widgetReference,
+      ...layer('scaffold').widgetReference,
       propertyConfig: {
         styles: {
           backgroundColor: {
@@ -45,18 +45,18 @@ export function scaffoldLayer(): Layer {
         },
       },
       defaultWidgetPropertyModel: {
-        class: 'pl-2 pr-2',
-        styles: {
-          backgroundColor: {
-            name: 'gray',
-            range: 100,
-          },
-          color: {
-            name: 'black',
-            range: null,
-          },
-        },
+        // styles: {
+        //   backgroundColor: {
+        //     name: 'gray',
+        //     range: 100,
+        //   },
+        //   color: {
+        //     name: 'black',
+        //     range: null,
+        //   },
+        // },
       },
     } as Widget,
+    layerPropertyModel: layer('scaffold').widgetReference.defaultWidgetPropertyModel,
   };
 }

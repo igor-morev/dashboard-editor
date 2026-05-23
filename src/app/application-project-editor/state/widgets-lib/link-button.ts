@@ -15,7 +15,7 @@ export function linkButtonWidget(model: Partial<LinkWidgetPropertyModel> = {}): 
       hasContent: true,
     },
     defaultWidgetPropertyModel: {
-      class: 'px-2 py-1 bg-blue-500 text-white rounded inline-flex items-center gap-x-1',
+      class: 'px-2 py-1 bg-primary text-white rounded-theme inline-flex items-center gap-x-1',
       target: '_self',
       href: '#',
       ...model,

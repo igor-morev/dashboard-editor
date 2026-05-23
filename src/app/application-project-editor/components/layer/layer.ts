@@ -58,6 +58,10 @@ export class LayerComponent {
     return this.layer().id;
   }
 
+  @HostBinding('attr.data-layer-type') get layerType() {
+    return this.layer().widgetReference.widgetType;
+  }
+
   buildLayerTailwindClasses = buildLayerTailwindClasses;
   buildLayerStyleAttribute = buildLayerStyleAttribute;
 

@@ -16,7 +16,8 @@ export function headingWidget(model: WidgetPropertyModel = {}): Widget {
       return true;
     },
     defaultWidgetPropertyModel: {
-      class: 'font-bold text-2xl mb-2',
+      defaultClass: 'font-heading font-black',
+      class: '',
       ...model,
     },
     propertyConfig: {

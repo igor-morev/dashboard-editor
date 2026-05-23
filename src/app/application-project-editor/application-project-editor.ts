@@ -24,6 +24,7 @@ import { Autofocus } from './ui/directives/autofocus';
 import { LayersEditor } from './services/layers-editor';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
 import { Subject } from 'rxjs';
+import { ThemeManager } from './services/theme-manager';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -52,6 +53,7 @@ export class ApplicationProjectEditor {
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly state = inject(ApplicationEditorState);
   private readonly widgetsState = inject(WidgetsState);
+  private readonly themeManager = inject(ThemeManager);
 
   private layersEditor = inject(LayersEditor);
 
@@ -77,6 +79,10 @@ export class ApplicationProjectEditor {
     this.dragDroppedEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       this.handleDragDrop(event);
     });
+  }
+
+  ngOnInit() {
+    this.themeManager.setTheme('grooming');
   }
 
   get appState() {

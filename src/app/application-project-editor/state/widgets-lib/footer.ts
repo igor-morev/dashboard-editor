@@ -72,7 +72,7 @@ export function footerWidget(
     // Хелпер для создания колонки ссылок
     const createLinkColumn = (group: { title: string; links: any[] }) =>
       columnWidget([
-        headingWidget({ content: group.title, class: 'text-sm font-semibold uppercase mb-4' }),
+        headingWidget({ content: group.title, class: 'font-semibold uppercase mb-4' }),
         listWidget(
           group.links.map((l) => listItemWidget(linkWidget(l.label))),
           'space-y-2 list-none',
@@ -90,7 +90,7 @@ export function footerWidget(
                 data.linkGroups[0].links.map((l) => listItemWidget(linkWidget(l.label))),
                 'flex justify-center gap-6 mb-6 list-none',
               ),
-              textWidget({ content: data.copyright, class: 'text-center opacity-60' }),
+              textWidget({ content: data.copyright, class: 'text-center' }),
             ]),
           ],
           {
@@ -105,7 +105,7 @@ export function footerWidget(
           rowWidget([
             columnWidget([
               imageWidget({ src: data.logoSrc, class: 'h-8 mb-4' }),
-              textWidget({ content: data.brandName, class: 'text-sm' }),
+              textWidget({ content: data.brandName }),
             ]),
             ...data.linkGroups.slice(0, 2).map(createLinkColumn),
           ]),
@@ -183,7 +183,7 @@ export function footerWidget(
     },
     defaultWidgetPropertyModel: {
       layout,
-      class: 'py-12',
+      class: 'py-12 bg-contrast text-white',
       content: content as Record<string, any>, // Дефолтные данные, если ничего не передано
     },
     layoutTransformer,

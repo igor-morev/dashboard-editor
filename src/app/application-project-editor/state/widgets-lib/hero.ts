@@ -30,7 +30,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
   const layoutTransformer = (currentLayout: HeroLayout, data: HeroContent) => {
     const heading = headingWidget({
       content: data.title,
-      class: 'font-bold text-3xl mb-4',
+      class: 'text-project-h1 mb-4',
     });
     const text = textWidget({
       content: data.subtitle,
@@ -56,9 +56,12 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
           [
             rowWidget([
               columnWidget(contentStack, { class: 'w-full text-left' }),
-              columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], {
-                class: 'w-full',
-              }),
+              columnWidget(
+                [imageWidget({ src: data.imageSrc, class: 'rounded-theme shadow-2xl' })],
+                {
+                  class: 'w-full',
+                },
+              ),
             ]),
           ],
           { class: 'py-40' },
@@ -70,9 +73,12 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
         containerWidget(
           [
             rowWidget([
-              columnWidget([imageWidget({ src: data.imageSrc, class: 'rounded-2xl shadow-2xl' })], {
-                class: 'w-full',
-              }),
+              columnWidget(
+                [imageWidget({ src: data.imageSrc, class: 'rounded-theme shadow-2xl' })],
+                {
+                  class: 'w-full',
+                },
+              ),
               columnWidget(contentStack, { class: 'w-full text-left' }),
             ]),
           ],
@@ -93,7 +99,7 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
           [
             rowWidget([
               columnWidget(contentStack, {
-                class: 'bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-4',
+                class: 'bg-white/10 backdrop-blur-md rounded-theme border border-white/20 p-4',
               }),
             ]),
           ],

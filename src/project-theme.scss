@@ -1,0 +1,43 @@
+@use 'tailwindcss';
+
+// :root {
+//   --project-primary-color: #3b82f6; 
+//   --project-h1-size: 2.5rem;
+//   --project-h2-size: 2rem;
+//   --project-body-size: 1rem;
+// }
+
+@theme {
+  /* Цвета теперь привязаны к переменным из твоего ThemeManager */
+  --color-primary: var(--project-primary-color);
+  --color-surface: var(--project-surface-color);
+  --color-contrast: var(--project-contrast-color);
+
+  /* Типографика и радиусы */
+  --font-heading: var(--project-font-heading);
+  --font-body: var(--project-font-body);
+  --radius-theme: var(--project-radius);
+
+  /* Семантические размеры шрифтов */
+  --text-project-h1: var(--project-h1-size);
+  --text-project-h2: var(--project-h2-size);
+  --text-project-h3: var(--project-h3-size);
+  --text-project-body: var(--project-body-size);
+
+  /* Дополнительные настройки для v4 */
+  --tracking-tight: -0.02em;
+}
+
+/* Базовые стили для плавных переходов при смене темы */
+@layer base {
+  *, *::before, *::after {
+    transition-property: color, background-color, border-color, border-radius;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
+}
+
+
+* {
+  box-sizing: border-box;
+}

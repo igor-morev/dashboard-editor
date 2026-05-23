@@ -33,7 +33,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
     ]);
 
     const brand = columnWidget([
-      textWidget({ content: data.brandName || 'Discover', class: 'font-bold text-lg' }),
+      textWidget({ content: data.brandName || 'Discover', class: 'font-bold' }),
     ]);
 
     const nav = columnWidget([

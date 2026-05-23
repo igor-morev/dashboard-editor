@@ -6,6 +6,8 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @use 'tailwindcss';
+@use 'project-theme';
+
 @source inline("bg-white");
 @source inline("bg-black");
 

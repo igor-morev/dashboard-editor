@@ -37,7 +37,7 @@ export function testimonialsWidget(
       columnWidget(
         [
           // Рейтинг (звездочки)
-          textWidget({ content: '★'.repeat(rev.rating || 5), class: 'text-yellow-400 mb-4' }),
+          textWidget({ content: '★'.repeat(rev.rating || 5), class: 'text-contrast mb-4' }),
           // Текст отзыва
           textWidget({ content: `"${rev.text}"`, class: 'text-lg italic mb-6 opacity-90' }),
           // Блок автора
@@ -52,13 +52,12 @@ export function testimonialsWidget(
                   textWidget({ content: rev.author, class: 'font-bold' }),
                   textWidget({
                     content: rev.role,
-                    class: 'text-sm',
-                    styles: {
-                      color: {
-                        name: 'gray',
-                        range: 500,
-                      },
-                    },
+                    // styles: {
+                    //   color: {
+                    //     name: 'gray',
+                    //     range: 500,
+                    //   },
+                    // },
                   }),
                 ],
                 { class: 'inline-flex flex-col' },
@@ -75,7 +74,10 @@ export function testimonialsWidget(
       grid: [
         containerWidget([
           columnWidget([
-            headingWidget({ content: data.title, class: 'text-3xl font-bold text-center mb-4' }),
+            headingWidget({
+              content: data.title,
+              class: 'text-project-h2 font-bold text-center mb-4',
+            }),
             textWidget({
               content: data.subtitle,
               class: 'text-center mb-12',
@@ -91,7 +93,7 @@ export function testimonialsWidget(
             data.items.map((rev) =>
               createReviewCard(
                 rev,
-                'grow w-[calc(50%-0.5rem)] p-4 border rounded-2xl flex flex-col bg-white shadow-sm',
+                'grow w-[calc(50%-0.5rem)] p-4 border rounded-2xl flex flex-col shadow-sm',
               ),
             ),
             { class: 'flex-wrap' },
@@ -105,8 +107,8 @@ export function testimonialsWidget(
           [
             columnWidget(
               [
-                textWidget({ content: '“', class: 'text-6xl font-serif text-blue-500 mb-2' }),
-                textWidget({ content: data.items[0].text, class: 'text-3xl font-medium mb-8' }),
+                textWidget({ content: '“', class: 'text-6xl font-serif text-primary mb-2' }),
+                textWidget({ content: data.items[0].text, class: 'font-medium mb-8' }),
                 rowWidget(
                   [
                     imageWidget({ src: data.items[0].avatar, class: 'w-16 h-16 rounded-full' }),
@@ -139,7 +141,7 @@ export function testimonialsWidget(
           rowWidget([
             columnWidget(
               [
-                headingWidget({ content: data.title, class: 'text-4xl font-bold mb-6' }),
+                headingWidget({ content: data.title, class: 'text-project-h3 font-bold mb-6' }),
                 textWidget({
                   content: data.subtitle,
                   class: 'text-lg',
@@ -170,7 +172,7 @@ export function testimonialsWidget(
             data.items.map((rev, i) =>
               createReviewCard(
                 rev,
-                `grow w-[calc(50%-1rem)] p-6 rounded-[40px] bg-gray-100 ${i % 2 === 0 ? '' : 'mt-12'}`,
+                `grow w-[calc(50%-1rem)] p-6 rounded-[40px] ${i % 2 === 0 ? '' : 'mt-12'}`,
               ),
             ),
             { class: 'gap-8 flex-wrap' },
@@ -221,7 +223,7 @@ export function testimonialsWidget(
     },
     defaultWidgetPropertyModel: {
       layout,
-      class: 'py-20 bg-white',
+      class: 'py-20',
       content: defaultContent as Record<string, any>,
     },
     layoutTransformer,

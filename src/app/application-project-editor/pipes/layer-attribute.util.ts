@@ -5,6 +5,7 @@ export function buildLayerTailwindClasses(
   [key, val]: [keyof WidgetPropertyModel, WidgetPropertyModel['styles']],
 ): string {
   if (val !== undefined && val !== null) {
+    console.log(key);
     if (key === 'defaultClass') {
       classes += ` ${val}`;
     } else if (key === 'class') {

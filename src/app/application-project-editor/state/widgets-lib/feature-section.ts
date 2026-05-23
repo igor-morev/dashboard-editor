@@ -62,7 +62,7 @@ export function featureSectionWidget(
     // Контентные блоки
     const contentStack = [
       headingWidget({
-        class: 'font-bold text-3xl mb-4',
+        class: 'text-project-h2',
         content: content.heading,
         onUpdate: (newContent) => {
           // TODO: оптимизировать обновление контента (может быть через useState в реальной реализации)
@@ -71,7 +71,7 @@ export function featureSectionWidget(
         },
       }),
       textWidget({
-        class: 'text-base mb-6 opacity-80',
+        class: 'mb-6',
         content: content.description,
         onUpdate: (newContent) => {
           content.description = newContent;

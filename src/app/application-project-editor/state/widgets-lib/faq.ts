@@ -31,11 +31,11 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
         [
           headingWidget({
             content: item.question,
-            class: 'text-xl font-semibold mb-2 cursor-pointer',
+            class: 'text-project-h3 font-semibold mb-2 cursor-pointer',
           }),
           textWidget({
             content: item.answer,
-            class: 'text-base opacity-80 pb-4 border-b border-gray-100',
+            class: 'pb-4 border-b border-contrast',
           }),
         ],
         { class: classes },
@@ -45,7 +45,10 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
       // 1. Классический аккордеон (вертикальный список)
       accordion: [
         containerWidget([
-          headingWidget({ content: data.title, class: 'text-3xl font-bold text-center mb-12' }),
+          headingWidget({
+            content: data.title,
+            class: 'text-project-h2 font-bold text-center mb-12',
+          }),
           rowWidget(
             data.items.map((item) => createFAQItem(item, 'w-full max-w-3xl mx-auto mb-6')),
             { class: 'flex-col' },
@@ -56,16 +59,16 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
       // 2. Две колонки (Вопрос слева, Ответ справа) - для Healthcare/Fintech
       'two-columns': [
         containerWidget([
-          headingWidget({ content: data.title, class: 'text-3xl font-bold mb-12' }),
+          headingWidget({ content: data.title, class: 'text-project-h2 font-bold mb-12' }),
           ...data.items.map((item) =>
             rowWidget(
               [
                 columnWidget(
-                  [headingWidget({ content: item.question, class: 'text-xl font-medium' })],
+                  [headingWidget({ content: item.question, class: 'text-project-h3' })],
                   { class: 'w-full' },
                 ),
-                columnWidget([textWidget({ content: item.answer, class: 'opacity-80' })], {
-                  class: 'w-full pb-8 mb-8 border-b',
+                columnWidget([textWidget({ content: item.answer })], {
+                  class: 'w-full pb-8 mb-8 border-b border-contrast',
                 }),
               ],
               { class: 'gap-8' },
@@ -77,7 +80,10 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
       // 3. Минималистичная сетка (Grid) - для AI/Grooming
       'minimal-grid': [
         containerWidget([
-          headingWidget({ content: data.title, class: 'text-3xl font-bold text-center mb-12' }),
+          headingWidget({
+            content: data.title,
+            class: 'text-project-h1 font-bold text-center mb-12',
+          }),
           rowWidget(
             data.items.map((item) => createFAQItem(item, 'grow w-[calc(50%-0.5rem)] p-4')),
             { class: 'flex-wrap gap-y-8' },
@@ -90,8 +96,8 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
         containerWidget([
           columnWidget(
             [
-              headingWidget({ content: data.title, class: 'text-2xl font-bold mb-4' }),
-              textWidget({ content: data.subtitle, class: 'mb-10 opacity-70' }),
+              headingWidget({ content: data.title, class: 'text-project-h2 font-bold mb-4' }),
+              textWidget({ content: data.subtitle, class: 'mb-10' }),
               ...data.items.map((item) => createFAQItem(item, 'mb-8')),
             ],
             { class: 'max-w-2xl mx-auto text-center' },
@@ -135,7 +141,7 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
     },
     defaultWidgetPropertyModel: {
       layout,
-      class: 'py-20 bg-gray-50',
+      class: 'py-20',
       content: defaultContent as Record<string, any>,
     },
     layoutTransformer,
