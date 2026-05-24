@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AppState, Layer } from '../types/application-editor.type';
 import { scaffoldLayer } from '../utils/editor';
 import { HistoryEditorState } from './history-state';
 import { LayersEditor } from '../services/layers-editor';
+import { AppState, Layer } from '../types/project.type';
 
 @Injectable({
   providedIn: 'root',

@@ -1,4 +1,4 @@
-import { Widget } from '@app/application-project-editor/types/application-editor.type';
+import { Widget } from '@app/application-project-editor/types/widget.type';
 import { containerWidget } from './container';
 import {
   colorPalette,

@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
 import { LayerComponent } from '../layer/layer';
-import { Layer } from '@app/application-project-editor/types/application-editor.type';
+import { Layer } from '@app/application-project-editor/types/project.type';
 
 @Component({
   selector: 'de-scaffold-outlet',

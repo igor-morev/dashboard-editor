@@ -1,7 +1,4 @@
-import {
-  Widget,
-  WidgetPropertyConfig,
-} from '@app/application-project-editor/types/application-editor.type';
+import { Widget, WidgetPropertyConfig } from '@app/application-project-editor/types/widget.type';
 import { sectionWidget } from './section';
 import { containerWidget } from './container';
 import { headingWidget } from './heading';
@@ -36,9 +33,9 @@ export interface FeatureContent {
 export function featureSectionWidget(
   layout: FeatureLayout = 'stack',
   content: FeatureContent = {
-    heading: 'Feature Heading',
-    description: 'Description text goes here...',
-    buttonText: 'Action Button',
+    heading: 'Which screening are you looking for?',
+    description: 'After you complete your registration and your kit is ordered',
+    buttonText: 'Order Now',
     image: {
       src: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
       alt: 'Feature Image',
@@ -77,6 +74,7 @@ export function featureSectionWidget(
           content.description = newContent;
         },
       }),
+      cardWidget({}),
       linkButtonWidget({ content: content.buttonText }),
     ];
 

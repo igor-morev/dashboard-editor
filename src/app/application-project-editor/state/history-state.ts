@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Layer, AppViewSchema } from '../types/application-editor.type';
+import { AppViewSchema, Layer } from '../types/project.type';
 
 export interface HistoryState {
   appViewSchema: AppViewSchema;

@@ -1,7 +1,4 @@
-import {
-  WidgetPropertyModel,
-  Widget,
-} from '@app/application-project-editor/types/application-editor.type';
+import { WidgetPropertyModel, Widget } from '@app/application-project-editor/types/widget.type';
 
 export function rowWidget(children: Widget[] = [], model: WidgetPropertyModel = {}): Widget {
   return {

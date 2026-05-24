@@ -1,11 +1,10 @@
-import { WidgetPropertyModel } from '@app/application-project-editor/types/application-editor.type';
+import { WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
 
 export function buildLayerTailwindClasses(
   classes: string,
   [key, val]: [keyof WidgetPropertyModel, WidgetPropertyModel['styles']],
 ): string {
   if (val !== undefined && val !== null) {
-    console.log(key);
     if (key === 'defaultClass') {
       classes += ` ${val}`;
     } else if (key === 'class') {

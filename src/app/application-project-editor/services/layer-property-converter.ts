@@ -1,6 +1,6 @@
 import { Injectable, InjectionToken } from '@angular/core';
 import { ILayerPropertyConverter } from '../types';
-import { WidgetPropertyModel } from '../types/application-editor.type';
+import { WidgetPropertyModel } from '../types/widget.type';
 
 export const LAYER_PROPERTY_CONVERTER = new InjectionToken<ILayerPropertyConverter>(
   'LayerPropertyConverter',

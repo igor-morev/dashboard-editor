@@ -2,7 +2,7 @@ import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
-import { Widget } from '@app/application-project-editor/types/application-editor.type';
+import { Widget } from '@app/application-project-editor/types/widget.type';
 
 export function listItemWidget(children?: Widget): Widget {
   return {

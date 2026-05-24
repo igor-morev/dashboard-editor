@@ -8,7 +8,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { EditorCommand, Layer, Widget } from './types/application-editor.type';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
@@ -25,6 +24,8 @@ import { LayersEditor } from './services/layers-editor';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
 import { Subject } from 'rxjs';
 import { ThemeManager } from './services/theme-manager';
+import { Layer, EditorCommand } from './types/project.type';
+import { Widget } from './types/widget.type';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -103,6 +104,10 @@ export class ApplicationProjectEditor {
 
   get pages() {
     return this.state.pages;
+  }
+
+  changeTheme(event: Event) {
+    this.themeManager.setTheme(event.target instanceof HTMLSelectElement ? event.target.value : '');
   }
 
   getParent(parentId: string, reccursive = false): Layer | null {

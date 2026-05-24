@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { WidgetPropertyModel } from '@app/application-project-editor/types/application-editor.type';
+import { WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
 
 @Pipe({
   name: 'layerAttributeTransform',

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Layer, Widget } from '../types/application-editor.type';
+import { Widget } from '../types/widget.type';
 import { generateUniqueId } from '../utils/editor';
+import { Layer } from '../types/project.type';
 
 /**
  * LayersEditor is responsible for managing the layers tree structure in the application editor.

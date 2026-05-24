@@ -1,4 +1,5 @@
-import { AppState, Layer, Widget, WidgetPropertyModel } from './application-editor.type';
+import { AppState, Layer } from './project.type';
+import { Widget, WidgetPropertyModel } from './widget.type';
 
 interface WidgetsList {
   widgets: Widget[];

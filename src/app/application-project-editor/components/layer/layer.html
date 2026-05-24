@@ -2,7 +2,6 @@
   @case ('section') {
     <section
       deLayerContent
-      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
       [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       [style]="layer().layerPropertyModel | layerAttributeTransform: buildLayerStyleAttribute"
     >
@@ -51,11 +50,80 @@
   @case ('link') {
     <a
       deLayerContent
-      [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       [href]="linkLayerPropertyModel.href"
       [target]="linkLayerPropertyModel.target"
       >{{ layer().layerPropertyModel.content }}</a
     >
+  }
+
+  @case ('form') {
+    <form
+      deLayerContent
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      [action]="formLayerPropertyModel.action"
+    >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+    </form>
+  }
+
+  @case ('text-input') {
+    <div deLayerContent>
+      <label>{{ textInputLayerPropertyModel.label }}</label>
+      <input
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+        [type]="textInputLayerPropertyModel.inputType"
+        [placeholder]="textInputLayerPropertyModel.placeholder"
+        [required]="textInputLayerPropertyModel.required"
+      />
+    </div>
+  }
+
+  @case ('textarea') {
+    <div deLayerContent>
+      <label>{{ textareaInputLayerPropertyModel.label }}</label>
+      <textarea
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+        [placeholder]="textareaInputLayerPropertyModel.placeholder"
+        [required]="textareaInputLayerPropertyModel.required"
+      >
+      {{ textareaInputLayerPropertyModel.content }}
+    </textarea
+      >
+    </div>
+  }
+
+  @case ('select-input') {
+    <div deLayerContent>
+      <label>{{ selectInputLayerPropertyModel.label }}</label>
+      <select
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+        [required]="selectInputLayerPropertyModel.required"
+      >
+        @for (option of selectInputLayerPropertyModel.options; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  @case ('button') {
+    <button
+      deLayerContent
+      [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+      [type]="buttonLayerPropertyModel.type"
+    >
+      {{ layer().layerPropertyModel.content }}
+    </button>
   }
 
   @case ('icon') {

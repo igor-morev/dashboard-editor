@@ -4,7 +4,7 @@ import { DesignTokens, THEME_PRESETS } from '../types/theme';
 @Injectable({ providedIn: 'root' })
 export class ThemeManager {
   // Текущее состояние темы (Angular Signal)
-  private themeSignal = signal<DesignTokens>(THEME_PRESETS['healthcare']);
+  private themeSignal = signal<DesignTokens>(THEME_PRESETS['grooming']);
   readonly currentTheme = this.themeSignal.asReadonly();
 
   constructor() {

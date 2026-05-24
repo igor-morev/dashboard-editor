@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
+import { Layer, EditorCommand } from '@app/application-project-editor/types/project.type';
 import { CONTEXT_MENU_OVERLAY_DATA, ContextMenuOverlayRef } from '@app/shared/context-menu-overlay';
-import {
-  EditorCommand,
-  Layer,
-} from '@app/application-project-editor/types/application-editor.type';
 
 @Component({
   selector: 'de-context-menu',

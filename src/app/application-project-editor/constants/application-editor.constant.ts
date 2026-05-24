@@ -1,4 +1,4 @@
-import { ColorName, ColorRange } from '../types/application-editor.type';
+import { ColorName, ColorRange } from '../types/config.type';
 
 export const colorPalette: ColorName[] = [
   'white',

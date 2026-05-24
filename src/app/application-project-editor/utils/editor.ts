@@ -1,5 +1,6 @@
 import { colorPalette, colorRange } from '../constants/application-editor.constant';
-import { Layer, Widget } from '../types/application-editor.type';
+import { Layer } from '../types/project.type';
+import { Widget } from '../types/widget.type';
 
 export function generateUniqueId() {
   return 'layer-' + Math.random().toString(36).substr(2, 9);

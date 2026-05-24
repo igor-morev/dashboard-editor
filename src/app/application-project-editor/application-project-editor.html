@@ -94,14 +94,22 @@
 
   <div class="grow h-full flex flex-col">
     <div
-      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12"
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12 gap-x-4"
     >
-      <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
-        <mat-icon>undo</mat-icon>
-      </button>
-      <button matIconButton (click)="redo()" [disabled]="!canRedo()" title="Redo (Cmd+Shift+Z)">
-        <mat-icon>redo</mat-icon>
-      </button>
+      <div class="flex items-center">
+        <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
+          <mat-icon>undo</mat-icon>
+        </button>
+        <button matIconButton (click)="redo()" [disabled]="!canRedo()" title="Redo (Cmd+Shift+Z)">
+          <mat-icon>redo</mat-icon>
+        </button>
+      </div>
+      <div>
+        <select class="de-input" name="textAlign" id="" (change)="changeTheme($event)">
+          <option value="grooming">Grooming</option>
+          <option value="healthcare">Healthcare</option>
+        </select>
+      </div>
     </div>
     <div
       class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"

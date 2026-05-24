@@ -1,3 +1,13 @@
+import {
+  ColorName,
+  ColorRange,
+  BackgroundPosition,
+  BackgroundRepeat,
+  BackgroundSize,
+  TextAlign,
+  Spaces,
+} from './config.type';
+
 interface AbstractBaseWidget {
   id: string;
   widgetName: string;
@@ -26,7 +36,13 @@ export interface GenericWidget extends AbstractBaseWidget {
     | 'list-item'
     | 'header'
     | 'footer'
-    | 'block';
+    | 'block'
+    | 'button'
+    | 'text-input'
+    | 'file-input'
+    | 'select-input'
+    | 'textarea'
+    | 'form';
 }
 
 export interface LinkWidget extends AbstractBaseWidget {
@@ -39,90 +55,44 @@ export interface ImageWidget extends AbstractBaseWidget {
   defaultWidgetPropertyModel: ImageWidgetPropertyModel;
 }
 
+export interface FormWidget extends AbstractBaseWidget {
+  widgetType: 'form';
+  defaultWidgetPropertyModel: FormWidgetPropertyModel;
+}
+
+export interface TextInputWidget extends AbstractBaseWidget {
+  widgetType: 'text-input';
+  defaultWidgetPropertyModel: TextInputWidgetPropertyModel;
+}
+
+export interface FileInputWidget extends AbstractBaseWidget {
+  widgetType: 'file-input';
+  defaultWidgetPropertyModel: FileInputWidgetPropertyModel;
+}
+
+export interface SelectInputWidget extends AbstractBaseWidget {
+  widgetType: 'select-input';
+  defaultWidgetPropertyModel: SelectInputWidgetPropertyModel;
+}
+
+export interface TextareaWidget extends AbstractBaseWidget {
+  widgetType: 'textarea';
+  defaultWidgetPropertyModel: TextareaWidgetPropertyModel;
+}
+
+export interface ButtonWidget extends AbstractBaseWidget {
+  widgetType: 'button';
+  defaultWidgetPropertyModel: ButtonWidgetPropertyModel;
+}
+
+export type FormElementWidget =
+  | TextInputWidget
+  | FileInputWidget
+  | SelectInputWidget
+  | TextareaWidget
+  | ButtonWidget;
+
 export type Widget = GenericWidget | LinkWidget | ImageWidget;
-
-export interface Page {
-  id: string;
-  pageName: string;
-}
-
-export interface Layer {
-  id: string;
-  parentId: string | null;
-  sourceWidgetId: string;
-  widgetReference: Widget;
-  layerPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel;
-  children: Layer[];
-  index: number;
-  isVisible: boolean;
-  locked: boolean;
-  layerName?: string;
-}
-
-export interface AppViewSchema {
-  device: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  layers: Layer[];
-  layersMap: Record<string, Layer>;
-}
-
-export interface AppState {
-  pages: Page[];
-  selectedPage: Page;
-  selectedLayer: Layer;
-  appViewSchema: AppViewSchema;
-}
-
-export type EditorCommand = 'delete' | 'copy' | 'paste' | 'duplicate';
-
-type SpaceValue =
-  | 2
-  | 4
-  | 6
-  | 8
-  | 10
-  | 12
-  | 14
-  | 16
-  | 20
-  | 24
-  | 28
-  | 32
-  | {
-      unit: 'px' | 'rem' | 'em';
-      value: number;
-    };
-
-type Spaces =
-  | {
-      x: SpaceValue;
-      y: SpaceValue;
-    }
-  | {
-      left: SpaceValue;
-      right: SpaceValue;
-      top: SpaceValue;
-      bottom: SpaceValue;
-    };
-
-export type ColorName =
-  | 'white'
-  | 'red'
-  | 'blue'
-  | 'green'
-  | 'yellow'
-  | 'gray'
-  | 'purple'
-  | 'pink'
-  | 'indigo'
-  | 'teal'
-  | 'cyan'
-  | 'black';
-export type ColorRange = null | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-
-export type TextAlign = 'left' | 'center' | 'right' | 'justify';
-export type BackgroundPosition = 'center' | 'top' | 'bottom' | 'left' | 'right';
-export type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
-export type BackgroundSize = 'cover' | 'contain' | 'auto';
 
 export type WidgetPropertyConfig = Partial<{
   styles: Partial<{
@@ -220,4 +190,43 @@ export type LinkWidgetPropertyModel = WidgetPropertyModel & {
 export type ImageWidgetPropertyModel = WidgetPropertyModel & {
   src: string;
   alt: string;
+};
+
+export type TextInputWidgetPropertyModel = WidgetPropertyModel & {
+  inputType: 'text' | 'email' | 'password' | 'number' | 'tel';
+  label: string;
+  placeholder: string;
+  name: string;
+  required: boolean;
+};
+
+export type FileInputWidgetPropertyModel = WidgetPropertyModel & {
+  multiple: boolean;
+  label: string;
+  name: string;
+  required: boolean;
+};
+
+export type SelectInputWidgetPropertyModel = WidgetPropertyModel & {
+  multiple: boolean;
+  label: string;
+  name: string;
+  required: boolean;
+  options: string[];
+};
+
+export type TextareaWidgetPropertyModel = WidgetPropertyModel & {
+  label: string;
+  placeholder: string;
+  name: string;
+  required: boolean;
+};
+
+export type ButtonWidgetPropertyModel = WidgetPropertyModel & {
+  type: 'button' | 'submit';
+};
+
+export type FormWidgetPropertyModel = WidgetPropertyModel & {
+  action: string;
+  method: 'GET' | 'POST';
 };

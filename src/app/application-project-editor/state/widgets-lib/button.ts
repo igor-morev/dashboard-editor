@@ -1,13 +1,13 @@
 import {
-  LinkWidget,
-  LinkWidgetPropertyModel,
+  ButtonWidget,
+  ButtonWidgetPropertyModel,
 } from '@app/application-project-editor/types/widget.type';
 
-export function linkButtonWidget(model: Partial<LinkWidgetPropertyModel> = {}): LinkWidget {
+export function buttonWidget(model: Partial<ButtonWidgetPropertyModel> = {}): ButtonWidget {
   return {
-    id: 'link-button-widget',
-    widgetName: 'LinkButton',
-    widgetType: 'link',
+    id: 'button-widget',
+    widgetName: 'Button',
+    widgetType: 'button',
     canNotBeAddedInside: (widget) => {
       return true;
     },
@@ -17,9 +17,7 @@ export function linkButtonWidget(model: Partial<LinkWidgetPropertyModel> = {}): 
     defaultWidgetPropertyModel: {
       defaultClass:
         'px-2 py-1 bg-primary text-white rounded-theme inline-flex items-center gap-x-1',
-      target: '_self',
-      href: '#',
       ...model,
-    },
+    } as ButtonWidgetPropertyModel,
   };
 }

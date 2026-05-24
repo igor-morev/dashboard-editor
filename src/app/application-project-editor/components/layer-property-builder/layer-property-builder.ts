@@ -10,16 +10,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LayersEditor } from '@app/application-project-editor/services/layers-editor';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
+import { ColorName, ColorRange } from '@app/application-project-editor/types/config.type';
+import { Layer } from '@app/application-project-editor/types/project.type';
 import {
-  ColorName,
-  ColorRange,
-  ImageWidgetPropertyModel,
-  Layer,
   LinkWidget,
-  LinkWidgetPropertyModel,
-  Widget,
   WidgetPropertyModel,
-} from '@app/application-project-editor/types/application-editor.type';
+  LinkWidgetPropertyModel,
+  ImageWidgetPropertyModel,
+} from '@app/application-project-editor/types/widget.type';
 import { ColorPalleteSelect } from '@app/application-project-editor/ui/color-pallete-select/color-pallete-select';
 import { auditTime } from 'rxjs';
 

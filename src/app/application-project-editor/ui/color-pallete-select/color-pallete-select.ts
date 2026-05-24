@@ -20,13 +20,11 @@ import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
-import {
-  ColorName,
-  ColorRange,
-} from '@app/application-project-editor/types/application-editor.type';
+
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { filter } from 'rxjs';
+import { ColorName, ColorRange } from '@app/application-project-editor/types/config.type';
 
 interface ColorSwatch {
   name: ColorName;

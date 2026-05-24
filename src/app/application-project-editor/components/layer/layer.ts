@@ -12,7 +12,14 @@ import {
   signal,
   TemplateRef,
 } from '@angular/core';
-import { Layer, LinkWidget } from '../../types/application-editor.type';
+import {
+  ButtonWidget,
+  FormWidget,
+  LinkWidget,
+  SelectInputWidget,
+  TextareaWidget,
+  TextInputWidget,
+} from '../../types/widget.type';
 import { NgTemplateOutlet } from '@angular/common';
 import { LayerContent } from './layer-content/layer-content';
 import { LayerAttributeTransformPipe } from '../../pipes/layer-attribute-transform-pipe';
@@ -21,6 +28,7 @@ import {
   buildLayerTailwindClasses,
 } from '../../pipes/layer-attribute.util';
 import { MatIconModule } from '@angular/material/icon';
+import { Layer } from '@app/application-project-editor/types/project.type';
 
 export const LAYER_REF = new InjectionToken<LayerComponent>('LAYER');
 
@@ -73,5 +81,25 @@ export class LayerComponent {
 
   get linkLayerPropertyModel() {
     return this.layer().layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'];
+  }
+
+  get formLayerPropertyModel() {
+    return this.layer().layerPropertyModel as FormWidget['defaultWidgetPropertyModel'];
+  }
+
+  get buttonLayerPropertyModel() {
+    return this.layer().layerPropertyModel as ButtonWidget['defaultWidgetPropertyModel'];
+  }
+
+  get textInputLayerPropertyModel() {
+    return this.layer().layerPropertyModel as TextInputWidget['defaultWidgetPropertyModel'];
+  }
+
+  get textareaInputLayerPropertyModel() {
+    return this.layer().layerPropertyModel as TextareaWidget['defaultWidgetPropertyModel'];
+  }
+
+  get selectInputLayerPropertyModel() {
+    return this.layer().layerPropertyModel as SelectInputWidget['defaultWidgetPropertyModel'];
   }
 }

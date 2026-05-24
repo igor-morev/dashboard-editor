@@ -2,10 +2,7 @@ import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
-import {
-  Widget,
-  WidgetPropertyModel,
-} from '@app/application-project-editor/types/application-editor.type';
+import { Widget, WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
 import { columnWidget } from './column';
 import { containerWidget } from './container';
 import { headingWidget } from './heading';

@@ -1,4 +1,4 @@
-import { Widget } from '@app/application-project-editor/types/application-editor.type';
+import { Widget } from '@app/application-project-editor/types/widget.type';
 import { headingWidget } from './heading';
 import { textWidget } from './text';
 import { imageWidget } from './image';
@@ -6,10 +6,11 @@ import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
+import { iconWidget } from './icon';
 
 export function cardWidget({
-  title = 'Card Header',
-  description = 'Card Body Heading',
+  title = 'Reproductive Carrier Screen',
+  description = 'This test identifies couples who are at risk of passing inherited conditions to their children. If you or your partner are pregnant or are planning to become pregnant, this test is for you.',
   imageUrl = '/placeholder-icon.png',
 }): Widget {
   return {
@@ -21,7 +22,7 @@ export function cardWidget({
     },
     propertyConfig: {},
     defaultWidgetPropertyModel: {
-      class: 'rounded-md mb-4 shadow-xs',
+      class: 'rounded-theme mb-4 shadow-xs',
     },
     children: [
       {
@@ -33,13 +34,16 @@ export function cardWidget({
         },
         propertyConfig: {},
         defaultWidgetPropertyModel: {
-          class: 'flex items-center justify-center bg-blue-200 h-48',
+          class: 'flex items-center justify-center bg-primary h-48',
         },
         children: [
-          imageWidget({
-            content: imageUrl,
-            alt: 'Card Image',
-            class: 'h-24 m-auto',
+          // imageWidget({
+          //   content: imageUrl,
+          //   alt: 'Card Image',
+          //   class: 'h-24 m-auto',
+          // }),
+          iconWidget({
+            content: 'photo',
           }),
         ],
       },
@@ -64,17 +68,11 @@ export function cardWidget({
         },
         defaultWidgetPropertyModel: {
           class: 'p-3',
-          styles: {
-            backgroundColor: {
-              name: 'white',
-              range: null,
-            },
-          },
         },
         children: [
           headingWidget({
             content: title,
-            class: 'mb-2 font-bold',
+            class: 'text-project-h3 mb-2',
           }),
           textWidget({
             content: description,
