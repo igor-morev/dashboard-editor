@@ -2,10 +2,11 @@ import {
   FormElementWidget,
   FormWidget,
   FormWidgetPropertyModel,
+  Widget,
 } from '@app/application-project-editor/types/widget.type';
 
 export function formWidget(
-  children: FormElementWidget[] = [],
+  children: Widget[] = [],
   model: Partial<FormWidgetPropertyModel> = {},
 ): FormWidget {
   return {

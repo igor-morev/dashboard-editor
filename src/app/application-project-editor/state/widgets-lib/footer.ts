@@ -12,6 +12,9 @@ import { listWidget } from './list';
 import { listItemWidget } from './list-item';
 import { rowWidget } from './row';
 import { textWidget } from './text';
+import { buttonWidget } from './button';
+import { formWidget } from './form/form';
+import { textInputWidget } from './form/text-input';
 
 export interface FooterContent {
   logoSrc?: string;
@@ -120,25 +123,67 @@ export function footerWidget(
       // 4. С формой подписки (Banner + Footer)
       'newsletter-split': [
         containerWidget([
+          // Используем flex-col для вертикального стека,
+          // и lg:flex-row только для десктопов, если захочешь вернуть сплит
           rowWidget(
             [
+              // Текстовый блок: теперь на всю ширину
               columnWidget(
                 [
-                  headingWidget({ content: 'Stay updated' }),
-                  textWidget({ content: 'Join our list' }),
+                  headingWidget({
+                    content: 'Stay updated',
+                    class: 'text-project-h3 font-bold mb-2',
+                  }),
+                  textWidget({
+                    content: 'Join our list for the latest updates and news.',
+                    class: 'mb-6', // Добавили отступ снизу
+                  }),
                 ],
-                { class: 'w-1/2' },
+                { class: 'w-full' },
               ),
+              // Блок формы: теперь строго под текстом
               columnWidget(
                 [
-                  /* Тут будет виджет формы или инпут */
+                  formWidget([
+                    rowWidget(
+                      [
+                        columnWidget(
+                          [
+                            textInputWidget({
+                              placeholder: 'Enter your email address',
+                              inputType: 'email',
+                              class: 'w-full',
+                              required: true,
+                            }),
+                          ],
+                          { class: 'grow' },
+                        ),
+                        columnWidget(
+                          [
+                            buttonWidget({
+                              type: 'submit',
+                              content: 'Subscribe',
+                            }),
+                          ],
+                          { class: 'flex-none' },
+                        ),
+                      ],
+                      { class: 'flex flex-col sm:flex-row gap-3 items-stretch' },
+                    ),
+                    // На мобилках даже инпут и кнопка будут друг под другом (flex-col)
+                  ]),
                 ],
-                { class: 'w-1/2' },
+                { class: 'w-full max-w-lg' }, // Ограничиваем ширину формы для красоты
               ),
             ],
-            { class: 'mb-12 pb-12 border-b' },
+            { class: 'mb-12 pb-12 border-b border-white/10 flex-col items-start' },
           ),
-          rowWidget([textWidget({ content: data.copyright })]),
+          rowWidget([
+            textWidget({
+              content: data.copyright,
+              class: 'text-sm',
+            }),
+          ]),
         ]),
       ],
 

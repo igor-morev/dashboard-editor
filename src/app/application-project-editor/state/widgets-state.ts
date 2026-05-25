@@ -25,6 +25,7 @@ import { buttonWidget } from './widgets-lib/button';
 import { selectInputWidget } from './widgets-lib/form/select-input';
 import { textareaWidget } from './widgets-lib/form/textarea';
 import { contactSectionWidget } from './widgets-lib/contact';
+import { bannerWidget } from './widgets-lib/banner';
 
 @Injectable({
   providedIn: 'root',
@@ -85,6 +86,7 @@ export class WidgetsState {
     headerWidget(),
     heroWidget(),
     featureSectionWidget(),
+    bannerWidget(),
     testimonialsWidget(),
     faqWidget(),
     contactSectionWidget(),

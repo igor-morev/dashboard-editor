@@ -158,7 +158,6 @@ export function featureSectionWidget(
     defaultWidgetPropertyModel: {
       ...sectionWidget().defaultWidgetPropertyModel,
       layout,
-      class: 'pt-10 pb-10',
       content: content as Record<string, any>,
     },
     layoutTransformer,

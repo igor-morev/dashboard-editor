@@ -32,7 +32,7 @@ export function sectionWidget(children: Widget[] = [], model: WidgetPropertyMode
       },
     },
     defaultWidgetPropertyModel: {
-      defaultClass: 'pt-12 pb-12',
+      defaultClass: 'py-12',
       styles: {
         background: {
           repeat: 'no-repeat',

@@ -87,45 +87,36 @@ export function contactSectionWidget(
     const layouts: Record<ContactLayout, Widget[]> = {
       // 1. Все в один столбец по центру (Classic Mobile)
       'simple-stack': [
-        containerWidget(
-          [
-            columnWidget([textInfo], { class: 'text-center items-center mb-12' }),
-            columnWidget([formBlock], { class: 'max-w-2xl mx-auto' }),
-          ],
-          { class: 'py-20' },
-        ),
+        containerWidget([
+          columnWidget([textInfo], { class: 'text-center items-center mb-12' }),
+          columnWidget([formBlock], { class: 'max-w-2xl mx-auto' }),
+        ]),
       ],
 
       // 2. Текст слева, Форма справа (Desktop Standard)
       'split-form-right': [
-        containerWidget(
-          [
-            rowWidget(
-              [
-                columnWidget([textInfo], { class: 'w-full mb-12' }),
-                columnWidget([formBlock], { class: 'w-full' }),
-              ],
-              { class: 'items-center flex-wrap' },
-            ),
-          ],
-          { class: 'py-20' },
-        ),
+        containerWidget([
+          rowWidget(
+            [
+              columnWidget([textInfo], { class: 'w-full mb-12' }),
+              columnWidget([formBlock], { class: 'w-full' }),
+            ],
+            { class: 'items-center flex-wrap' },
+          ),
+        ]),
       ],
 
       // 3. Форма слева, Текст справа (Инверсия)
       'split-form-left': [
-        containerWidget(
-          [
-            rowWidget(
-              [
-                columnWidget([formBlock], { class: 'w-full' }),
-                columnWidget([textInfo], { class: 'w-full mt-12' }),
-              ],
-              { class: 'items-center flex-wrap' },
-            ),
-          ],
-          { class: 'py-20' },
-        ),
+        containerWidget([
+          rowWidget(
+            [
+              columnWidget([formBlock], { class: 'w-full' }),
+              columnWidget([textInfo], { class: 'w-full mt-12' }),
+            ],
+            { class: 'items-center flex-wrap' },
+          ),
+        ]),
       ],
 
       // 4. Форма в "плавающей" карточке поверх фона (Modern)
@@ -136,39 +127,34 @@ export function contactSectionWidget(
               rowWidget(
                 [
                   columnWidget([textInfo], { class: 'w-full text-white' }),
-                  columnWidget([formBlock], { class: 'w-full ml-auto mt-12' }),
+                  columnWidget([formBlock], { class: 'w-full ml-auto' }),
                 ],
                 { class: 'items-center' },
               ),
             ]),
           ],
           {
-            class: 'relative py-32 bg-contrast', // Тут можно добавить фоновое фото
+            class: 'relative bg-contrast', // Тут можно добавить фоновое фото
           },
         ),
       ],
 
       // 5. Контакты и форма разделены сеткой
       'contact-grid': [
-        containerWidget(
-          [
-            headingWidget({ content: data.title, class: 'text-project-h2 text-center mb-16' }),
-            rowWidget([
-              columnWidget([formBlock], { class: 'w-full' }),
-              columnWidget(
-                [
-                  headingWidget({ content: 'Our Offices', class: 'text-project-h3 mb-4' }),
-                  textWidget({ content: '123 Business St, New York' }),
-                  textWidget({ content: '+1 234 567 890', class: 'mt-4 font-bold' }),
-                ],
-                { class: 'w-full mt-12' },
-              ),
-            ]),
-          ],
-          {
-            class: 'py-20',
-          },
-        ),
+        containerWidget([
+          headingWidget({ content: data.title, class: 'text-project-h2 text-center mb-16' }),
+          rowWidget([
+            columnWidget([formBlock], { class: 'w-full' }),
+            columnWidget(
+              [
+                headingWidget({ content: 'Our Offices', class: 'text-project-h3 mb-4' }),
+                textWidget({ content: '123 Business St, New York' }),
+                textWidget({ content: '+1 234 567 890', class: 'mt-4 font-bold' }),
+              ],
+              { class: 'w-full mt-12' },
+            ),
+          ]),
+        ]),
       ],
     };
 
@@ -200,6 +186,7 @@ export function contactSectionWidget(
       },
     },
     defaultWidgetPropertyModel: {
+      ...sectionWidget().defaultWidgetPropertyModel,
       layout,
       class: 'bg-surface',
       content: defaultContent as Record<string, any>,

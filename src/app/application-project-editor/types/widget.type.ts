@@ -90,7 +90,8 @@ export type FormElementWidget =
   | FileInputWidget
   | SelectInputWidget
   | TextareaWidget
-  | ButtonWidget;
+  | ButtonWidget
+  | GenericWidget;
 
 export type Widget = GenericWidget | LinkWidget | ImageWidget;
 

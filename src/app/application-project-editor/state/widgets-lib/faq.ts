@@ -140,8 +140,8 @@ export function faqWidget(layout: FAQLayout = 'accordion', content?: FAQContent)
       styles: { backgroundColor: { nameOptions: colorPalette, rangeOptions: colorRange } },
     },
     defaultWidgetPropertyModel: {
+      ...sectionWidget().defaultWidgetPropertyModel,
       layout,
-      class: 'py-20',
       content: defaultContent as Record<string, any>,
     },
     layoutTransformer,

@@ -27,3 +27,73 @@
     }
   ]
 }
+
+
+### JSON Schema Example 2:
+{
+  "industry": "Fintech",
+  "theme": {
+    "primaryColor": "slate",
+    "range": 900,
+    "typeScale": 1.25,
+    "borderRadius": "8px"
+  },
+  "sections": [
+    {
+      "type": "header",
+      "layout": "classic",
+      "content": {
+        "brandName": "SecurePay",
+        "navLinks": [
+          {"label": "Решения", "href": "#"},
+          {"label": "Безопасность", "href": "#"}
+        ],
+        "cta": {"label": "Вход", "href": "/login"}
+      }
+    },
+    {
+      "type": "hero",
+      "layout": "split-right",
+      "content": {
+        "title": "Управляйте капиталом в одно касание",
+        "subtitle": "Безопасные транзакции и аналитика ваших финансов в реальном времени.",
+        "ctaText": "Открыть счет",
+        "imageSrc": "https://unsplash.com"
+      }
+    },
+    {
+      "type": "banner",
+      "layout": "minimal-inline",
+      "content": {
+        "title": "Новое обновление: поддержка крипто-кошельков уже доступна",
+        "buttonText": "Узнать больше",
+        "badge": "NEW"
+      }
+    },
+    {
+      "type": "features",
+      "layout": "side-by-side",
+      "content": {
+        "title": "Почему выбирают нас",
+        "description": "Мы объединили безопасность банка и удобство мобильного приложения."
+      }
+    },
+    {
+      "type": "contact",
+      "layout": "split-form-right",
+      "content": {
+        "title": "Нужна консультация?",
+        "subtitle": "Наши эксперты ответят на любые вопросы о ваших инвестициях.",
+        "formTitle": "Заявка на звонок"
+      }
+    },
+    {
+      "type": "footer",
+      "layout": "logo-left-links-right",
+      "content": {
+        "brandName": "SecurePay Inc.",
+        "copyright": "© 2026 Все права защищены"
+      }
+    }
+  ]
+}

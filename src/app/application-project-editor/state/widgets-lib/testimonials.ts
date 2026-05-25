@@ -103,36 +103,33 @@ export function testimonialsWidget(
 
       // 2. Одна большая цитата (для Hero-блока или акцента)
       'single-quote': [
-        containerWidget(
-          [
-            columnWidget(
-              [
-                textWidget({ content: '“', class: 'text-6xl font-serif text-primary mb-2' }),
-                textWidget({ content: data.items[0].text, class: 'font-medium mb-8' }),
-                rowWidget(
-                  [
-                    imageWidget({ src: data.items[0].avatar, class: 'w-16 h-16 rounded-full' }),
-                    columnWidget([
-                      textWidget({ content: data.items[0].author, class: 'font-bold text-xl' }),
-                      textWidget({
-                        content: data.items[0].role,
-                        styles: {
-                          color: {
-                            name: 'gray',
-                            range: 500,
-                          },
+        containerWidget([
+          columnWidget(
+            [
+              textWidget({ content: '“', class: 'text-6xl font-serif text-primary mb-2' }),
+              textWidget({ content: data.items[0].text, class: 'font-medium mb-8' }),
+              rowWidget(
+                [
+                  imageWidget({ src: data.items[0].avatar, class: 'w-16 h-16 rounded-full' }),
+                  columnWidget([
+                    textWidget({ content: data.items[0].author, class: 'font-bold text-xl' }),
+                    textWidget({
+                      content: data.items[0].role,
+                      styles: {
+                        color: {
+                          name: 'gray',
+                          range: 500,
                         },
-                      }),
-                    ]),
-                  ],
-                  { class: 'items-center gap-4 justify-center' },
-                ),
-              ],
-              { class: 'text-center max-w-4xl mx-auto' },
-            ),
-          ],
-          { class: 'py-20' },
-        ),
+                      },
+                    }),
+                  ]),
+                ],
+                { class: 'items-center gap-4 justify-center' },
+              ),
+            ],
+            { class: 'text-center max-w-4xl mx-auto' },
+          ),
+        ]),
       ],
 
       // 3. Текст слева, отзывы справа (Side-by-Side)
@@ -222,8 +219,8 @@ export function testimonialsWidget(
       styles: { backgroundColor: { nameOptions: colorPalette, rangeOptions: colorRange } },
     },
     defaultWidgetPropertyModel: {
+      ...sectionWidget().defaultWidgetPropertyModel,
       layout,
-      class: 'py-20',
       content: defaultContent as Record<string, any>,
     },
     layoutTransformer,
