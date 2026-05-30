@@ -26,6 +26,7 @@ import { Subject } from 'rxjs';
 import { ThemeManager } from './services/theme-manager';
 import { Layer, EditorCommand } from './types/project.type';
 import { Widget } from './types/widget.type';
+import { Template } from './types/template.type';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -67,6 +68,10 @@ export class ApplicationProjectEditor {
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
 
+  widgetTabs = ['widgets', 'templates', 'AI'];
+
+  tab = signal<string>('widgets');
+
   private _dragPosition = signal<{ position: 'before' | 'after' | 'inside'; id: string } | null>(
     null,
   );
@@ -100,6 +105,10 @@ export class ApplicationProjectEditor {
 
   get widgets() {
     return this.widgetsState.widgets;
+  }
+
+  get templates() {
+    return this.widgetsState.templates;
   }
 
   get pages() {
@@ -299,6 +308,16 @@ export class ApplicationProjectEditor {
   moveWidgetOnScaffold(event: Event, widget: Widget) {
     event.preventDefault();
     this.createLayer(widget);
+  }
+
+  moveTemplateOnScaffold(event: Event, template: Template) {
+    this.state.resetAppState();
+
+    template.widgets.forEach((widget) => {
+      this.createLayer(widget);
+    });
+
+    this.cdr.markForCheck();
   }
 
   highlightLayerFromTree(event: Event, layer: Layer) {
@@ -526,6 +545,10 @@ export class ApplicationProjectEditor {
    */
   onLayerDragDrop(event: CdkDragDrop<Layer[]>) {
     this.dragDroppedEvent.next(event);
+  }
+
+  selectTab(tab: string) {
+    this.tab.set(tab);
   }
 
   private createLayer(widget: Widget) {

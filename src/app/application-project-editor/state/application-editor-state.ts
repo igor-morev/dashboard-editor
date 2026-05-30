@@ -57,6 +57,36 @@ export class ApplicationEditorState {
     });
   }
 
+  resetAppState() {
+    const initialState: AppState = {
+      pages: [
+        {
+          id: 'page-1',
+          pageName: 'Home Page',
+        },
+        {
+          id: 'page-2',
+          pageName: 'Contacts Page',
+        },
+      ],
+      selectedPage: {
+        id: 'page-1',
+        pageName: 'Home Page',
+      },
+      selectedLayer: scaffoldLayer(),
+      appViewSchema: {
+        device: 'sm',
+        layers: [scaffoldLayer()],
+        layersMap: {
+          scaffold: scaffoldLayer(),
+        },
+      },
+    };
+
+    // this.historyState.clearHistory();
+    this.updateState(initialState);
+  }
+
   updateAppState(updates: Partial<AppState>) {
     const newState = { ...this.appState, ...updates };
 

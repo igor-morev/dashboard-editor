@@ -1,7 +1,7 @@
 @use 'tailwindcss';
 
 :host {
-  @apply h-screen w-screen flex flex-col;
+  @apply h-full w-full block;
 }
 // Layer tree styling
 ::ng-deep {
@@ -64,4 +64,12 @@
 
 .inside {
   @apply border-blue-300;
+}
+
+.tab {
+  @apply border-solid border-b-2 border-transparent capitalize cursor-pointer;
+}
+
+.tab-active {
+  @apply border-solid border-b-blue-500;
 }

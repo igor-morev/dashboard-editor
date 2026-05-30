@@ -1,31 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Widget } from '../types/widget.type';
-import { containerWidget } from './widgets-lib/container';
-import { sectionWidget } from './widgets-lib/section';
-import { heroWidget } from './widgets-lib/hero';
-import { linkWidget } from './widgets-lib/link';
-import { listWidget } from './widgets-lib/list';
-import { listItemWidget } from './widgets-lib/list-item';
-import { headerWidget } from './widgets-lib/header';
-import { linkButtonWidget } from './widgets-lib/link-button';
-import { headingWidget } from './widgets-lib/heading';
-import { textWidget } from './widgets-lib/text';
-import { imageWidget } from './widgets-lib/image';
-import { columnWidget } from './widgets-lib/column';
-import { rowWidget } from './widgets-lib/row';
-import { featureSectionWidget } from './widgets-lib/feature-section';
-import { cardWidget } from './widgets-lib/card';
-import { footerWidget } from './widgets-lib/footer';
-import { testimonialsWidget } from './widgets-lib/testimonials';
-import { faqWidget } from './widgets-lib/faq';
-import { iconWidget } from './widgets-lib/icon';
-import { formWidget } from './widgets-lib/form/form';
-import { textInputWidget } from './widgets-lib/form/text-input';
-import { buttonWidget } from './widgets-lib/button';
-import { selectInputWidget } from './widgets-lib/form/select-input';
-import { textareaWidget } from './widgets-lib/form/textarea';
-import { contactSectionWidget } from './widgets-lib/contact';
-import { bannerWidget } from './widgets-lib/banner';
+import { containerWidget } from '../widgets-lib/container';
+import { sectionWidget } from '../widgets-lib/section';
+import { heroWidget } from '../widgets-lib/hero';
+import { linkWidget } from '../widgets-lib/link';
+import { listWidget } from '../widgets-lib/list';
+import { listItemWidget } from '../widgets-lib/list-item';
+import { headerWidget } from '../widgets-lib/header';
+import { linkButtonWidget } from '../widgets-lib/link-button';
+import { headingWidget } from '../widgets-lib/heading';
+import { textWidget } from '../widgets-lib/text';
+import { imageWidget } from '../widgets-lib/image';
+import { columnWidget } from '../widgets-lib/column';
+import { rowWidget } from '../widgets-lib/row';
+import { featureSectionWidget } from '../widgets-lib/feature-section';
+import { cardWidget } from '../widgets-lib/card';
+import { footerWidget } from '../widgets-lib/footer';
+import { testimonialsWidget } from '../widgets-lib/testimonials';
+import { faqWidget } from '../widgets-lib/faq';
+import { iconWidget } from '../widgets-lib/icon';
+import { formWidget } from '../widgets-lib/form/form';
+import { textInputWidget } from '../widgets-lib/form/text-input';
+import { buttonWidget } from '../widgets-lib/button';
+import { selectInputWidget } from '../widgets-lib/form/select-input';
+import { textareaWidget } from '../widgets-lib/form/textarea';
+import { contactSectionWidget } from '../widgets-lib/contact';
+import { bannerWidget } from '../widgets-lib/banner';
+import { Template } from '../types/template.type';
 
 @Injectable({
   providedIn: 'root',
@@ -93,7 +94,28 @@ export class WidgetsState {
     footerWidget(),
   ];
 
+  private _templates: Template[] = [
+    {
+      id: 'dog-grooming',
+      templateName: 'Dog Grooming',
+      widgets: [
+        headerWidget(),
+        heroWidget(),
+        featureSectionWidget(),
+        bannerWidget('split-accent'),
+        testimonialsWidget(),
+        faqWidget(),
+        contactSectionWidget(),
+        footerWidget(),
+      ],
+    },
+  ];
+
   get widgets() {
     return this._widgets;
+  }
+
+  get templates() {
+    return this._templates;
   }
 }

@@ -1,22 +1,50 @@
-<div class="h-screen w-screen flex">
+<div class="h-full w-full flex">
   <div class="flex flex-col w-80 bg-white border-0 border-r border-gray-300 border-solid">
     <div
-      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12"
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12 gap-x-2"
     >
+      <a matIconButton [routerLink]="['/project']">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
       Project Name
     </div>
     <div class="grow grid grid-rows-[200px_100px_2fr]">
       <div class="flex flex-col">
-        <div class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white">Widgets</div>
-        <div class="py-2 px-4 overflow-auto h-0 grow">
-          @for (widget of widgets; track widget.id) {
+        <div class="border-0 border-b border-gray-300 border-solid bg-white">
+          @for (item of widgetTabs; track item) {
             <button
-              (click)="moveWidgetOnScaffold($event, widget)"
-              class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
-              [title]="widget.widgetName"
+              class="py-2 px-4 tab"
+              (click)="selectTab(item)"
+              type="button"
+              [class.tab-active]="tab() === item"
             >
-              {{ widget.widgetName }}
+              {{ item }}
             </button>
+          }
+        </div>
+        <div class="py-2 px-4 overflow-auto h-0 grow">
+          @if (tab() === 'widgets') {
+            @for (widget of widgets; track widget.id) {
+              <button
+                (click)="moveWidgetOnScaffold($event, widget)"
+                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                [title]="widget.widgetName"
+              >
+                {{ widget.widgetName }}
+              </button>
+            }
+          }
+
+          @if (tab() === 'templates') {
+            @for (template of templates; track template.id) {
+              <button
+                (click)="moveTemplateOnScaffold($event, template)"
+                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                [title]="template.templateName"
+              >
+                {{ template.templateName }}
+              </button>
+            }
           }
         </div>
       </div>
