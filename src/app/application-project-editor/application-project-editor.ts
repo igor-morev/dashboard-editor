@@ -313,6 +313,8 @@ export class ApplicationProjectEditor {
   moveTemplateOnScaffold(event: Event, template: Template) {
     this.state.resetAppState();
 
+    this.themeManager.setTheme(template.theme);
+
     template.widgets.forEach((widget) => {
       this.createLayer(widget);
     });

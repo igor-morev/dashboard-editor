@@ -98,6 +98,7 @@ export class WidgetsState {
     {
       id: 'dog-grooming',
       templateName: 'Dog Grooming',
+      theme: 'grooming',
       widgets: [
         headerWidget(),
         heroWidget(),

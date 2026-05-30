@@ -5,5 +5,6 @@ export interface Template {
   templateName: string;
   description?: string;
   thumbnailUrl?: string;
+  theme: string;
   widgets: Widget[];
 }
