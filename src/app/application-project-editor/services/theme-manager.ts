@@ -18,6 +18,12 @@ export class ThemeManager {
     }
   }
 
+  setCustomTheme(customTokens: Partial<DesignTokens>) {
+    const current = this.themeSignal();
+    const updatedTheme = { ...current, ...customTokens };
+    this.themeSignal.set(updatedTheme);
+  }
+
   varPrefix() {
     return '--project';
   }

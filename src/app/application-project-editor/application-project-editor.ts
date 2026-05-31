@@ -27,6 +27,8 @@ import { ThemeManager } from './services/theme-manager';
 import { Layer, EditorCommand } from './types/project.type';
 import { Widget } from './types/widget.type';
 import { Template } from './types/template.type';
+import { ProjectEditorApi } from '@app/api/services/project-editor-api';
+import { DataAccess } from './services/data-access';
 
 @Component({
   selector: 'de-application-project-editor',
@@ -53,9 +55,11 @@ export class ApplicationProjectEditor {
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private contextMenuOverlay = inject(ContextMenuOverlay);
+  private readonly api = inject(ProjectEditorApi);
   private readonly state = inject(ApplicationEditorState);
   private readonly widgetsState = inject(WidgetsState);
   private readonly themeManager = inject(ThemeManager);
+  private readonly dataAccess = inject(DataAccess);
 
   private layersEditor = inject(LayersEditor);
 
@@ -88,7 +92,11 @@ export class ApplicationProjectEditor {
   }
 
   ngOnInit() {
-    this.themeManager.setTheme('grooming');
+    // this.themeManager.setTheme('grooming');
+    this.api.loadPage('1', '1').subscribe((response) => {
+      this.themeManager.setCustomTheme(response.theme);
+      this.dataAccess.renderPage(response);
+    });
   }
 
   get appState() {

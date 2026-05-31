@@ -22,7 +22,7 @@ export function cardWidget({
     },
     propertyConfig: {},
     defaultWidgetPropertyModel: {
-      class: 'rounded-theme mb-4 shadow-xs',
+      class: 'rounded-theme mb-8 shadow-xs',
     },
     children: [
       {
@@ -37,14 +37,15 @@ export function cardWidget({
           class: 'flex items-center justify-center bg-primary h-48',
         },
         children: [
-          // imageWidget({
-          //   content: imageUrl,
-          //   alt: 'Card Image',
-          //   class: 'h-24 m-auto',
-          // }),
-          iconWidget({
-            content: 'photo',
-          }),
+          imageUrl
+            ? imageWidget({
+                content: imageUrl,
+                alt: 'Card Image',
+                class: 'h-24 m-auto',
+              })
+            : iconWidget({
+                content: 'photo',
+              }),
         ],
       },
       {

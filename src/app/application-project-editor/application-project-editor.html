@@ -46,6 +46,10 @@
               </button>
             }
           }
+
+          @if (tab() === 'AI') {
+            <a [routerLink]="['page', 1, 'generate']">Generate Page</a>
+          }
         </div>
       </div>
       <div class="flex flex-col">
@@ -59,6 +63,7 @@
                 <a
                   [routerLink]="['page', page.id]"
                   routerLinkActive="text-blue-500"
+                  [routerLinkActiveOptions]="{ exact: false }"
                   class="pl-1 hover:bg-blue-300/50 block whitespace-nowrap overflow-hidden text-ellipsis"
                   [title]="page.pageName"
                   >{{ page.pageName }}</a

@@ -62,7 +62,7 @@ export class ApplicationEditorState {
       pages: [
         {
           id: 'page-1',
-          pageName: 'Home Page',
+          pageName: 'Home Landing Page',
         },
         {
           id: 'page-2',
@@ -71,7 +71,7 @@ export class ApplicationEditorState {
       ],
       selectedPage: {
         id: 'page-1',
-        pageName: 'Home Page',
+        pageName: 'Home Landing Page',
       },
       selectedLayer: scaffoldLayer(),
       appViewSchema: {

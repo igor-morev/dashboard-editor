@@ -1,24 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { environment } from "../../../environments/environment.development";
 import { AuthResponse } from "../types/auth";
 import { UserDto } from "../types/user";
-
-
-const aiResponse = {
-  "industry": "Название",
-  "theme": {
-    "primaryColor": "emerald | sky | rose | amber | slate",
-    "range": 500,
-    "typeScale": 1.2,
-    "borderRadius": "8px | 24px | 0px"
-  },
-  "sections": [
-    { "type": "header", "layout": "classic", "content": {} },
-    { "type": "hero", "layout": "centered-overlay", "content": {} },
-  ]
-};
+import { AIGenerationPayload } from "../types/ai";
+import { ProjectResponseDto } from "../types/project";
+import { PROJECT_PAGE_RESPONSE } from "@app/application-project-editor/mock/response";
 
 @Injectable({
   providedIn: 'root',
@@ -52,10 +40,18 @@ export class ProjectEditorApi {
     }>(`${environment.apiUrl}/auth/userDetails`);
   }
 
-  generatePageAI(projectId: string, pageId: string, prompt: string): Observable<{ success: boolean; message: typeof aiResponse }> {
-    return this.http.post<{ success: boolean; message: typeof aiResponse }>(
-      `${environment.apiUrl}/project/${projectId}/page/${pageId}/generate`,
-      { prompt }
+  loadPage(projectId: string, pageId: string): Observable<ProjectResponseDto> {
+    // return this.http.get<ProjectResponseDto>(
+    //   `${environment.apiUrl}/project/${projectId}/page/${pageId}`
+    // );
+
+    return of(PROJECT_PAGE_RESPONSE as any);
+  }
+
+  generatePageAI(payload: AIGenerationPayload): Observable<ProjectResponseDto> {
+    return this.http.post<ProjectResponseDto>(
+      `${environment.apiUrl}/ai/generate`,
+      payload
     );
   }
 

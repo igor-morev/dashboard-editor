@@ -1,23 +1,23 @@
-import { Widget } from '@app/application-project-editor/types/widget.type';
-import { linkWidget } from './link';
-import { listWidget } from './list';
-import { listItemWidget } from './list-item';
-import { imageWidget } from './image';
-import { textWidget } from './text';
-import { columnWidget } from './column';
-import { rowWidget } from './row';
 import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
-import { containerWidget } from './container';
-import { linkButtonWidget } from './link-button';
+import { Widget } from '@app/application-project-editor/types/widget.type';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { imageWidget } from '../image';
+import { linkWidget } from '../link';
+import { linkButtonWidget } from '../link-button';
+import { listWidget } from '../list';
+import { listItemWidget } from '../list-item';
+import { rowWidget } from '../row';
+import { textWidget } from '../text';
 
 export interface HeaderContent {
-  logoUrl?: string;
-  brandName?: string;
+  logoUrl: string;
+  brandName: string;
   navLinks: Array<{ label: string; href: string }>;
-  cta?: { label: string; href: string };
+  cta: { label: string; href: string };
 }
 
 export type HeaderLayout = 'classic' | 'centered-logo' | 'nav-center' | 'minimal' | 'stacked';
@@ -28,7 +28,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
     const logo = columnWidget([
       imageWidget({
         content: data.logoUrl || 'https://cdn-icons-png.freepik.com/512/5200/5200787.png',
-        class: 'w-[50px] object-contain',
+        class: 'w-[50px] min-w-[50px] object-contain',
       }),
     ]);
 

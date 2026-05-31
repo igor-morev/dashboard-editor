@@ -42,7 +42,7 @@
     <div deLayerContent class="inline-flex">
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
-        [src]="layer().layerPropertyModel.content"
+        [src]="imageLayerPropertyModel.src || imageLayerPropertyModel.content"
       />
     </div>
   }

@@ -3,13 +3,13 @@ import {
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
 import { Widget } from '@app/application-project-editor/types/widget.type';
-import { columnWidget } from './column';
-import { containerWidget } from './container';
-import { headingWidget } from './heading';
-import { imageWidget } from './image';
-import { rowWidget } from './row';
-import { sectionWidget } from './section';
-import { textWidget } from './text';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { headingWidget } from '../heading';
+import { imageWidget } from '../image';
+import { rowWidget } from '../row';
+import { sectionWidget } from '../section';
+import { textWidget } from '../text';
 
 export interface TestimonialItem {
   author: string;
@@ -189,21 +189,21 @@ export function testimonialsWidget(
         author: 'Sarah Johnson',
         role: 'Business Owner',
         text: 'This platform changed the way we build websites forever.',
-        avatar: 'https://pravatar.cc',
+        avatar: 'https://i.pravatar.cc/100?img=10',
         rating: 5,
       },
       {
         author: 'Mark Smith',
         role: 'Developer',
         text: 'The cleanest code I have ever seen in a low-code tool.',
-        avatar: 'https://pravatar.cc',
+        avatar: 'https://i.pravatar.cc/100?img=11',
         rating: 5,
       },
       {
         author: 'Jane Doe',
         role: 'Designer',
         text: 'Highly recommend for anyone who values time and quality.',
-        avatar: 'https://pravatar.cc',
+        avatar: 'https://i.pravatar.cc/100?img=12',
         rating: 4,
       },
     ],

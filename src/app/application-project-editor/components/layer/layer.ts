@@ -15,6 +15,7 @@ import {
 import {
   ButtonWidget,
   FormWidget,
+  ImageWidget,
   LinkWidget,
   SelectInputWidget,
   TextareaWidget,
@@ -77,6 +78,10 @@ export class LayerComponent {
 
   get linkWidgetReference() {
     return this.layer().widgetReference as LinkWidget;
+  }
+
+  get imageLayerPropertyModel() {
+    return this.layer().layerPropertyModel as ImageWidget['defaultWidgetPropertyModel'];
   }
 
   get linkLayerPropertyModel() {

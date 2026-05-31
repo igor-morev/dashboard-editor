@@ -3,12 +3,12 @@ import {
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
 import { Widget } from '@app/application-project-editor/types/widget.type';
-import { columnWidget } from './column';
-import { containerWidget } from './container';
-import { headingWidget } from './heading';
-import { rowWidget } from './row';
-import { sectionWidget } from './section';
-import { textWidget } from './text';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { headingWidget } from '../heading';
+import { rowWidget } from '../row';
+import { sectionWidget } from '../section';
+import { textWidget } from '../text';
 
 export interface FAQItem {
   question: string;

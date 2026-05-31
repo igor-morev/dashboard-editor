@@ -2,22 +2,22 @@ import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
-import { Widget, WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
-import { columnWidget } from './column';
-import { containerWidget } from './container';
-import { headingWidget } from './heading';
-import { imageWidget } from './image';
-import { linkWidget } from './link';
-import { listWidget } from './list';
-import { listItemWidget } from './list-item';
-import { rowWidget } from './row';
-import { textWidget } from './text';
-import { buttonWidget } from './button';
-import { formWidget } from './form/form';
-import { textInputWidget } from './form/text-input';
+import { Widget } from '@app/application-project-editor/types/widget.type';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { headingWidget } from '../heading';
+import { imageWidget } from '../image';
+import { linkWidget } from '../link';
+import { listWidget } from '../list';
+import { listItemWidget } from '../list-item';
+import { rowWidget } from '../row';
+import { textWidget } from '../text';
+import { buttonWidget } from '../button';
+import { formWidget } from '../form/form';
+import { textInputWidget } from '../form/text-input';
 
 export interface FooterContent {
-  logoSrc?: string;
+  logoUrl?: string;
   brandName?: string;
   copyright: string;
   // Группы ссылок (каждая группа — заголовок + массив ссылок)
@@ -26,10 +26,16 @@ export interface FooterContent {
     links: Array<{ label: string; href: string }>;
   }>;
   socials?: Array<{ icon: string; href: string }>;
+  newsletter?: {
+    title: string;
+    subtitle: string;
+    placeholder: string;
+    buttonText: string;
+  };
 }
 
 const FooterDefaultContent: FooterContent = {
-  logoSrc: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+  logoUrl: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
   brandName: 'YourBrand',
   copyright: '© 2024 YourBrand. All rights reserved.',
   linkGroups: [
@@ -55,6 +61,12 @@ const FooterDefaultContent: FooterContent = {
     { icon: 'twitter', href: '#' },
     { icon: 'linkedin', href: '#' },
   ],
+  newsletter: {
+    title: 'Subscribe to our Newsletter',
+    subtitle: 'Get the latest updates and offers.',
+    placeholder: 'Enter your email',
+    buttonText: 'Subscribe',
+  },
 };
 
 export type FooterLayout =
@@ -85,7 +97,7 @@ export function footerWidget(
         containerWidget(
           [
             columnWidget([
-              imageWidget({ src: data.logoSrc, class: 'mx-auto h-10 mb-6' }),
+              imageWidget({ src: data.logoUrl, class: 'mx-auto h-10 mb-6' }),
               listWidget(
                 data.linkGroups[0].links.map((l) => listItemWidget(linkWidget(l.label))),
                 'flex justify-center gap-6 mb-6 list-none',
@@ -104,7 +116,7 @@ export function footerWidget(
         containerWidget([
           rowWidget([
             columnWidget([
-              imageWidget({ src: data.logoSrc, class: 'h-8 mb-4' }),
+              imageWidget({ src: data.logoUrl, class: 'h-8 mb-4' }),
               textWidget({ content: data.brandName }),
             ]),
             ...data.linkGroups.slice(0, 2).map(createLinkColumn),
@@ -131,11 +143,11 @@ export function footerWidget(
               columnWidget(
                 [
                   headingWidget({
-                    content: 'Stay updated',
+                    content: content.newsletter?.title,
                     class: 'text-project-h3 font-bold mb-2',
                   }),
                   textWidget({
-                    content: 'Join our list for the latest updates and news.',
+                    content: content.newsletter?.subtitle,
                     class: 'mb-6', // Добавили отступ снизу
                   }),
                 ],
@@ -150,7 +162,7 @@ export function footerWidget(
                         columnWidget(
                           [
                             textInputWidget({
-                              placeholder: 'Enter your email address',
+                              placeholder: content.newsletter?.placeholder,
                               inputType: 'email',
                               class: 'w-full',
                               required: true,
@@ -162,7 +174,7 @@ export function footerWidget(
                           [
                             buttonWidget({
                               type: 'submit',
-                              content: 'Subscribe',
+                              content: content.newsletter?.buttonText,
                             }),
                           ],
                           { class: 'flex-none' },

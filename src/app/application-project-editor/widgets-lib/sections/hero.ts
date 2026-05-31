@@ -1,15 +1,11 @@
 import { Widget } from '@app/application-project-editor/types/widget.type';
-import { containerWidget } from './container';
-import {
-  colorPalette,
-  colorRange,
-} from '@app/application-project-editor/constants/application-editor.constant';
-import { headingWidget } from './heading';
-import { textWidget } from './text';
-import { linkButtonWidget } from './link-button';
-import { columnWidget } from './column';
-import { imageWidget } from './image';
-import { rowWidget } from './row';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { headingWidget } from '../heading';
+import { imageWidget } from '../image';
+import { linkButtonWidget } from '../link-button';
+import { rowWidget } from '../row';
+import { textWidget } from '../text';
 
 export interface HeroContent {
   title: string;
