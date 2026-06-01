@@ -27,7 +27,7 @@ export function layer(id: string, parentId = null): Layer {
   };
 }
 
-export function scaffoldLayer(): Layer {
+export function scaffoldLayer(children: Layer[] = []): Layer {
   return {
     ...layer('scaffold'),
     locked: true,
@@ -59,5 +59,6 @@ export function scaffoldLayer(): Layer {
       },
     } as Widget,
     layerPropertyModel: layer('scaffold').widgetReference.defaultWidgetPropertyModel,
+    children,
   };
 }

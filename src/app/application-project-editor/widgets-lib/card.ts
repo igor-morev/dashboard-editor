@@ -11,7 +11,11 @@ import { iconWidget } from './icon';
 export function cardWidget({
   title = 'Reproductive Carrier Screen',
   description = 'This test identifies couples who are at risk of passing inherited conditions to their children. If you or your partner are pregnant or are planning to become pregnant, this test is for you.',
-  imageUrl = '/placeholder-icon.png',
+  imageUrl,
+}: {
+  title?: string;
+  description?: string;
+  imageUrl?: string;
 }): Widget {
   return {
     id: 'card-widget',
@@ -22,7 +26,7 @@ export function cardWidget({
     },
     propertyConfig: {},
     defaultWidgetPropertyModel: {
-      class: 'rounded-theme mb-8 shadow-xs',
+      class: 'rounded-theme mb-8 shadow-xs overflow-hidden',
     },
     children: [
       {
@@ -34,14 +38,14 @@ export function cardWidget({
         },
         propertyConfig: {},
         defaultWidgetPropertyModel: {
-          class: 'flex items-center justify-center bg-primary h-48',
+          class: 'flex items-center justify-center bg-primary h-48 overflow-hidden',
         },
         children: [
           imageUrl
             ? imageWidget({
                 content: imageUrl,
                 alt: 'Card Image',
-                class: 'h-24 m-auto',
+                class: 'm-auto h-full object-cover',
               })
             : iconWidget({
                 content: 'photo',

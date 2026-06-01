@@ -18,6 +18,7 @@ import {
   footerWidget,
 } from '../widgets-lib/sections';
 import { contactSectionWidget } from '../widgets-lib/contact';
+import { Template } from '../types/template.type';
 
 @Injectable({
   providedIn: 'root',
@@ -32,42 +33,45 @@ export class DataAccess {
     return this.state.appState;
   }
 
-  renderPage(response: ProjectResponseDto) {
-    this.state.resetAppState();
+  createAiTemplate(response: ProjectResponseDto): Template {
+    const widgets = this.convertResponseDtoToSectionWidgets(response);
 
-    this.themeManager.setCustomTheme(response.theme);
+    const templateId = `ai-gen-template-${response.industry}_${Date.now()}`;
 
-    const widgets = this.convertProjectResponseDtoToSectionWidgets(response);
-
-    console.log(widgets);
-
-    widgets.forEach((widget) => this.populateLayer(widget));
+    return {
+      id: templateId,
+      templateName: templateId,
+      theme: response.theme,
+      widgets,
+    };
   }
 
-  private populateLayer(widget: Widget, selectedLayer: Layer = scaffoldLayer()) {
-    const newLayer = this.layersEditor.createLayerForWidget(
-      widget,
-      selectedLayer.id,
-      selectedLayer.children.length,
-    );
-    const updatedLayers = this.layersEditor.insertLayerInSchema(
-      this.appState.appViewSchema.layers,
-      selectedLayer.id,
-      newLayer,
-    );
-    const updatedMap = this.layersEditor.updateLayersMap(updatedLayers, {});
+  createTemplate(response: ProjectResponseDto): Template {
+    const widgets = this.convertResponseDtoToSectionWidgets(response);
 
-    this.state.updateAppState({
-      selectedLayer: updatedMap[newLayer.parentId!],
-      appViewSchema: {
-        ...this.appState.appViewSchema,
-        layers: updatedLayers,
-        layersMap: this.layersEditor.updateLayersMap(updatedLayers, {}),
-      },
+    const templateId = `template-${response.industry}_${Date.now()}`;
+
+    return {
+      id: templateId,
+      templateName: templateId,
+      theme: response.theme,
+      widgets,
+    };
+  }
+
+  renderByTemplate(template: Template) {
+    // 1. Apply theme to the app state
+    this.themeManager.setTheme(template.theme);
+
+    // 2. Populate layers based on template widgets
+    const layers = template.widgets.map((widget) => {
+      return this.layersEditor.createLayerForWidget(widget, scaffoldLayer().id, 0);
     });
+
+    this.state.setLayersState(layers);
   }
 
-  convertProjectResponseDtoToSectionWidgets(projectResponseDto: ProjectResponseDto) {
+  convertResponseDtoToSectionWidgets(projectResponseDto: ProjectResponseDto) {
     // it should return array of widgets with all properties mapped from projectResponseDto
     return projectResponseDto.sections.map((section) => {
       switch (section.type) {

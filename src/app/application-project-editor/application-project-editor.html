@@ -18,7 +18,7 @@
               type="button"
               [class.tab-active]="tab() === item"
             >
-              {{ item }}
+              {{ item === 'AI' ? '✨' : '' }} {{ item }}
             </button>
           }
         </div>
@@ -38,7 +38,7 @@
           @if (tab() === 'templates') {
             @for (template of templates; track template.id) {
               <button
-                (click)="moveTemplateOnScaffold($event, template)"
+                (click)="renderTemplateOnScaffold($event, template)"
                 class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
                 [title]="template.templateName"
               >
@@ -49,6 +49,16 @@
 
           @if (tab() === 'AI') {
             <a [routerLink]="['page', 1, 'generate']">Generate Page</a>
+
+            @for (template of aiTemplates(); track template.id) {
+              <button
+                (click)="renderTemplateOnScaffold($event, template)"
+                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                [title]="template.templateName"
+              >
+                {{ template.templateName }}
+              </button>
+            }
           }
         </div>
       </div>

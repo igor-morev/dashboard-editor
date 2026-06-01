@@ -7,6 +7,7 @@ import { AIGenerationPayload } from '@app/api/types/ai';
 import { AI_SYSTEM_PROMPT } from '@app/application-project-editor/ai/constants/ai-system-prompt';
 import { DataAccess } from '@app/application-project-editor/services/data-access';
 import { ApplicationEditorState } from '@app/application-project-editor/state/application-editor-state';
+import { WidgetsState } from '@app/application-project-editor/state/widgets-state';
 
 @Component({
   selector: 'de-generate-template-form',
@@ -18,6 +19,8 @@ import { ApplicationEditorState } from '@app/application-project-editor/state/ap
 export class GenerateTemplateForm {
   private api = inject(ProjectEditorApi);
   private state = inject(ApplicationEditorState);
+  private widgetsState = inject(WidgetsState);
+
   private dataAccess = inject(DataAccess);
   private router = inject(Router);
 
@@ -86,9 +89,9 @@ export class GenerateTemplateForm {
         this.isLoading.set(false);
         console.log('Сгенерированный JSON от AI:', response);
 
-        this.dataAccess.renderPage(response);
+        const newTemplate = this.dataAccess.createAiTemplate(response);
 
-        this.router.navigate(['/project', '1', 'page', 'page-1']);
+        this.widgetsState.addTemplate(newTemplate);
       },
       error: (err) => {
         this.isLoading.set(false);

@@ -12,13 +12,17 @@ export class ThemeManager {
     effect(() => this.applyThemeToDom(this.themeSignal()));
   }
 
-  setTheme(presetName: string) {
+  setThemeByPreset(presetName: string) {
     if (THEME_PRESETS[presetName]) {
       this.themeSignal.set(THEME_PRESETS[presetName]);
     }
   }
 
-  setCustomTheme(customTokens: Partial<DesignTokens>) {
+  getTheme(presetName: string) {
+    return THEME_PRESETS[presetName] || null;
+  }
+
+  setTheme(customTokens: Partial<DesignTokens>) {
     const current = this.themeSignal();
     const updatedTheme = { ...current, ...customTokens };
     this.themeSignal.set(updatedTheme);

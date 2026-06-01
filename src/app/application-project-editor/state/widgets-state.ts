@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Template } from '../types/template.type';
 import { Widget } from '../types/widget.type';
 import { buttonWidget } from '../widgets-lib/button';
@@ -29,11 +29,14 @@ import {
   footerWidget,
 } from '../widgets-lib/sections';
 import { textWidget } from '../widgets-lib/text';
+import { ThemeManager } from '../services/theme-manager';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WidgetsState {
+  private themeManager = inject(ThemeManager);
+
   private _widgets: Widget[] = [
     containerWidget(),
     sectionWidget(),
@@ -100,7 +103,7 @@ export class WidgetsState {
     {
       id: 'dog-grooming',
       templateName: 'Dog Grooming',
-      theme: 'grooming',
+      theme: this.themeManager.getTheme('dog-grooming')!,
       widgets: [
         headerWidget(),
         heroWidget(),
@@ -114,11 +117,19 @@ export class WidgetsState {
     },
   ];
 
+  private _aiTemplates = signal<Template[]>([]);
+
   get widgets() {
     return this._widgets;
   }
 
   get templates() {
     return this._templates;
+  }
+
+  aiTemplates = this._aiTemplates.asReadonly();
+
+  addTemplate(template: Template) {
+    this._aiTemplates.update((templates) => [...templates, template]);
   }
 }

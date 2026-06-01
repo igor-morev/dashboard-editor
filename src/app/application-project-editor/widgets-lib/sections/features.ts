@@ -19,7 +19,7 @@ export interface FeaturesContent {
   items: Array<{
     title: string;
     description: string;
-    imageSrc: string;
+    imageSrc?: string;
   }>;
 }
 
@@ -34,13 +34,15 @@ export function featureSectionWidget(
         title: 'Colorectal Cancer Screening',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel gravida arcu.',
-        imageSrc: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+        imageSrc:
+          'https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
       {
         title: 'Cervical Cancer Screening',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel gravida arcu.',
-        imageSrc: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+        imageSrc:
+          'https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
     ],
   },

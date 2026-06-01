@@ -87,6 +87,18 @@ export class ApplicationEditorState {
     this.updateState(initialState);
   }
 
+  setLayersState(layers: Layer[]) {
+    const newLayers = [scaffoldLayer(layers)];
+
+    this.updateAppState({
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: newLayers,
+        layersMap: this.layersEditor.updateLayersMap(newLayers, {}),
+      },
+    });
+  }
+
   updateAppState(updates: Partial<AppState>) {
     const newState = { ...this.appState, ...updates };
 

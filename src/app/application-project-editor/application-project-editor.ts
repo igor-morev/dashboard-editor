@@ -14,7 +14,7 @@ import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { ApplicationEditorState } from './state/application-editor-state';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
 import { WidgetsState } from './state/widgets-state';
 import { MatIconModule } from '@angular/material/icon';
@@ -54,6 +54,7 @@ export class ApplicationProjectEditor {
   private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly api = inject(ProjectEditorApi);
   private readonly state = inject(ApplicationEditorState);
@@ -92,10 +93,12 @@ export class ApplicationProjectEditor {
   }
 
   ngOnInit() {
-    // this.themeManager.setTheme('grooming');
     this.api.loadPage('1', '1').subscribe((response) => {
-      this.themeManager.setCustomTheme(response.theme);
-      this.dataAccess.renderPage(response);
+      const template = this.dataAccess.createTemplate(response);
+
+      this.widgetsState.addTemplate(template);
+
+      this.dataAccess.renderByTemplate(template);
     });
   }
 
@@ -119,12 +122,18 @@ export class ApplicationProjectEditor {
     return this.widgetsState.templates;
   }
 
+  get aiTemplates() {
+    return this.widgetsState.aiTemplates;
+  }
+
   get pages() {
     return this.state.pages;
   }
 
   changeTheme(event: Event) {
-    this.themeManager.setTheme(event.target instanceof HTMLSelectElement ? event.target.value : '');
+    this.themeManager.setThemeByPreset(
+      event.target instanceof HTMLSelectElement ? event.target.value : '',
+    );
   }
 
   getParent(parentId: string, reccursive = false): Layer | null {
@@ -318,16 +327,12 @@ export class ApplicationProjectEditor {
     this.createLayer(widget);
   }
 
-  moveTemplateOnScaffold(event: Event, template: Template) {
+  renderTemplateOnScaffold(event: Event, template: Template) {
     this.state.resetAppState();
 
-    this.themeManager.setTheme(template.theme);
+    this.dataAccess.renderByTemplate(template);
 
-    template.widgets.forEach((widget) => {
-      this.createLayer(widget);
-    });
-
-    this.cdr.markForCheck();
+    this.router.navigate(['/project', '1', 'page', 'page-1']);
   }
 
   highlightLayerFromTree(event: Event, layer: Layer) {

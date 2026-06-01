@@ -111,7 +111,8 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
     title: 'Discover Your Inner Peace with Our Meditation App',
     subtitle: 'Welcome to our website! We are glad to have you here.',
     ctaText: 'Get Started',
-    imageSrc: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+    imageSrc:
+      'https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   };
 
   return {
