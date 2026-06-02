@@ -124,7 +124,7 @@ export const PROJECT_PAGE_RESPONSE = {
     },
     {
       type: 'contact',
-      layout: 'split-form-right',
+      layout: 'split-form-left',
       content: {
         title: 'Запишитесь на груминг',
         subtitle:
@@ -144,6 +144,42 @@ export const PROJECT_PAGE_RESPONSE = {
             text: 'г. Москва, ул. Кошачья, д. 5',
           },
         ],
+        formFields: [
+          {
+            name: 'name',
+            label: 'Ваше имя',
+            placeholder: 'Введите ваше имя',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'email',
+            label: 'Ваш email',
+            placeholder: 'Введите ваш email',
+            type: 'email',
+            required: true,
+          },
+          {
+            name: 'phone',
+            label: 'Ваш телефон',
+            placeholder: 'Введите ваш телефон',
+            type: 'text',
+          },
+          {
+            name: 'service',
+            label: 'Выберите услугу',
+            placeholder: '',
+            type: 'select',
+            options: ['Стрижка', 'Купание', 'Гигиена', 'SPA-процедуры'],
+          },
+          {
+            name: 'message',
+            label: 'Дополнительная информация',
+            placeholder: 'Напишите, если есть особые пожелания или вопросы',
+            type: 'textarea',
+          },
+        ],
+        submitButtonText: 'Отправить заявку',
       },
     },
     {

@@ -146,6 +146,29 @@ export const AI_CONSTRUCTION_RESPONSE = {
             text: '123 Construction Way, Suite 100, City, State, USA',
           },
         ],
+        formFields: [
+          {
+            name: 'name',
+            label: 'Name',
+            placeholder: 'Enter your name',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'email',
+            label: 'Email',
+            placeholder: 'Enter your email',
+            type: 'email',
+            required: true,
+          },
+          {
+            name: 'message',
+            label: 'Message',
+            placeholder: 'How can we help you?',
+            type: 'textarea',
+          },
+        ],
+        submitButtonText: 'Send Message',
       },
     },
     {

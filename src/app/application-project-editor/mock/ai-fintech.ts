@@ -140,6 +140,29 @@ export const AI_FINTECH_RESPONSE = {
             text: '123 Digital Blvd, Fintech City, USA',
           },
         ],
+        formFields: [
+          {
+            name: 'name',
+            label: 'Name',
+            placeholder: 'Enter your name',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'email',
+            label: 'Email',
+            placeholder: 'Enter your email',
+            type: 'email',
+            required: true,
+          },
+          {
+            name: 'message',
+            label: 'Message',
+            placeholder: 'How can we assist you?',
+            type: 'textarea',
+          },
+        ],
+        submitButtonText: 'Send Message',
       },
     },
     {

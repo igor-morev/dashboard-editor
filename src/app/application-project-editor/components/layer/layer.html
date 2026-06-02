@@ -80,6 +80,8 @@
     <div deLayerContent>
       <label>{{ textInputLayerPropertyModel.label }}</label>
       <input
+        [name]="textInputLayerPropertyModel.name"
+        [required]="textInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
         [type]="textInputLayerPropertyModel.inputType"
         [placeholder]="textInputLayerPropertyModel.placeholder"
@@ -92,6 +94,8 @@
     <div deLayerContent>
       <label>{{ textareaInputLayerPropertyModel.label }}</label>
       <textarea
+        [name]="textareaInputLayerPropertyModel.name"
+        [required]="textareaInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
         [placeholder]="textareaInputLayerPropertyModel.placeholder"
         [required]="textareaInputLayerPropertyModel.required"
@@ -106,6 +110,8 @@
     <div deLayerContent>
       <label>{{ selectInputLayerPropertyModel.label }}</label>
       <select
+        [name]="selectInputLayerPropertyModel.name"
+        [required]="selectInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
         [required]="selectInputLayerPropertyModel.required"
       >

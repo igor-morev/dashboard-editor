@@ -1,23 +1,70 @@
 import { Widget } from '@app/application-project-editor/types/widget.type';
-import { buttonWidget } from './button';
-import { columnWidget } from './column';
-import { containerWidget } from './container';
-import { formWidget } from './form/form';
-import { selectInputWidget } from './form/select-input';
-import { textInputWidget } from './form/text-input';
-import { textareaWidget } from './form/textarea';
-import { headingWidget } from './heading';
-import { rowWidget } from './row';
-import { sectionWidget } from './section';
-import { textWidget } from './text';
+import { buttonWidget } from '../button';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { formWidget } from '../form/form';
+import { selectInputWidget } from '../form/select-input';
+import { textInputWidget } from '../form/text-input';
+import { textareaWidget } from '../form/textarea';
+import { headingWidget } from '../heading';
+import { rowWidget } from '../row';
+import { sectionWidget } from '../section';
+import { textWidget } from '../text';
 
 export interface ContactContent {
   title: string;
   subtitle: string;
-  formTitle?: string;
+  formTitle: string;
   contacts?: Array<{ icon: string; text: string }>;
   imageSrc?: string; // Для лейаутов с фото
+  formFields: Array<{
+    name: string;
+    label: string;
+    placeholder: string;
+    type: 'text' | 'email' | 'textarea' | 'select' | 'tel';
+    options?: string[]; // Для select
+    required?: boolean;
+  }>;
+  submitButtonText: string;
 }
+
+const defaultContent: ContactContent = {
+  title: 'Get in Touch',
+  subtitle:
+    'Have a question? We would love to hear from you. Send us a message and we will respond as soon as possible.',
+  formTitle: 'Contact Us',
+  contacts: [{ icon: 'phone', text: '+1 (555) 000-0000' }],
+  formFields: [
+    {
+      name: 'name',
+      label: 'Name',
+      placeholder: 'Enter your name',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      placeholder: 'Enter your email',
+      type: 'email',
+      required: true,
+    },
+    {
+      name: 'service',
+      label: 'Service',
+      placeholder: '',
+      type: 'select',
+      options: ['Support', 'Sales', 'Other'],
+    },
+    {
+      name: 'message',
+      label: 'Message',
+      placeholder: 'How can we help?',
+      type: 'textarea',
+    },
+  ],
+  submitButtonText: 'Send Request',
+};
 
 export type ContactLayout =
   | 'simple-stack'
@@ -28,7 +75,7 @@ export type ContactLayout =
 
 export function contactSectionWidget(
   layout: ContactLayout = 'simple-stack',
-  content?: ContactContent,
+  content: ContactContent = defaultContent,
 ): Widget {
   const layoutTransformer = (currentLayout: ContactLayout, data: ContactContent) => {
     // 1. Создаем блок с текстом
@@ -53,28 +100,37 @@ export function contactSectionWidget(
               class: 'text-project-h3 mb-6',
             }),
             formWidget([
-              textInputWidget({
-                label: 'Name',
-                placeholder: 'Enter your name',
-                class: 'mb-4',
-                required: true,
+              ...data.formFields.map((field) => {
+                switch (field.type) {
+                  case 'text':
+                  case 'email':
+                  case 'tel':
+                    return textInputWidget({
+                      label: field.label,
+                      placeholder: field.placeholder,
+                      inputType: field.type,
+                      required: field.required,
+                      class: 'mb-4',
+                    });
+                  case 'textarea':
+                    return textareaWidget({
+                      label: field.label,
+                      placeholder: field.placeholder,
+                      required: field.required,
+                      class: 'mb-4',
+                    });
+                  case 'select':
+                    return selectInputWidget({
+                      label: field.label,
+                      options: field.options || [],
+                      required: field.required,
+                      class: 'mb-4',
+                    });
+                }
               }),
-              textInputWidget({
-                label: 'Email',
-                placeholder: 'Enter your email',
-                class: 'mb-4',
-                inputType: 'email',
-                required: true,
-              }),
-              selectInputWidget({
-                label: 'Service',
-                options: ['Support', 'Sales', 'Other'],
-                class: 'mb-4',
-              }),
-              textareaWidget({ label: 'Message', placeholder: 'How can we help?', class: 'mb-6' }),
               buttonWidget({
                 type: 'submit',
-                content: 'Send Request',
+                content: data.submitButtonText,
               }),
             ]),
           ],
@@ -147,9 +203,9 @@ export function contactSectionWidget(
             columnWidget([formBlock], { class: 'w-full' }),
             columnWidget(
               [
-                headingWidget({ content: 'Our Offices', class: 'text-project-h3 mb-4' }),
-                textWidget({ content: '123 Business St, New York' }),
-                textWidget({ content: '+1 234 567 890', class: 'mt-4 font-bold' }),
+                ...(data.contacts?.map((c) =>
+                  textWidget({ content: c.text, class: 'mb-2 font-medium' }),
+                ) || []),
               ],
               { class: 'w-full mt-12' },
             ),
@@ -159,14 +215,6 @@ export function contactSectionWidget(
     };
 
     return layouts[currentLayout];
-  };
-
-  const defaultContent: ContactContent = content || {
-    title: 'Get in Touch',
-    subtitle:
-      'Have a question? We would love to hear from you. Send us a message and we will respond as soon as possible.',
-    formTitle: 'Contact Us',
-    contacts: [{ icon: 'phone', text: '+1 (555) 000-0000' }],
   };
 
   return {
@@ -189,9 +237,9 @@ export function contactSectionWidget(
       ...sectionWidget().defaultWidgetPropertyModel,
       layout,
       class: 'bg-surface',
-      content: defaultContent as Record<string, any>,
+      content: content as Record<string, any>,
     },
     layoutTransformer,
-    children: layoutTransformer(layout, defaultContent),
+    children: layoutTransformer(layout, content),
   } as Widget;
 }

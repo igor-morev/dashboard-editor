@@ -92,6 +92,29 @@ export const AI_SYSTEM_JSON_RESPONSE = {
         subtitle: 'Оставьте заявку, и наш специалист свяжется с вами',
         formTitle: 'Запись на прием',
         contacts: [{ icon: 'phone', text: '+7 (123) 456-78-90' }],
+        formFields: [
+          {
+            name: 'name',
+            label: 'Ваше имя',
+            placeholder: 'Введите ваше имя',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'email',
+            label: 'Ваш email',
+            placeholder: 'Введите ваш email',
+            type: 'email',
+            required: true,
+          },
+          {
+            name: 'message',
+            label: 'Сообщение',
+            placeholder: 'Как мы можем вам помочь?',
+            type: 'textarea',
+          },
+        ],
+        submitButtonText: 'Отправить заявку',
       },
     },
     {
@@ -150,6 +173,7 @@ export const AI_SYSTEM_PROMPT = `
 2. Используй строго определенные типы лейаутов (layouts).
 3. Соблюдай баланс: чередуй светлые и акцентные секции, но учитывай читабельность текста на фоне
 4. После контактной секции добавляй ещё один banner с акцией или важным объявлением.
+5. Поля контактной формы только следующих типов: 'text' | 'email' | 'textarea' | 'select' | 'tel';
 
 ### ДОСТУПНЫЕ КОМПОНЕНТЫ И ЛЕЙАУТЫ:
 - header: 'classic', 'centered-logo', 'nav-center', 'minimal', 'stacked'

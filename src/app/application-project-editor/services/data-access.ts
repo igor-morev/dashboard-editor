@@ -17,7 +17,7 @@ import {
   faqWidget,
   footerWidget,
 } from '../widgets-lib/sections';
-import { contactSectionWidget } from '../widgets-lib/contact';
+import { contactSectionWidget } from '../widgets-lib/sections/contact';
 import { Template } from '../types/template.type';
 
 @Injectable({

@@ -35,6 +35,7 @@ import { PROJECT_PAGE_RESPONSE } from './mock/response';
 import { AI_FINTECH_RESPONSE } from './mock/ai-fintech';
 import { FilterPipe } from '@app/shared/filter-pipe';
 import { AI_GAMING_RESPONSE } from './mock/ai-gaming';
+import { AI_CLINIC_PAGE } from './mock/ai-clinic';
 
 interface WidgetsTab {
   label: string;
@@ -136,6 +137,7 @@ export class ApplicationProjectEditor {
         AI_FINTECH_RESPONSE,
         PROJECT_PAGE_RESPONSE,
         AI_GAMING_RESPONSE,
+        AI_CLINIC_PAGE,
       ] as ProjectResponseDto[]
     ).forEach((response, index) => {
       const template = this.dataAccess.createTemplate(response, 'ai-generated');

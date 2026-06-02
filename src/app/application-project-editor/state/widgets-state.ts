@@ -4,7 +4,7 @@ import { Widget } from '../types/widget.type';
 import { buttonWidget } from '../widgets-lib/button';
 import { cardWidget } from '../widgets-lib/card';
 import { columnWidget } from '../widgets-lib/column';
-import { contactSectionWidget } from '../widgets-lib/contact';
+import { contactSectionWidget } from '../widgets-lib/sections/contact';
 import { containerWidget } from '../widgets-lib/container';
 import { formWidget } from '../widgets-lib/form/form';
 import { selectInputWidget } from '../widgets-lib/form/select-input';

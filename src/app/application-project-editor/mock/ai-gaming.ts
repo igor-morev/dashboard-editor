@@ -150,6 +150,29 @@ export const AI_GAMING_RESPONSE = {
             text: '123 AI Street, Future City, FC 90210',
           },
         ],
+        formFields: [
+          {
+            name: 'name',
+            label: 'Name',
+            placeholder: 'Enter your name',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'email',
+            label: 'Email',
+            placeholder: 'Enter your email',
+            type: 'email',
+            required: true,
+          },
+          {
+            name: 'message',
+            label: 'Message',
+            placeholder: 'How can we assist you?',
+            type: 'textarea',
+          },
+        ],
+        submitButtonText: 'Send Message',
       },
     },
     {
