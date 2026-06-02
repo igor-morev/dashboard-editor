@@ -35,7 +35,7 @@ export interface FooterContent {
 }
 
 const FooterDefaultContent: FooterContent = {
-  logoUrl: 'https://cdn-icons-png.flaticon.com/512/190/190411.png?w=360',
+  logoUrl: 'https://cdn-icons-png.freepik.com/512/5200/5200787.png',
   brandName: 'YourBrand',
   copyright: '© 2024 YourBrand. All rights reserved.',
   linkGroups: [

@@ -33,26 +33,14 @@ export class DataAccess {
     return this.state.appState;
   }
 
-  createAiTemplate(response: ProjectResponseDto): Template {
+  createTemplate(response: ProjectResponseDto, source: Template['source']): Template {
     const widgets = this.convertResponseDtoToSectionWidgets(response);
 
-    const templateId = `ai-gen-template-${response.industry}_${Date.now()}`;
+    const templateId = `${source}-${response.industry}_${Date.now()}`;
 
     return {
       id: templateId,
-      templateName: templateId,
-      theme: response.theme,
-      widgets,
-    };
-  }
-
-  createTemplate(response: ProjectResponseDto): Template {
-    const widgets = this.convertResponseDtoToSectionWidgets(response);
-
-    const templateId = `template-${response.industry}_${Date.now()}`;
-
-    return {
-      id: templateId,
+      source,
       templateName: templateId,
       theme: response.theme,
       widgets,
@@ -60,6 +48,7 @@ export class DataAccess {
   }
 
   renderByTemplate(template: Template) {
+    console.log(template);
     // 1. Apply theme to the app state
     this.themeManager.setTheme(template.theme);
 

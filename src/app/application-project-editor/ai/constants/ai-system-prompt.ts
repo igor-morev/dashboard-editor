@@ -146,8 +146,10 @@ export const AI_SYSTEM_PROMPT = `
 
 ### ПРАВИЛА СТРУКТУРЫ:
 1. Выдавай ТОЛЬКО чистый JSON без пояснений.
+2. Для навигации header используй пункты в соответствии с создаваемыми секциями
 2. Используй строго определенные типы лейаутов (layouts).
-3. Соблюдай баланс: чередуй светлые и акцентные секции.
+3. Соблюдай баланс: чередуй светлые и акцентные секции, но учитывай читабельность текста на фоне
+4. После контактной секции добавляй ещё один banner с акцией или важным объявлением.
 
 ### ДОСТУПНЫЕ КОМПОНЕНТЫ И ЛЕЙАУТЫ:
 - header: 'classic', 'centered-logo', 'nav-center', 'minimal', 'stacked'
@@ -155,7 +157,7 @@ export const AI_SYSTEM_PROMPT = `
 - features: 'card-centered'
 - testimonials: 'grid', 'single-quote', 'side-by-side', 'bubbles'
 - faq: 'accordion', 'two-columns', 'centered-list', 'minimal-grid'
-- contact: 'simple-stack', 'split-form-right', 'split-form-left', 'card-overlay', 'contact-grid'
+- contact: 'simple-stack', 'split-form-left', 'card-overlay', 'contact-grid'
 - banner: 'simple-row', 'split-accent', 'image-background', 'floating-bottom', 'minimal-inline'
 - footer: 'simple-center', 'logo-left-links-right', 'multi-column', 'newsletter-split', 'minimal-split'
 

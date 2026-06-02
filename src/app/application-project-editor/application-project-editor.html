@@ -11,19 +11,19 @@
     <div class="grow grid grid-rows-[200px_100px_2fr]">
       <div class="flex flex-col">
         <div class="border-0 border-b border-gray-300 border-solid bg-white">
-          @for (item of widgetTabs; track item) {
+          @for (item of widgetTabs; track item.value) {
             <button
               class="py-2 px-4 tab"
               (click)="selectTab(item)"
               type="button"
               [class.tab-active]="tab() === item"
             >
-              {{ item === 'AI' ? '✨' : '' }} {{ item }}
+              {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
             </button>
           }
         </div>
         <div class="py-2 px-4 overflow-auto h-0 grow">
-          @if (tab() === 'widgets') {
+          @if (tab().value === 'widgets') {
             @for (widget of widgets; track widget.id) {
               <button
                 (click)="moveWidgetOnScaffold($event, widget)"
@@ -35,22 +35,12 @@
             }
           }
 
-          @if (tab() === 'templates') {
-            @for (template of templates; track template.id) {
-              <button
-                (click)="renderTemplateOnScaffold($event, template)"
-                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
-                [title]="template.templateName"
-              >
-                {{ template.templateName }}
-              </button>
+          @if (tab().value === 'predefined' || tab().value === 'ai-generated') {
+            @if (tab().value === 'ai-generated') {
+              <a [routerLink]="['page', 1, 'generate']"><b>Generate Template</b></a>
             }
-          }
 
-          @if (tab() === 'AI') {
-            <a [routerLink]="['page', 1, 'generate']">Generate Page</a>
-
-            @for (template of aiTemplates(); track template.id) {
+            @for (template of templates() | filter: tab().value : 'source'; track template.id) {
               <button
                 (click)="renderTemplateOnScaffold($event, template)"
                 class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"

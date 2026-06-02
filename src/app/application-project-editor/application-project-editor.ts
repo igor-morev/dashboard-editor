@@ -29,6 +29,17 @@ import { Widget } from './types/widget.type';
 import { Template } from './types/template.type';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
 import { DataAccess } from './services/data-access';
+import { AI_CONSTRUCTION_RESPONSE } from './mock/ai-construction';
+import { ProjectResponseDto } from '@app/api/types/project';
+import { PROJECT_PAGE_RESPONSE } from './mock/response';
+import { AI_FINTECH_RESPONSE } from './mock/ai-fintech';
+import { FilterPipe } from '@app/shared/filter-pipe';
+import { AI_GAMING_RESPONSE } from './mock/ai-gaming';
+
+interface WidgetsTab {
+  label: string;
+  value: 'widgets' | 'predefined' | 'ai-generated';
+}
 
 @Component({
   selector: 'de-application-project-editor',
@@ -45,6 +56,7 @@ import { DataAccess } from './services/data-access';
     Autofocus,
     CdkDropList,
     CdkDrag,
+    FilterPipe,
   ],
   templateUrl: './application-project-editor.html',
   styleUrl: './application-project-editor.scss',
@@ -73,9 +85,25 @@ export class ApplicationProjectEditor {
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
 
-  widgetTabs = ['widgets', 'templates', 'AI'];
+  widgetTabs: WidgetsTab[] = [
+    {
+      label: 'Widgets',
+      value: 'widgets',
+    },
+    {
+      label: 'Templates',
+      value: 'predefined',
+    },
+    {
+      label: 'AI',
+      value: 'ai-generated',
+    },
+  ];
 
-  tab = signal<string>('widgets');
+  tab = signal<WidgetsTab>({
+    label: 'Widgets',
+    value: 'widgets',
+  });
 
   private _dragPosition = signal<{ position: 'before' | 'after' | 'inside'; id: string } | null>(
     null,
@@ -93,12 +121,26 @@ export class ApplicationProjectEditor {
   }
 
   ngOnInit() {
-    this.api.loadPage('1', '1').subscribe((response) => {
-      const template = this.dataAccess.createTemplate(response);
+    // this.api.loadPage('1', '1').subscribe((response) => {
+    //   const template = this.dataAccess.createTemplate(response);
+
+    //   // temporal solution for demo, we'll remove it later on
+    //   this.widgetsState.addTemplate(template);
+
+    //   this.dataAccess.renderByTemplate(template);
+    // });
+
+    (
+      [
+        AI_CONSTRUCTION_RESPONSE,
+        AI_FINTECH_RESPONSE,
+        PROJECT_PAGE_RESPONSE,
+        AI_GAMING_RESPONSE,
+      ] as ProjectResponseDto[]
+    ).forEach((response, index) => {
+      const template = this.dataAccess.createTemplate(response, 'ai-generated');
 
       this.widgetsState.addTemplate(template);
-
-      this.dataAccess.renderByTemplate(template);
     });
   }
 
@@ -120,10 +162,6 @@ export class ApplicationProjectEditor {
 
   get templates() {
     return this.widgetsState.templates;
-  }
-
-  get aiTemplates() {
-    return this.widgetsState.aiTemplates;
   }
 
   get pages() {
@@ -562,7 +600,7 @@ export class ApplicationProjectEditor {
     this.dragDroppedEvent.next(event);
   }
 
-  selectTab(tab: string) {
+  selectTab(tab: WidgetsTab) {
     this.tab.set(tab);
   }
 

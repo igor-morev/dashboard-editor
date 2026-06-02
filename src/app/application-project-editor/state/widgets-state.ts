@@ -94,42 +94,68 @@ export class WidgetsState {
     featureSectionWidget(),
     bannerWidget(),
     testimonialsWidget(),
-    faqWidget(),
     contactSectionWidget(),
+    faqWidget(),
     footerWidget(),
   ];
 
-  private _templates: Template[] = [
+  private _templates = signal<Template[]>([
     {
       id: 'dog-grooming',
       templateName: 'Dog Grooming',
-      theme: this.themeManager.getTheme('dog-grooming')!,
+      source: 'predefined',
+      theme: this.themeManager.getTheme('grooming')!,
       widgets: [
         headerWidget(),
         heroWidget(),
-        featureSectionWidget(),
+        featureSectionWidget('card-centered', {
+          title: 'Our Services',
+          subtitle: 'Comprehensive grooming solutions for your furry friend.',
+          buttonText: 'Learn More',
+          items: [
+            {
+              title: 'Full Grooming Package',
+              description:
+                'Includes bath, haircut, nail trimming, ear cleaning, and more for a complete pampering experience.',
+              imageSrc: 'https://loremflickr.com/600/400/dog,grooming,full-package',
+            },
+            {
+              title: 'Bath & Brush',
+              description:
+                'A refreshing bath followed by thorough brushing to keep your dog clean and comfortable.',
+              imageSrc: 'https://loremflickr.com/600/400/dog,grooming,bath-brush',
+            },
+            {
+              title: 'Nail Trimming',
+              description:
+                'Professional nail trimming to maintain your dog’s comfort and prevent overgrowth.',
+              imageSrc: 'https://loremflickr.com/600/400/dog,grooming,nail-trimming',
+            },
+          ],
+        }),
         bannerWidget('split-accent'),
         testimonialsWidget(),
-        faqWidget(),
         contactSectionWidget(),
+        faqWidget(),
+        bannerWidget('image-background', {
+          title: 'Ready to Dive In?',
+          description: 'Explore thousands of AI games and assets. Your next adventure awaits!',
+          buttonText: 'Browse Marketplace',
+          imageSrc: 'https://loremflickr.com/1200/400/ai,gaming,marketplace',
+          badge: 'EXPLORE',
+        }),
         footerWidget(),
       ],
     },
-  ];
-
-  private _aiTemplates = signal<Template[]>([]);
+  ]);
 
   get widgets() {
     return this._widgets;
   }
 
-  get templates() {
-    return this._templates;
-  }
-
-  aiTemplates = this._aiTemplates.asReadonly();
+  templates = this._templates.asReadonly();
 
   addTemplate(template: Template) {
-    this._aiTemplates.update((templates) => [...templates, template]);
+    this._templates.update((templates) => [...templates, template]);
   }
 }

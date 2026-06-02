@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { ApplicationProjects } from './application-projects/application-projects';
 import { VersionComparison } from './version-comparison/version-comparison';
 import { guestGuard } from './services/auth/guest-guard';
+import { authGuard } from './services/auth/auth-guard';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'project',
+    canActivate: [authGuard],
     children: [
       {
         path: '',

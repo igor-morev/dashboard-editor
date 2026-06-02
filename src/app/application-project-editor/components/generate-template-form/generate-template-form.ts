@@ -89,7 +89,7 @@ export class GenerateTemplateForm {
         this.isLoading.set(false);
         console.log('Сгенерированный JSON от AI:', response);
 
-        const newTemplate = this.dataAccess.createAiTemplate(response);
+        const newTemplate = this.dataAccess.createTemplate(response, 'ai-generated');
 
         this.widgetsState.addTemplate(newTemplate);
       },
