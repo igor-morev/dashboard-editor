@@ -78,8 +78,10 @@
 
   @case ('text-input') {
     <div deLayerContent>
-      <label>{{ textInputLayerPropertyModel.label }}</label>
+      @let id = 'input-' + layer().id;
+      <label [for]="id">{{ textInputLayerPropertyModel.label }}</label>
       <input
+        [id]="id"
         [name]="textInputLayerPropertyModel.name"
         [required]="textInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -92,8 +94,11 @@
 
   @case ('textarea') {
     <div deLayerContent>
-      <label>{{ textareaInputLayerPropertyModel.label }}</label>
+      @let id = 'textarea-' + layer().id;
+
+      <label [for]="id">{{ textareaInputLayerPropertyModel.label }}</label>
       <textarea
+        [id]="id"
         [name]="textareaInputLayerPropertyModel.name"
         [required]="textareaInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
@@ -108,8 +113,10 @@
 
   @case ('select-input') {
     <div deLayerContent>
-      <label>{{ selectInputLayerPropertyModel.label }}</label>
+      @let id = 'select-' + layer().id;
+      <label [for]="id">{{ selectInputLayerPropertyModel.label }}</label>
       <select
+        [id]="id"
         [name]="selectInputLayerPropertyModel.name"
         [required]="selectInputLayerPropertyModel.required"
         [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
