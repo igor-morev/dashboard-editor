@@ -172,7 +172,7 @@ export function footerWidget(
                         ),
                         columnWidget(
                           [
-                            buttonWidget({
+                            buttonWidget([], {
                               type: 'submit',
                               content: content.newsletter?.buttonText,
                             }),

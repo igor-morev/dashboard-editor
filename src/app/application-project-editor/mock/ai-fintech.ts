@@ -16,7 +16,7 @@ export const AI_FINTECH_RESPONSE = {
   sections: [
     {
       type: 'header',
-      layout: 'classic',
+      layout: 'nav-center',
       content: {
         logoUrl: 'https://loremflickr.com/100/100/fintech,bank',
         brandName: 'NovaBank',

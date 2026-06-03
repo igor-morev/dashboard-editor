@@ -4,20 +4,19 @@ import {
   Widget,
 } from '@app/application-project-editor/types/widget.type';
 
-export function buttonWidget(
+export function iconButtonWidget(
   children: Widget[] = [],
   model: Partial<ButtonWidgetPropertyModel> = {},
 ): ButtonWidget {
   return {
-    id: 'button-widget',
+    id: 'icon-button-widget',
     widgetName: 'Button',
     widgetType: 'button',
     propertyConfig: {
       hasContent: true,
     },
     defaultWidgetPropertyModel: {
-      defaultClass:
-        'px-4 py-1 bg-primary text-white text-nowrap rounded-theme inline-flex items-center gap-x-1',
+      defaultClass: 'px-1 py-1 rounded-theme inline-flex items-center gap-x-1',
       ...model,
     } as ButtonWidgetPropertyModel,
     children,

@@ -135,6 +135,17 @@
       [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
       [type]="buttonLayerPropertyModel.type"
     >
+      @if (layer().children) {
+        <ng-container
+          *ngTemplateOutlet="
+            layersTemplate();
+            context: {
+              $implicit: layer().children,
+            }
+          "
+        ></ng-container>
+      }
+
       {{ layer().layerPropertyModel.content }}
     </button>
   }

@@ -12,6 +12,8 @@ import { listWidget } from '../list';
 import { listItemWidget } from '../list-item';
 import { rowWidget } from '../row';
 import { textWidget } from '../text';
+import { iconWidget } from '../icon';
+import { iconButtonWidget } from '../icon-button';
 
 export interface HeaderContent {
   logoUrl: string;
@@ -32,55 +34,79 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
       }),
     ]);
 
-    const brand = columnWidget([
-      textWidget({ content: data.brandName || 'Discover', class: 'font-bold' }),
-    ]);
+    const brand = columnWidget(
+      [
+        textWidget({
+          content: data.brandName || 'Discover',
+          class: 'font-bold text-contrast',
+        }),
+      ],
+      { class: 'flex items-center' },
+    );
 
-    const nav = columnWidget([
-      listWidget(
-        data.navLinks.map((link) => listItemWidget(linkWidget(link.label))),
-        'flex gap-x-2 list-none',
-      ),
-    ]);
+    // Классическая навигация для десктопа (прячется на мобилках через hidden lg:flex)
+    const desktopNav = columnWidget(
+      [
+        listWidget(
+          data.navLinks.map((link) => listItemWidget(linkWidget(link.label))),
+          'gap-x-4 list-none items-center h-full', // lg: flex
+        ),
+      ],
+      { class: 'hidden items-center' },
+    );
 
+    // Кнопка CTA
     const cta = columnWidget([linkButtonWidget({ content: data.cta?.label || 'Get Started' })], {
-      class: 'text-right',
+      class: 'text-right hidden sm:block', // Скрываем на совсем маленьких телефонах для экономии места
     });
+
+    // Иконка Бургера (показывается только на мобилках, скрывается на десктопе через lg:hidden)
+    const burgerIcon = columnWidget(
+      [
+        iconButtonWidget([iconWidget({ content: 'menu', class: 'w-6 h-6' })], {
+          class: 'p-0 bg-transparent border-none',
+          content: '',
+        }),
+      ],
+      { class: 'flex items-center justify-end' },
+    );
 
     const layouts: Record<HeaderLayout, Widget[]> = {
       // 1. Лого (слева) --- Навигация (центр) --- Кнопка (справа)
       classic: [
-        rowWidget([logo, brand, nav, cta], {
-          class: 'items-center justify-between',
-        }),
+        rowWidget([
+          rowWidget([logo, brand, desktopNav], {
+            class: 'items-center justify-between w-full flex-row',
+          }),
+          rowWidget([cta, burgerIcon], { class: 'items-center ml-auto justify-end' }),
+        ]),
       ],
 
       // 2. Лого (по центру) --- Навигация и кнопка по бокам
       'centered-logo': [
-        rowWidget([nav, logo, cta], {
-          class: 'items-center justify-between',
-        }),
+        rowWidget([
+          rowWidget([desktopNav, logo], {
+            class: 'items-center justify-between w-full flex-row',
+          }),
+          rowWidget([cta, burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
+        ]),
       ],
 
       // 3. Лого (слева) --- Пустота --- Навигация (справа)
       'nav-center': [
-        rowWidget(
-          [
-            logo,
-            nav, // grow заставит навигацию занять центр
-            cta,
-          ],
-          {
-            class: 'items-center justify-between',
-          },
-        ),
+        rowWidget([logo, desktopNav, burgerIcon, cta], {
+          class: 'items-center justify-between w-full flex-row',
+        }),
       ],
 
       // 4. Только лого и навигация (без кнопок)
       minimal: [
-        rowWidget([logo, brand, nav], {
-          class: 'items-center justify-between',
-        }),
+        rowWidget([
+          rowWidget([logo, desktopNav], {
+            class: 'items-center justify-between w-full flex-row',
+          }),
+          rowWidget([burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
+        ]),
       ],
 
       // 5. Двухэтажный (Лого вверху, меню внизу)
@@ -88,7 +114,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
         containerWidget(
           [
             rowWidget([logo, brand], { class: 'justify-center items-center py-2' }),
-            rowWidget([nav], { class: 'justify-center border-t py-2' }),
+            rowWidget([desktopNav, cta, burgerIcon], { class: 'justify-center border-t py-2' }),
           ],
           { class: 'w-full' },
         ),
@@ -115,13 +141,15 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
     canNotBeAddedInside: (widget) =>
       widget.widgetType === 'header' || widget.widgetType === 'section',
     propertyConfig: {
-      layout: { options: ['classic', 'centered-logo', 'nav-center', 'minimal', 'stacked'] },
+      layout: {
+        options: ['classic', 'centered-logo', 'nav-center', 'minimal', 'stacked'],
+      },
       styles: { backgroundColor: { nameOptions: colorPalette, rangeOptions: colorRange } },
     },
     defaultWidgetPropertyModel: {
       layout,
       content: defaultContent as Record<string, any>,
-      class: 'bg-white shadow-sm block px-6 py-2 w-full',
+      class: 'bg-white shadow-sm block px-6 py-2 w-full sticky top-0 z-50', // Сделали шапку липкой
     },
     layoutTransformer,
     children: layoutTransformer(layout, defaultContent),

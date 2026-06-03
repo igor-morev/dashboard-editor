@@ -128,7 +128,7 @@ export function contactSectionWidget(
                     });
                 }
               }),
-              buttonWidget({
+              buttonWidget([], {
                 type: 'submit',
                 content: data.submitButtonText,
               }),

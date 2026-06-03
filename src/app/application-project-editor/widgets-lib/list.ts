@@ -2,9 +2,13 @@ import {
   colorPalette,
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
-import { Widget } from '@app/application-project-editor/types/widget.type';
+import { Widget, WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
 
-export function listWidget(children: Widget[], customClass?: string): Widget {
+export function listWidget(
+  children: Widget[],
+  customClass?: string,
+  model: WidgetPropertyModel = {},
+): Widget {
   return {
     id: 'list-widget',
     widgetName: 'List',
@@ -22,6 +26,7 @@ export function listWidget(children: Widget[], customClass?: string): Widget {
     },
     defaultWidgetPropertyModel: {
       class: `list-disc list-inside ${customClass || ''}`,
+      ...model,
     },
     children,
   };

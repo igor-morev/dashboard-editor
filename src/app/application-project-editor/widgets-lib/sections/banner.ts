@@ -88,10 +88,9 @@ export function bannerWidget(layout: BannerLayout = 'simple-row', content?: Bann
       'image-background': [
         containerWidget(
           [
-            columnWidget(
-              [title, text!, columnWidget([button!].filter(Boolean), { class: 'mt-8' })],
-              { class: 'max-w-xl py-12 text-white' },
-            ),
+            columnWidget([title, text!, rowWidget([button!].filter(Boolean), { class: 'mt-8' })], {
+              class: 'max-w-xl py-12 text-white',
+            }),
           ],
           {
             class: 'bg-cover bg-center rounded-theme overflow-hidden px-10',

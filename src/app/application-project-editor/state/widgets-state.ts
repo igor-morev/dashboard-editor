@@ -50,6 +50,7 @@ export class WidgetsState {
     listWidget([listItemWidget()]),
     linkButtonWidget(),
     linkWidget('Home'),
+    buttonWidget([], { content: 'Click Me' }),
     iconWidget(),
     cardWidget({}),
 
@@ -86,7 +87,7 @@ export class WidgetsState {
         class: 'mb-4',
         required: false,
       }),
-      buttonWidget({ type: 'submit', content: 'Submit' }),
+      buttonWidget([], { type: 'submit', content: 'Submit' }),
     ]),
 
     headerWidget(),

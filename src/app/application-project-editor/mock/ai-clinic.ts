@@ -16,7 +16,7 @@ export const AI_CLINIC_PAGE = {
   sections: [
     {
       type: 'header',
-      layout: 'classic',
+      layout: 'nav-center',
       content: {
         logoUrl: 'https://loremflickr.com/100/100/clinic,logo',
         brandName: 'Медицинский Центр Забота',

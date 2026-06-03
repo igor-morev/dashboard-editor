@@ -16,7 +16,7 @@ export const AI_GAMING_RESPONSE = {
   sections: [
     {
       type: 'header',
-      layout: 'classic',
+      layout: 'nav-center',
       content: {
         logoUrl: 'https://loremflickr.com/100/100/ai,gaming,logo',
         brandName: 'AI Gaming Hub',
