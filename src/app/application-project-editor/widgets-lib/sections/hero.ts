@@ -41,8 +41,8 @@ export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: He
     const layouts: Record<HeroLayout, Widget[]> = {
       // 1. Контент по центру поверх фона
       'centered-overlay': [
-        containerWidget([rowWidget([columnWidget(contentStack, { class: 'text-center' })])], {
-          class: 'py-40',
+        containerWidget(contentStack, {
+          class: 'py-40 text-center',
         }),
       ],
 

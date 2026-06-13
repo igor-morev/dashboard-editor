@@ -56,12 +56,14 @@ export class WidgetsState {
 
     formWidget([
       textInputWidget({
+        name: 'name',
         label: 'Name',
         placeholder: 'Enter your name',
         class: 'mb-4',
         required: true,
       }),
       textInputWidget({
+        name: 'email',
         label: 'Email',
         placeholder: 'Enter your email',
         class: 'mb-4',
@@ -69,6 +71,7 @@ export class WidgetsState {
         required: true,
       }),
       textInputWidget({
+        name: 'phone',
         label: 'Phone Number',
         placeholder: 'Enter your phone number',
         class: 'mb-4',
@@ -76,12 +79,14 @@ export class WidgetsState {
         required: true,
       }),
       selectInputWidget({
+        name: 'reason',
         label: 'Reason for Contact',
         options: ['Support', 'Sales', 'Feedback'],
         class: 'mb-4',
         required: true,
       }),
       textareaWidget({
+        name: 'message',
         label: 'Message',
         placeholder: 'Enter your message',
         class: 'mb-4',
@@ -112,7 +117,8 @@ export class WidgetsState {
           title: 'Pamper Your Pup with Our Expert Grooming Services',
           subtitle: 'Tailored care for every breed and personality.',
           ctaText: 'Book an Appointment',
-          imageSrc: 'https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          imageSrc:
+            'https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         }),
         featureSectionWidget('card-centered', {
           title: 'Our Services',
@@ -123,19 +129,22 @@ export class WidgetsState {
               title: 'Full Grooming Package',
               description:
                 'Includes bath, haircut, nail trimming, ear cleaning, and more for a complete pampering experience.',
-              imageSrc: 'https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              imageSrc:
+                'https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             },
             {
               title: 'Bath & Brush',
-              description: 
+              description:
                 'A refreshing bath followed by thorough brushing to keep your dog clean and comfortable.',
-              imageSrc: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              imageSrc:
+                'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             },
             {
               title: 'Nail Trimming',
               description:
                 'Professional nail trimming to maintain your dog’s comfort and prevent overgrowth.',
-              imageSrc: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              imageSrc:
+                'https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             },
           ],
         }),

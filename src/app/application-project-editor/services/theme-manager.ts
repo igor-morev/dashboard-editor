@@ -1,5 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { DesignTokens, THEME_PRESETS } from '../types/theme';
+import { THEME_PRESETS } from '../types/theme';
+import { DesignTokens } from '@app/api/types/project';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeManager {

@@ -1,18 +1,4 @@
-export interface FontPair {
-  heading: string;
-  body: string;
-}
-
-export interface DesignTokens {
-  name: string;
-  primaryColor: string;
-  surfaceColor: string;
-  contrastColor: string;
-  borderRadius: string; // '0px', '8px', '24px'
-  fontFamily: FontPair;
-  typeScale: number; // 1.15, 1.25, 1.4
-  baseFontSize: number; // 16
-}
+import { DesignTokens } from '@app/api/types/project';
 
 // Примеры пресетов для разных индустрий
 export const THEME_PRESETS: Record<string, DesignTokens> = {

@@ -1,4 +1,4 @@
-import { DesignTokens } from './theme';
+import { DesignTokens } from '@app/api/types/project';
 import { Widget } from './widget.type';
 
 export interface Template {

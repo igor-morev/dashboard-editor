@@ -1,12 +1,5 @@
 @use 'tailwindcss';
 
-// :root {
-//   --project-primary-color: #3b82f6; 
-//   --project-h1-size: 2.5rem;
-//   --project-h2-size: 2rem;
-//   --project-body-size: 1rem;
-// }
-
 @theme {
   /* Цвета теперь привязаны к переменным из твоего ThemeManager */
   --color-primary: var(--project-primary-color);
@@ -28,16 +21,10 @@
   --tracking-tight: -0.02em;
 }
 
-/* Базовые стили для плавных переходов при смене темы */
-@layer base {
-  *, *::before, *::after {
-    transition-property: color, background-color, border-color, border-radius;
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-  }
-}
-
-
 * {
   box-sizing: border-box;
+}
+
+img {
+  display: inline-flex;
 }

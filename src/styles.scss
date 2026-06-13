@@ -49,16 +49,12 @@
 @source inline("text-pink-{100..900}");
 @source inline("text-teal-{100..900}");
 
-
 @source inline("text-left");
 @source inline("text-center");
 @source inline("text-right");
 @source inline("text-justify");
 
-
-
 @import '@angular/cdk/overlay-prebuilt.css';
-
 
 * {
   box-sizing: border-box;
@@ -93,6 +89,15 @@ body {
   // Reset the user agent margin.
   margin: 0;
   overflow: hidden;
+}
+
+/* Базовые стили для плавных переходов при смене темы */
+@layer base {
+  *, *::before, *::after {
+    transition-property: color, background-color, border-color, border-radius;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
 }
 
 .de-input {

@@ -106,6 +106,7 @@ export function contactSectionWidget(
                   case 'email':
                   case 'tel':
                     return textInputWidget({
+                      name: field.name,
                       label: field.label,
                       placeholder: field.placeholder,
                       inputType: field.type,
@@ -114,6 +115,7 @@ export function contactSectionWidget(
                     });
                   case 'textarea':
                     return textareaWidget({
+                      name: field.name,
                       label: field.label,
                       placeholder: field.placeholder,
                       required: field.required,
@@ -121,6 +123,7 @@ export function contactSectionWidget(
                     });
                   case 'select':
                     return selectInputWidget({
+                      name: field.name,
                       label: field.label,
                       options: field.options || [],
                       required: field.required,

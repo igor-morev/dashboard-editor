@@ -3,6 +3,7 @@ import {
   WidgetPropertyModel,
   LinkWidgetPropertyModel,
   ImageWidgetPropertyModel,
+  FormElementWidget,
 } from './widget.type';
 
 export interface Page {
@@ -15,7 +16,11 @@ export interface Layer {
   parentId: string | null;
   sourceWidgetId: string;
   widgetReference: Widget;
-  layerPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel;
+  layerPropertyModel:
+    | WidgetPropertyModel
+    | LinkWidgetPropertyModel
+    | ImageWidgetPropertyModel
+    | FormElementWidget['defaultWidgetPropertyModel'];
   children: Layer[];
   index: number;
   isVisible: boolean;

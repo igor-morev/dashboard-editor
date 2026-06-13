@@ -16,6 +16,7 @@ export function iconButtonWidget(
       hasContent: true,
     },
     defaultWidgetPropertyModel: {
+      type: 'button',
       defaultClass: 'px-1 py-1 rounded-theme inline-flex items-center gap-x-1',
       ...model,
     } as ButtonWidgetPropertyModel,

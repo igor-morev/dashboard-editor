@@ -5,7 +5,7 @@ import { environment } from "../../../environments/environment.development";
 import { AuthResponse } from "../types/auth";
 import { UserDto } from "../types/user";
 import { AIGenerationPayload } from "../types/ai";
-import { ProjectResponseDto } from "../types/project";
+import { ExportPayloadDto, ProjectResponseDto } from "../types/project";
 import { PROJECT_PAGE_RESPONSE } from "@app/application-project-editor/mock/response";
 
 @Injectable({
@@ -57,6 +57,10 @@ export class ProjectEditorApi {
 
   exportProject(projectId: string): Observable<Blob> {
     return this.http.get(`${environment.apiUrl}/project/${projectId}/export`, { responseType: 'blob' });
+  }
+
+  exportByJson(payload: ExportPayloadDto): Observable<Blob> {
+    return this.http.post(`${environment.apiUrl}/project/export`, payload, { responseType: 'blob' });
   }
 
   getProjectList() {

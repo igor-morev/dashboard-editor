@@ -16,6 +16,7 @@ export function buttonWidget(
       hasContent: true,
     },
     defaultWidgetPropertyModel: {
+      type: 'button',
       defaultClass:
         'px-4 py-1 bg-primary text-white text-nowrap rounded-theme inline-flex items-center gap-x-1',
       ...model,

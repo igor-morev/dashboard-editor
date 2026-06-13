@@ -30,7 +30,7 @@ import { Template } from './types/template.type';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
 import { DataAccess } from './services/data-access';
 import { AI_CONSTRUCTION_RESPONSE } from './mock/ai-construction';
-import { ProjectResponseDto } from '@app/api/types/project';
+import { LayerDto, ProjectResponseDto } from '@app/api/types/project';
 import { PROJECT_PAGE_RESPONSE } from './mock/response';
 import { AI_FINTECH_RESPONSE } from './mock/ai-fintech';
 import { FilterPipe } from '@app/shared/filter-pipe';
@@ -604,6 +604,59 @@ export class ApplicationProjectEditor {
 
   selectTab(tab: WidgetsTab) {
     this.tab.set(tab);
+  }
+
+  exportProject() {
+    this.api
+      .exportByJson({
+        projectName: this.appState.selectedPage.pageName,
+        theme: this.themeManager.currentTheme(),
+        layers: this.convertUiLayersToServerFormat(this.appState.appViewSchema.layers),
+      })
+      .subscribe((response) => {
+        const url = window.URL.createObjectURL(response);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.appState.selectedPage.pageName.toLowerCase().split(' ').join('_')}.html`;
+        a.click();
+      });
+  }
+
+  convertUiLayersToServerFormat(layers: Layer[]): LayerDto[] {
+    return layers.map((layer) => ({
+      id: layer.id,
+      isVisible: layer.isVisible,
+      widgetReference: {
+        widgetType: layer.widgetReference.widgetType,
+      },
+      layerPropertyModel: {
+        defaultClass: layer.layerPropertyModel.defaultClass,
+        class: layer.layerPropertyModel.class,
+        content: layer.layerPropertyModel.content,
+
+        label: 'label' in layer.layerPropertyModel ? layer.layerPropertyModel.label : undefined,
+        placeholder:
+          'placeholder' in layer.layerPropertyModel
+            ? layer.layerPropertyModel.placeholder
+            : undefined,
+        name: 'name' in layer.layerPropertyModel ? layer.layerPropertyModel.name : undefined,
+        required:
+          'required' in layer.layerPropertyModel ? layer.layerPropertyModel.required : undefined,
+        options:
+          'options' in layer.layerPropertyModel ? layer.layerPropertyModel.options : undefined,
+        type: 'type' in layer.layerPropertyModel ? layer.layerPropertyModel.type : undefined,
+        inputType:
+          'inputType' in layer.layerPropertyModel ? layer.layerPropertyModel.inputType : undefined,
+
+        background: layer.layerPropertyModel.styles
+          ?.background as LayerDto['layerPropertyModel']['background'],
+        color: layer.layerPropertyModel.styles?.color as LayerDto['layerPropertyModel']['color'],
+
+        href: 'href' in layer.layerPropertyModel ? layer.layerPropertyModel.href : undefined,
+        target: 'target' in layer.layerPropertyModel ? layer.layerPropertyModel.target : undefined,
+      },
+      children: this.convertUiLayersToServerFormat(layer.children),
+    }));
   }
 
   private createLayer(widget: Widget) {
