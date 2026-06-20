@@ -9,7 +9,7 @@ export function columnWidget(children: Widget[] = [], model: WidgetPropertyModel
       return widget.widgetType === 'column'; // TBD;
     },
     defaultWidgetPropertyModel: {
-      defaultClass: 'pl-2 pr-2',
+      // defaultClass: 'pl-2 pr-2',
       class: '',
       ...model,
     },

@@ -26,7 +26,7 @@ export function cardWidget({
     },
     propertyConfig: {},
     defaultWidgetPropertyModel: {
-      class: 'rounded-theme mb-8 shadow-xs overflow-hidden',
+      class: 'rounded-theme shadow-xs overflow-hidden',
     },
     children: [
       {

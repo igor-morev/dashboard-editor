@@ -49,64 +49,75 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
       [
         listWidget(
           data.navLinks.map((link) => listItemWidget(linkWidget(link.label))),
-          'gap-x-4 list-none items-center h-full', // lg: flex
+          'gap-x-4 list-none items-center h-full flex', // lg: flex
         ),
       ],
-      { class: 'hidden items-center' },
+      { class: 'items-center hidden @md:block' },
     );
 
     // Кнопка CTA
     const cta = columnWidget([linkButtonWidget({ content: data.cta?.label || 'Get Started' })], {
-      class: 'text-right hidden sm:block', // Скрываем на совсем маленьких телефонах для экономии места
+      class: 'text-right hidden @sm:block', // Скрываем на совсем маленьких телефонах для экономии места
     });
 
     // Иконка Бургера (показывается только на мобилках, скрывается на десктопе через lg:hidden)
     const burgerIcon = columnWidget(
       [
         iconButtonWidget([iconWidget({ content: 'menu', class: 'w-6 h-6' })], {
-          class: 'p-0 bg-transparent border-none',
+          class: 'p-0 bg-transparent border-none header-burger-icon',
           content: '',
         }),
       ],
-      { class: 'flex items-center justify-end' },
+      { class: 'flex items-center justify-end @md:hidden' },
     );
 
     const layouts: Record<HeaderLayout, Widget[]> = {
       // 1. Лого (слева) --- Навигация (центр) --- Кнопка (справа)
       classic: [
-        rowWidget([
-          rowWidget([logo, brand, desktopNav], {
-            class: 'items-center justify-between w-full flex-row',
-          }),
-          rowWidget([cta, burgerIcon], { class: 'items-center ml-auto justify-end' }),
-        ]),
+        containerWidget(
+          [
+            rowWidget([
+              rowWidget([
+                rowWidget([logo, brand]), desktopNav], {
+                class: 'items-center justify-between w-full flex-row',
+              }),
+              rowWidget([cta, burgerIcon], { class: 'items-center ml-auto justify-end' }),
+            ])
+          ]
+        ),
       ],
 
       // 2. Лого (по центру) --- Навигация и кнопка по бокам
       'centered-logo': [
-        rowWidget([
-          rowWidget([desktopNav, logo], {
-            class: 'items-center justify-between w-full flex-row',
-          }),
-          rowWidget([cta, burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
-        ]),
+        containerWidget([
+          rowWidget([
+            rowWidget([desktopNav, logo], {
+              class: 'items-center justify-between w-full flex-row',
+            }),
+            rowWidget([cta, burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
+          ]),
+        ])
       ],
 
       // 3. Лого (слева) --- Пустота --- Навигация (справа)
       'nav-center': [
-        rowWidget([logo, desktopNav, burgerIcon, cta], {
-          class: 'items-center justify-between w-full flex-row',
-        }),
+        containerWidget([
+          rowWidget([logo, desktopNav, burgerIcon, cta], {
+            class: 'items-center justify-between w-full flex-row',
+          }),
+        ])
       ],
 
       // 4. Только лого и навигация (без кнопок)
       minimal: [
-        rowWidget([
-          rowWidget([logo, desktopNav], {
-            class: 'items-center justify-between w-full flex-row',
-          }),
-          rowWidget([burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
-        ]),
+        containerWidget([
+          rowWidget([
+            rowWidget([logo, desktopNav], {
+              class: 'items-center justify-between w-full flex-row',
+            }),
+            rowWidget([burgerIcon], { class: 'items-center gap-x-2 ml-auto justify-end' }),
+          ]),
+        ])
       ],
 
       // 5. Двухэтажный (Лого вверху, меню внизу)
@@ -149,7 +160,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
     defaultWidgetPropertyModel: {
       layout,
       content: defaultContent as Record<string, any>,
-      class: 'bg-white shadow-sm block px-6 py-2 w-full sticky top-0 z-50', // Сделали шапку липкой
+      class: 'bg-white shadow-sm block py-2 w-full sticky top-0 z-50', // Сделали шапку липкой
     },
     layoutTransformer,
     children: layoutTransformer(layout, defaultContent),

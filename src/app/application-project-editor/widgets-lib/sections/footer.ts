@@ -162,6 +162,8 @@ export function footerWidget(
                         columnWidget(
                           [
                             textInputWidget({
+                              name: 'email',
+                              label: 'Email',
                               placeholder: content.newsletter?.placeholder,
                               inputType: 'email',
                               class: 'w-full',
@@ -177,7 +179,7 @@ export function footerWidget(
                               content: content.newsletter?.buttonText,
                             }),
                           ],
-                          { class: 'flex-none' },
+                          { class: 'flex items-end' },
                         ),
                       ],
                       { class: 'flex flex-col sm:flex-row gap-3 items-stretch' },

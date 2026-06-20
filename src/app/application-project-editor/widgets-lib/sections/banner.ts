@@ -6,6 +6,7 @@ import { linkButtonWidget } from '../link-button';
 import { rowWidget } from '../row';
 import { sectionWidget } from '../section';
 import { textWidget } from '../text';
+import { blockWidget } from '../block';
 
 export interface BannerContent {
   title: string;
@@ -54,15 +55,16 @@ export function bannerWidget(layout: BannerLayout = 'simple-row', content?: Bann
       'simple-row': [
         containerWidget(
           [
-            rowWidget(
-              [
-                columnWidget([title!, text!].filter(Boolean)),
-                columnWidget([button!].filter(Boolean)),
-              ],
-              { class: 'items-center justify-between gap-6' },
-            ),
+            blockWidget([
+              rowWidget(
+                [
+                  columnWidget([title!, text!].filter(Boolean)),
+                  columnWidget([button!].filter(Boolean)),
+                ],
+                { class: 'items-center justify-between gap-6' },
+              ),
+            ],       { class: 'py-8 px-6 bg-surface border rounded-theme' }        )
           ],
-          { class: 'py-8 px-6 bg-surface border rounded-theme' },
         ),
       ],
 
@@ -70,17 +72,20 @@ export function bannerWidget(layout: BannerLayout = 'simple-row', content?: Bann
       'split-accent': [
         containerWidget(
           [
-            rowWidget(
-              [
-                columnWidget([badge!, title!, text!].filter(Boolean), { class: 'w-full lg:w-2/3' }),
-                columnWidget([button!].filter(Boolean), {
-                  class: 'w-full lg:w-1/3 flex lg:justify-end mt-6 lg:mt-0',
-                }),
+            blockWidget([
+                rowWidget(
+                  [
+                    columnWidget([badge!, title!, text!].filter(Boolean), { class: 'w-full lg:w-2/3' }),
+                    columnWidget([button!].filter(Boolean), {
+                      class: 'w-full lg:w-1/3 flex lg:justify-end mt-6 lg:mt-0',
+                    }),
+                  ],
+                  { class: 'items-center' },
+                ),
               ],
-              { class: 'items-center' },
-            ),
-          ],
-          { class: 'py-10 px-10 bg-contrast text-white rounded-theme' },
+              { class: 'py-6 px-6 bg-contrast text-white rounded-theme' }
+            )
+          ]
         ),
       ],
 
@@ -152,7 +157,6 @@ export function bannerWidget(layout: BannerLayout = 'simple-row', content?: Bann
     defaultWidgetPropertyModel: {
       ...sectionWidget().defaultWidgetPropertyModel,
       layout,
-      class: 'px-4',
       content: defaultContent as Record<string, any>,
       styles: {
         background: {

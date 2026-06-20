@@ -9,6 +9,7 @@ import {
   colorRange,
 } from '@app/application-project-editor/constants/application-editor.constant';
 import { cardWidget } from '../card';
+import { blockWidget } from '../block';
 
 export type FeaturesLayout = 'card-centered';
 
@@ -79,12 +80,17 @@ export function featureSectionWidget(
         },
       }),
       linkButtonWidget({ content: content.buttonText, class: 'mb-12' }),
-      content.items.map((item) =>
-        cardWidget({
-          title: item.title,
-          description: item.description,
-          imageUrl: item.imageSrc,
-        }),
+      blockWidget(
+        content.items.map((item) =>
+          cardWidget({
+            title: item.title,
+            description: item.description,
+            imageUrl: item.imageSrc,
+          }),
+        ),
+        {
+          class: 'grid gap-8 @sm:grid-cols-2 @md:grid-cols-3',
+        }
       ),
     ].flat();
 
@@ -92,7 +98,7 @@ export function featureSectionWidget(
     const layouts: Record<FeaturesLayout, Widget[]> = {
       'card-centered': [
         containerWidget(contentStack, {
-          class: 'mx-auto text-center flex flex-col items-center',
+          class: 'text-center flex flex-col items-center',
         }),
       ],
     };
