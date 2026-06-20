@@ -20,15 +20,12 @@
   /* Дополнительные настройки для v4 */
   --tracking-tight: -0.02em;
 
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
+  --container-sm: 40rem;  /* 640px */
+  --container-md: 48rem;  /* 768px */
+  --container-lg: 64rem;  /* 1024px */
+
 }
 
-* {
-  box-sizing: border-box;
-}
-
-img {
-  display: inline-flex;
-}
+// img {
+//   display: inline-flex;
+// }

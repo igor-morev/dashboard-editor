@@ -52,7 +52,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
           'gap-x-4 list-none items-center h-full flex', // lg: flex
         ),
       ],
-      { class: 'items-center hidden @md:block' },
+      { class: 'items-center hidden @sm:block' },
     );
 
     // Кнопка CTA
@@ -68,7 +68,7 @@ export function headerWidget(layout: HeaderLayout = 'classic', content?: HeaderC
           content: '',
         }),
       ],
-      { class: 'flex items-center justify-end @md:hidden' },
+      { class: 'flex items-center justify-end @sm:hidden' },
     );
 
     const layouts: Record<HeaderLayout, Widget[]> = {
