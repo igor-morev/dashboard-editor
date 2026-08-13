@@ -28,53 +28,53 @@ export class GenerateTemplateForm {
     return this.state.appState;
   }
 
-  // Список доступных индустрий для быстрого выбора
+  // List of available industries for quick selection
   readonly industries = [
-    { value: 'healthcare', label: '🏥 Медицина', placeholder: 'стоматология, клиника...' },
-    { value: 'grooming', label: '🐶 Груминг', placeholder: 'стрижка собак, салон для кошек...' },
+    { value: 'healthcare', label: '🏥 Healthcare', placeholder: 'dentistry, clinic...' },
+    { value: 'grooming', label: '🐶 Grooming', placeholder: 'dog grooming, cat salon...' },
     {
       value: 'construction',
-      label: '🏗 Строительство',
-      placeholder: 'ремонт квартир, постройка домов...',
+      label: '🏗 Construction',
+      placeholder: 'apartment renovation, house building...',
     },
-    { value: 'fintech', label: '💳 Финтех', placeholder: 'инвестиции, крипто-кошелек...' },
-    { value: 'ai', label: '🤖 AI Сервисы', placeholder: 'нейросети, автоматизация...' },
+    { value: 'fintech', label: '💳 Fintech', placeholder: 'investments, crypto wallet...' },
+    { value: 'ai', label: '🤖 AI Services', placeholder: 'neural networks, automation...' },
   ];
 
-  // Визуальные стили / настроения сайта
+  // Visual styles / site moods
   readonly moods = [
-    { value: 'modern', label: '⚡️ Технологичный и строгий' },
-    { value: 'friendly', label: '🌸 Мягкий и дружелюбный' },
-    { value: 'minimal', label: '🖤 Минимализм' },
+    { value: 'modern', label: '⚡️ Tech and strict' },
+    { value: 'friendly', label: '🌸 Soft and friendly' },
+    { value: 'minimal', label: '🖤 Minimalist' },
   ];
 
-  // Состояние формы через Angular Signals
+  // Form state via Angular Signals
   selectedIndustry = signal<string>('healthcare');
   selectedMood = signal<string>('modern');
   userPrompt = signal<string>('');
   isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
 
-  // Вычисляем плейсхолдер в зависимости от выбранной индустрии
+  // Compute the placeholder based on the selected industry
   get currentPlaceholder(): string {
     const ind = this.industries.find((i) => i.value === this.selectedIndustry());
-    return ind ? `Например: ${ind.placeholder}` : 'Опишите ваш бизнес...';
+    return ind ? `e.g., ${ind.placeholder}` : 'Describe your business...';
   }
 
   async onSubmit() {
     if (!this.userPrompt().trim()) {
-      this.errorMessage.set('Пожалуйста, опишите ваш бизнес');
+      this.errorMessage.set('Please describe your business');
       return;
     }
 
-    // 1. Формируем ТЗ для ИИ на основе того, что ввел пользователь
+    // 1. Build the AI brief based on what the user entered
     const userRequest = `
-  Сгенерируй сайт для индустрии: ${this.selectedIndustry()}.
-  Визуальный стиль/настроение: ${this.selectedMood()}.
-  Описание бизнеса и особые пожелания: ${this.userPrompt()}.
+  Generate a site for the industry: ${this.selectedIndustry()}.
+  Visual style/mood: ${this.selectedMood()}.
+  Business description and special requests: ${this.userPrompt()}.
 `;
 
-    // 2. Упаковываем системный промпт и запрос в один объект
+    // 2. Pack the system prompt and request into a single object
     const body: AIGenerationPayload = {
       systemInstruction: AI_SYSTEM_PROMPT,
       prompt: userRequest,
@@ -83,19 +83,23 @@ export class GenerateTemplateForm {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Отправляем запрос на наш будущий NestJS бэкенд
+    // Send the request to our future NestJS backend
     this.api.generatePageAI(body).subscribe({
       next: (response) => {
         this.isLoading.set(false);
-        console.log('Сгенерированный JSON от AI:', response);
+        console.log('Generated JSON from AI:', response);
 
         const newTemplate = this.dataAccess.createTemplate(response, 'ai-generated');
 
         this.widgetsState.addTemplate(newTemplate);
+
+        this.state.resetAppState();
+        this.dataAccess.renderByTemplate(newTemplate);
+        this.router.navigate(['/project', '1', 'page', 'page-1']);
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set('Ошибка при генерации. Попробуйте еще раз.');
+        this.errorMessage.set('Generation error. Please try again.');
         console.error(err);
       },
     });

@@ -1,17 +1,17 @@
 <div class="w-full max-w-md mx-auto p-4">
   <div class="bg-surface border border-contrast/10 rounded-theme p-6 shadow-xl">
-    <!-- Заголовок -->
+    <!-- Header -->
     <div class="mb-6 text-center">
-      <h2 class="font-heading text-site-h2 font-black text-contrast mb-2">Генерация Магией AI</h2>
+      <h2 class="font-heading text-site-h2 font-black text-contrast mb-2">AI Magic Generation</h2>
       <p class="font-body text-site-body opacity-70">
-        Заполните параметры, и нейросеть соберет готовый лендинг
+        Fill in the parameters, and the neural network will assemble a ready-made landing page
       </p>
     </div>
 
     <form (ngSubmit)="onSubmit()" class="space-y-5">
-      <!-- 1. Выбор Индустрии -->
+      <!-- 1. Industry selection -->
       <div>
-        <label class="block text-sm font-semibold mb-2 text-contrast">1. Выберите индустрию</label>
+        <label class="block text-sm font-semibold mb-2 text-contrast">1. Choose an industry</label>
         <div class="grid grid-cols-2 gap-2">
           @for (ind of industries; track ind.value) {
             <button
@@ -29,9 +29,9 @@
         </div>
       </div>
 
-      <!-- 2. Выбор Настроения/Стиля -->
+      <!-- 2. Mood/style selection -->
       <div>
-        <label class="block text-sm font-semibold mb-2 text-contrast">2. Визуальный стиль</label>
+        <label class="block text-sm font-semibold mb-2 text-contrast">2. Visual style</label>
         <select
           [ngModel]="selectedMood()"
           (ngModelChange)="selectedMood.set($event)"
@@ -44,9 +44,9 @@
         </select>
       </div>
 
-      <!-- 3. Текстовое описание -->
+      <!-- 3. Text description -->
       <div>
-        <label class="block text-sm font-semibold mb-2 text-contrast">3. Детали и пожелания</label>
+        <label class="block text-sm font-semibold mb-2 text-contrast">3. Details and preferences</label>
         <textarea
           [ngModel]="userPrompt()"
           (ngModelChange)="userPrompt.set($event)"
@@ -57,7 +57,7 @@
         ></textarea>
       </div>
 
-      <!-- Вывод ошибки -->
+      <!-- Error output -->
       @if (errorMessage()) {
         <div
           class="p-3 bg-rose-500/10 text-rose-500 text-sm rounded-theme border border-rose-500/20"
@@ -66,14 +66,14 @@
         </div>
       }
 
-      <!-- Кнопка отправки -->
+      <!-- Submit button -->
       <button
         type="submit"
         [disabled]="isLoading()"
         class="w-full bg-primary text-white font-heading font-bold py-4 rounded-theme shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
       >
         @if (isLoading()) {
-          <!-- Простой спиннер -->
+          <!-- Simple spinner -->
           <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
             <circle
               class="opacity-25"
@@ -89,9 +89,9 @@
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <span>Магия создается...</span>
+          <span>Creating magic...</span>
         } @else {
-          ✨ Сгенерировать сайт
+          ✨ Generate site
         }
       </button>
     </form>
