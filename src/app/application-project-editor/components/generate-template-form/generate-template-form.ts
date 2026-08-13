@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
@@ -23,6 +24,7 @@ export class GenerateTemplateForm {
 
   private dataAccess = inject(DataAccess);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   get appState() {
     return this.state.appState;
@@ -84,24 +86,31 @@ export class GenerateTemplateForm {
     this.errorMessage.set(null);
 
     // Send the request to our future NestJS backend
-    this.api.generatePageAI(body).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        console.log('Generated JSON from AI:', response);
+    this.api
+      .generatePageAI(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          console.log('Generated JSON from AI:', response);
 
-        const newTemplate = this.dataAccess.createTemplate(response, 'ai-generated');
+          const newTemplate = this.dataAccess.createTemplate(response, 'ai-generated');
 
-        this.widgetsState.addTemplate(newTemplate);
+          this.widgetsState.addTemplate(newTemplate);
 
-        this.state.resetAppState();
-        this.dataAccess.renderByTemplate(newTemplate);
-        this.router.navigate(['/project', '1', 'page', 'page-1']);
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Generation error. Please try again.');
-        console.error(err);
-      },
-    });
+          this.state.resetAppState();
+          this.dataAccess.renderByTemplate(newTemplate);
+
+          const projectId = this.appState.projectId;
+          if (projectId) {
+            this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id]);
+          }
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set('Generation error. Please try again.');
+          console.error(err);
+        },
+      });
   }
 }

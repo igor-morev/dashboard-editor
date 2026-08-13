@@ -9,8 +9,10 @@ export const ApplicationProjectEditorRoutes: Route[] = [
     component: ApplicationProjectEditor,
     children: [
       {
+        // Placeholder segment — replaced with the project's real first page id
+        // once ApplicationProjectEditor.ngOnInit() loads the project.
         path: '',
-        redirectTo: 'page/1',
+        redirectTo: 'page/default',
         pathMatch: 'full',
       },
       {

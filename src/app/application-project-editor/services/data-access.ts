@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
 import { ApplicationEditorState } from '../state/application-editor-state';
 import { Layer } from '../types/project.type';
@@ -6,7 +7,7 @@ import { Widget } from '../types/widget.type';
 import { scaffoldLayer } from '../utils/editor';
 import { LayersEditor } from './layers-editor';
 import { ThemeManager } from './theme-manager';
-import { ProjectResponseDto } from '@app/api/types/project';
+import { CreateProjectDto, ProjectDto, ProjectResponseDto } from '@app/api/types/project';
 import { sectionWidget } from '../widgets-lib/section';
 import {
   headerWidget,
@@ -45,6 +46,76 @@ export class DataAccess {
       theme: response.theme,
       widgets,
     };
+  }
+
+  createProject(dto: CreateProjectDto): Observable<ProjectDto> {
+    return this.api.createProject(dto).pipe(tap((project) => this.loadProjectData(project)));
+  }
+
+  loadProject(projectId: string): Observable<void> {
+    return this.api.getProject(projectId).pipe(
+      tap((project) => this.loadProjectData(project)),
+      switchMap((project) =>
+        project.pages[0] ? this.loadPage(project.pages[0].id) : of(void 0),
+      ),
+    );
+  }
+
+  loadPage(pageId: string): Observable<void> {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    const page = this.appState.pages.find((p) => p.id === pageId);
+    if (!page) {
+      return of(void 0);
+    }
+
+    return this.api.loadPage(projectId, pageId).pipe(
+      tap((pageDto) => {
+        this.state.loadFromServer({
+          projectId,
+          pages: this.appState.pages,
+          selectedPage: page,
+          layers: this.layersEditor.toLayer(pageDto.layers, null),
+        });
+      }),
+      map(() => void 0),
+    );
+  }
+
+  save(): Observable<void> {
+    const projectId = this.appState.projectId;
+    const pageId = this.appState.selectedPage.id;
+
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    const layers = this.layersEditor.toLayerDto(this.appState.appViewSchema.layers);
+    const theme = this.themeManager.currentTheme();
+
+    return forkJoin([
+      this.api.savePage(projectId, pageId, layers),
+      this.api.saveProject(projectId, { theme }),
+    ]).pipe(
+      tap(() => this.state.markSaved()),
+      map(() => void 0),
+    );
+  }
+
+  private loadProjectData(project: ProjectDto) {
+    this.themeManager.setTheme(project.theme ?? {});
+
+    const selectedPage = project.pages[0];
+
+    this.state.loadFromServer({
+      projectId: project.id,
+      pages: project.pages,
+      selectedPage,
+      layers: [],
+    });
   }
 
   renderByTemplate(template: Template) {

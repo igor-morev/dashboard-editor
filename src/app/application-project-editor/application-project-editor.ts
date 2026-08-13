@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   DestroyRef,
   DOCUMENT,
   HostListener,
@@ -11,10 +12,17 @@ import {
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContextMenuOverlay } from '@app/shared/context-menu-overlay';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { debounceTime, skip } from 'rxjs';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { ApplicationEditorState } from './state/application-editor-state';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import {
+  RouterOutlet,
+  RouterLink,
+  RouterLinkActive,
+  Router,
+  ActivatedRoute,
+} from '@angular/router';
 import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
 import { WidgetsState } from './state/widgets-state';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +38,7 @@ import { Template } from './types/template.type';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
 import { DataAccess } from './services/data-access';
 import { AI_CONSTRUCTION_RESPONSE } from './mock/ai-construction';
-import { LayerDto, ProjectResponseDto } from '@app/api/types/project';
+import { ProjectResponseDto } from '@app/api/types/project';
 import { PROJECT_PAGE_RESPONSE } from './mock/response';
 import { AI_FINTECH_RESPONSE } from './mock/ai-fintech';
 import { FilterPipe } from '@app/shared/filter-pipe';
@@ -68,6 +76,7 @@ export class ApplicationProjectEditor {
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private contextMenuOverlay = inject(ContextMenuOverlay);
   private readonly api = inject(ProjectEditorApi);
   private readonly state = inject(ApplicationEditorState);
@@ -82,6 +91,8 @@ export class ApplicationProjectEditor {
   editingLayerId = signal<string | null>(null);
 
   highlightedLayer = this.state.highlightedLayer;
+  hasUnsavedChanges = this.state.hasUnsavedChanges;
+  lastSavedAt = this.state.lastSavedAt;
 
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
@@ -122,14 +133,17 @@ export class ApplicationProjectEditor {
   }
 
   ngOnInit() {
-    // this.api.loadPage('1', '1').subscribe((response) => {
-    //   const template = this.dataAccess.createTemplate(response);
-
-    //   // temporal solution for demo, we'll remove it later on
-    //   this.widgetsState.addTemplate(template);
-
-    //   this.dataAccess.renderByTemplate(template);
-    // });
+    const projectId = this.route.snapshot.paramMap.get('projectId');
+    if (projectId) {
+      this.dataAccess
+        .loadProject(projectId)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id], {
+            replaceUrl: true,
+          });
+        });
+    }
 
     (
       [
@@ -144,7 +158,23 @@ export class ApplicationProjectEditor {
 
       this.widgetsState.addTemplate(template);
     });
+
+    toObservable(this.state.layers)
+      .pipe(skip(1), debounceTime(2000), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.save());
   }
+
+  save() {
+    if (!this.appState.projectId) {
+      return;
+    }
+    this.dataAccess.save().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  savedAtLabel = computed(() => {
+    const date = this.lastSavedAt();
+    return date ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+  });
 
   get appState() {
     return this.state.appState;
@@ -372,7 +402,10 @@ export class ApplicationProjectEditor {
 
     this.dataAccess.renderByTemplate(template);
 
-    this.router.navigate(['/project', '1', 'page', 'page-1']);
+    const projectId = this.appState.projectId;
+    if (projectId) {
+      this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id]);
+    }
   }
 
   highlightLayerFromTree(event: Event, layer: Layer) {
@@ -486,7 +519,13 @@ export class ApplicationProjectEditor {
   }
 
   selectPage(page: { id: string; pageName: string }) {
-    if (page) {
+    if (!page) {
+      return;
+    }
+
+    if (this.appState.projectId) {
+      this.dataAccess.loadPage(page.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    } else {
       this.state.updateAppState({
         selectedPage: page,
       });
@@ -611,7 +650,7 @@ export class ApplicationProjectEditor {
       .exportByJson({
         projectName: this.appState.selectedPage.pageName,
         theme: this.themeManager.currentTheme(),
-        layers: this.convertUiLayersToServerFormat(this.appState.appViewSchema.layers),
+        layers: this.layersEditor.toLayerDto(this.appState.appViewSchema.layers),
       })
       .subscribe((response) => {
         const url = window.URL.createObjectURL(response);
@@ -620,43 +659,6 @@ export class ApplicationProjectEditor {
         a.download = `${this.appState.selectedPage.pageName.toLowerCase().split(' ').join('_')}.html`;
         a.click();
       });
-  }
-
-  convertUiLayersToServerFormat(layers: Layer[]): LayerDto[] {
-    return layers.map((layer) => ({
-      id: layer.id,
-      isVisible: layer.isVisible,
-      widgetReference: {
-        widgetType: layer.widgetReference.widgetType,
-      },
-      layerPropertyModel: {
-        defaultClass: layer.layerPropertyModel.defaultClass,
-        class: layer.layerPropertyModel.class,
-        content: layer.layerPropertyModel.content,
-
-        label: 'label' in layer.layerPropertyModel ? layer.layerPropertyModel.label : undefined,
-        placeholder:
-          'placeholder' in layer.layerPropertyModel
-            ? layer.layerPropertyModel.placeholder
-            : undefined,
-        name: 'name' in layer.layerPropertyModel ? layer.layerPropertyModel.name : undefined,
-        required:
-          'required' in layer.layerPropertyModel ? layer.layerPropertyModel.required : undefined,
-        options:
-          'options' in layer.layerPropertyModel ? layer.layerPropertyModel.options : undefined,
-        type: 'type' in layer.layerPropertyModel ? layer.layerPropertyModel.type : undefined,
-        inputType:
-          'inputType' in layer.layerPropertyModel ? layer.layerPropertyModel.inputType : undefined,
-
-        background: layer.layerPropertyModel.styles
-          ?.background as LayerDto['layerPropertyModel']['background'],
-        color: layer.layerPropertyModel.styles?.color as LayerDto['layerPropertyModel']['color'],
-
-        href: 'href' in layer.layerPropertyModel ? layer.layerPropertyModel.href : undefined,
-        target: 'target' in layer.layerPropertyModel ? layer.layerPropertyModel.target : undefined,
-      },
-      children: this.convertUiLayersToServerFormat(layer.children),
-    }));
   }
 
   private createLayer(widget: Widget) {

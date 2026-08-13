@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Widget } from '../types/widget.type';
 import { generateUniqueId } from '../utils/editor';
 import { Layer } from '../types/project.type';
+import { LayerDto } from '@app/api/types/project';
+import { WidgetsState } from '../state/widgets-state';
 
 /**
  * LayersEditor is responsible for managing the layers tree structure in the application editor.
@@ -14,6 +16,9 @@ import { Layer } from '../types/project.type';
   providedIn: 'root',
 })
 export class LayersEditor {
+  private widgetsState = inject(WidgetsState);
+  private widgetTypeRegistry: Record<string, Widget> | null = null;
+
   createLayerForWidget(widget: Widget, parentId: string | null, index = 0): Layer {
     const layerId = generateUniqueId();
 
@@ -214,5 +219,110 @@ export class LayersEditor {
         parentId: layer.id,
       })),
     };
+  }
+
+  /**
+   * Serializes the in-memory layer tree to the wire format shared with the backend
+   * (used for both Export and Save — see `LayerDto` in api/types/project.ts).
+   */
+  toLayerDto(layers: Layer[]): LayerDto[] {
+    return layers.map((layer) => ({
+      id: layer.id,
+      isVisible: layer.isVisible,
+      widgetReference: {
+        widgetType: layer.widgetReference.widgetType,
+      },
+      layerPropertyModel: {
+        defaultClass: layer.layerPropertyModel.defaultClass,
+        class: layer.layerPropertyModel.class,
+        content: layer.layerPropertyModel.content,
+
+        label: 'label' in layer.layerPropertyModel ? layer.layerPropertyModel.label : undefined,
+        placeholder:
+          'placeholder' in layer.layerPropertyModel
+            ? layer.layerPropertyModel.placeholder
+            : undefined,
+        name: 'name' in layer.layerPropertyModel ? layer.layerPropertyModel.name : undefined,
+        required:
+          'required' in layer.layerPropertyModel ? layer.layerPropertyModel.required : undefined,
+        options:
+          'options' in layer.layerPropertyModel ? layer.layerPropertyModel.options : undefined,
+        type: 'type' in layer.layerPropertyModel ? layer.layerPropertyModel.type : undefined,
+        inputType:
+          'inputType' in layer.layerPropertyModel ? layer.layerPropertyModel.inputType : undefined,
+
+        background: layer.layerPropertyModel.styles
+          ?.background as LayerDto['layerPropertyModel']['background'],
+        color: layer.layerPropertyModel.styles?.color as LayerDto['layerPropertyModel']['color'],
+
+        href: 'href' in layer.layerPropertyModel ? layer.layerPropertyModel.href : undefined,
+        target: 'target' in layer.layerPropertyModel ? layer.layerPropertyModel.target : undefined,
+      },
+      children: this.toLayerDto(layer.children),
+    }));
+  }
+
+  /**
+   * Reconstructs the in-memory layer tree from the saved wire format. The `widgetReference`
+   * on a `LayerDto` only carries a `widgetType` string, so each node is re-attached to a
+   * representative `Widget` definition from the widget library, looked up by that type —
+   * the saved `layerPropertyModel` (not the widget's defaults) is what drives its actual content/styling.
+   */
+  toLayer(dtos: LayerDto[], parentId: string | null): Layer[] {
+    return dtos.map((dto, index) => {
+      const widget = this.getWidgetByType(dto.widgetReference.widgetType);
+
+      const layer: Layer = {
+        id: dto.id,
+        parentId,
+        sourceWidgetId: widget.id,
+        widgetReference: widget,
+        index,
+        isVisible: dto.isVisible,
+        locked: false,
+        layerPropertyModel: {
+          defaultClass: dto.layerPropertyModel.defaultClass,
+          class: dto.layerPropertyModel.class,
+          content: dto.layerPropertyModel.content,
+          label: dto.layerPropertyModel.label,
+          placeholder: dto.layerPropertyModel.placeholder,
+          name: dto.layerPropertyModel.name,
+          required: dto.layerPropertyModel.required,
+          options: dto.layerPropertyModel.options,
+          type: dto.layerPropertyModel.type,
+          inputType: dto.layerPropertyModel.inputType,
+          href: dto.layerPropertyModel.href,
+          target: dto.layerPropertyModel.target,
+          styles: {
+            background: dto.layerPropertyModel.background,
+            color: dto.layerPropertyModel.color,
+          },
+        } as Layer['layerPropertyModel'],
+        children: [],
+      };
+
+      layer.children = this.toLayer(dto.children, layer.id);
+
+      return layer;
+    });
+  }
+
+  private getWidgetByType(widgetType: string): Widget {
+    if (!this.widgetTypeRegistry) {
+      this.widgetTypeRegistry = {};
+      const flatten = (widgets: Widget[]) => {
+        widgets.forEach((widget) => {
+          if (!this.widgetTypeRegistry![widget.widgetType]) {
+            this.widgetTypeRegistry![widget.widgetType] = widget;
+          }
+          if (widget.children) {
+            flatten(widget.children);
+          }
+        });
+      };
+      flatten(this.widgetsState.widgets);
+    }
+
+    return this.widgetTypeRegistry[widgetType] ?? this.widgetsState.widgets[0];
   }
 }

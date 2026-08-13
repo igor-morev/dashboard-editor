@@ -144,7 +144,22 @@
         </select>
       </div>
 
+      <div class="flex items-center gap-x-1 text-xs text-gray-500">
+        @if (hasUnsavedChanges()) {
+          <mat-icon class="!text-base !w-4 !h-4 opacity-50">cloud_upload</mat-icon>
+          <span>Unsaved changes</span>
+        } @else if (lastSavedAt()) {
+          <mat-icon class="!text-base !w-4 !h-4 text-green-600">cloud_done</mat-icon>
+          <span>Saved {{ savedAtLabel() }}</span>
+        }
+      </div>
+
+      <div class="grow"></div>
+
       <div>
+        <button matIconButton (click)="save()" [disabled]="!hasUnsavedChanges()" title="Save">
+          <mat-icon>save</mat-icon>
+        </button>
         <button matIconButton (click)="exportProject()" title="Export Project">
           <mat-icon>arrow_downward</mat-icon>
         </button>

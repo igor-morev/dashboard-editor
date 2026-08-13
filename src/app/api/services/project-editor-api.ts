@@ -1,12 +1,20 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment.development";
 import { AuthResponse } from "../types/auth";
 import { UserDto } from "../types/user";
 import { AIGenerationPayload } from "../types/ai";
-import { ExportPayloadDto, ProjectResponseDto } from "../types/project";
-import { PROJECT_PAGE_RESPONSE } from "@app/application-project-editor/mock/response";
+import {
+  CreateProjectDto,
+  ExportPayloadDto,
+  LayerDto,
+  PageDto,
+  ProjectDto,
+  ProjectResponseDto,
+  ProjectSummaryDto,
+  UpdateProjectDto,
+} from "../types/project";
 
 @Injectable({
   providedIn: 'root',
@@ -40,12 +48,10 @@ export class ProjectEditorApi {
     }>(`${environment.apiUrl}/auth/userDetails`);
   }
 
-  loadPage(projectId: string, pageId: string): Observable<ProjectResponseDto> {
-    // return this.http.get<ProjectResponseDto>(
-    //   `${environment.apiUrl}/project/${projectId}/page/${pageId}`
-    // );
-
-    return of(PROJECT_PAGE_RESPONSE as any);
+  loadPage(projectId: string, pageId: string): Observable<PageDto> {
+    return this.http.get<PageDto>(
+      `${environment.apiUrl}/project/${projectId}/page/${pageId}`
+    );
   }
 
   generatePageAI(payload: AIGenerationPayload): Observable<ProjectResponseDto> {
@@ -63,16 +69,35 @@ export class ProjectEditorApi {
     return this.http.post(`${environment.apiUrl}/project/export`, payload, { responseType: 'blob' });
   }
 
-  getProjectList() {
-    return this.http.get(`${environment.apiUrl}/project/list`);
+  createProject(dto: CreateProjectDto): Observable<ProjectDto> {
+    return this.http.post<ProjectDto>(`${environment.apiUrl}/project/create`, dto);
+  }
+
+  getProjectList(): Observable<ProjectSummaryDto[]> {
+    return this.http.get<ProjectSummaryDto[]>(`${environment.apiUrl}/project/list`);
+  }
+
+  getProject(projectId: string): Observable<ProjectDto> {
+    return this.http.get<ProjectDto>(`${environment.apiUrl}/project/${projectId}`);
+  }
+
+  saveProject(projectId: string, dto: UpdateProjectDto): Observable<ProjectDto> {
+    return this.http.patch<ProjectDto>(`${environment.apiUrl}/project/${projectId}`, dto);
+  }
+
+  savePage(projectId: string, pageId: string, layers: LayerDto[]): Observable<void> {
+    return this.http.put<void>(
+      `${environment.apiUrl}/project/${projectId}/page/${pageId}`,
+      { layers },
+    );
   }
 
   getWidgetsLibrary() {
     return this.http.get(`${environment.apiUrl}/widgets/library`);
   }
 
-  getLayers(projectId: string, pageId: string) {
-    return this.http.get(`${environment.apiUrl}/project/${projectId}/page/${pageId}/layers`);
+  getLayers(projectId: string, pageId: string): Observable<LayerDto[]> {
+    return this.http.get<LayerDto[]>(`${environment.apiUrl}/project/${projectId}/page/${pageId}/layers`);
   }
-  
+
 }

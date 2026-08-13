@@ -14,6 +14,7 @@ export interface WidgetPropertyModel {
   type?: string;
   options?: string[];
   inputType?: string;
+  required?: boolean;
   background?: Partial<{
     color: {
       name: string;
@@ -63,4 +64,39 @@ export interface ExportPayloadDto {
   projectName: string;
   layers: LayerDto[];
   theme: DesignTokens;
+}
+
+export interface ProjectSummaryDto {
+  id: string;
+  name: string;
+  industry?: string;
+  status: 'draft' | 'published';
+  updatedAt?: string;
+}
+
+export interface ProjectPageSummaryDto {
+  id: string;
+  pageName: string;
+}
+
+export interface ProjectDto extends ProjectSummaryDto {
+  theme?: DesignTokens;
+  pages: ProjectPageSummaryDto[];
+}
+
+export interface CreateProjectDto {
+  name: string;
+  industry?: string;
+}
+
+export type UpdateProjectDto = Partial<{
+  name: string;
+  theme: DesignTokens;
+  status: 'draft' | 'published';
+}>;
+
+export interface PageDto {
+  id: string;
+  pageName: string;
+  layers: LayerDto[];
 }

@@ -35,6 +35,7 @@ export interface AppViewSchema {
 }
 
 export interface AppState {
+  projectId: string | null;
   pages: Page[];
   selectedPage: Page;
   selectedLayer: Layer;

@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { scaffoldLayer } from '../utils/editor';
 import { HistoryEditorState } from './history-state';
 import { LayersEditor } from '../services/layers-editor';
-import { AppState, Layer } from '../types/project.type';
+import { AppState, Layer, Page } from '../types/project.type';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,7 @@ export class ApplicationEditorState {
   private historyState = inject(HistoryEditorState);
 
   private _appState: AppState = {
+    projectId: null,
     pages: [
       {
         id: 'page-1',
@@ -45,6 +46,21 @@ export class ApplicationEditorState {
   _highlightedLayer = signal<Layer | null>(null);
   highlightedLayer = this._highlightedLayer.asReadonly();
 
+  private _hasUnsavedChanges = signal(false);
+  hasUnsavedChanges = this._hasUnsavedChanges.asReadonly();
+
+  private _lastSavedAt = signal<Date | null>(null);
+  lastSavedAt = this._lastSavedAt.asReadonly();
+
+  markSaved() {
+    this._hasUnsavedChanges.set(false);
+    this._lastSavedAt.set(new Date());
+  }
+
+  setProjectId(projectId: string) {
+    this._appState.projectId = projectId;
+  }
+
   get pages() {
     return this._appState.pages;
   }
@@ -57,22 +73,25 @@ export class ApplicationEditorState {
     });
   }
 
+  /**
+   * Clears the current canvas (layers + selection) before applying a new template.
+   * Preserves projectId/pages/selectedPage when a real project is loaded — falls back
+   * to demo stub pages otherwise (no project loaded yet).
+   */
   resetAppState() {
+    const hasRealProject = !!this._appState.projectId;
+
     const initialState: AppState = {
-      pages: [
-        {
-          id: 'page-1',
-          pageName: 'Home Landing Page',
-        },
-        {
-          id: 'page-2',
-          pageName: 'Contacts Page',
-        },
-      ],
-      selectedPage: {
-        id: 'page-1',
-        pageName: 'Home Landing Page',
-      },
+      projectId: this._appState.projectId,
+      pages: hasRealProject
+        ? this._appState.pages
+        : [
+            { id: 'page-1', pageName: 'Home Landing Page' },
+            { id: 'page-2', pageName: 'Contacts Page' },
+          ],
+      selectedPage: hasRealProject
+        ? this._appState.selectedPage
+        : { id: 'page-1', pageName: 'Home Landing Page' },
       selectedLayer: scaffoldLayer(),
       appViewSchema: {
         device: 'sm',
@@ -109,8 +128,33 @@ export class ApplicationEditorState {
     });
 
     this.updateState(newState);
+    this._hasUnsavedChanges.set(true);
 
     console.log('Updated App State:', this.appState);
+  }
+
+  /**
+   * Replaces the current layers/pages with content freshly loaded from the server.
+   * Unlike `updateAppState`, this does not mark the project as having unsaved changes —
+   * it's mirroring what's already persisted, not a new edit.
+   */
+  loadFromServer(params: { projectId: string; pages: Page[]; selectedPage: Page; layers: Layer[] }) {
+    const newLayers = [scaffoldLayer(params.layers)];
+
+    const newState: AppState = {
+      ...this.appState,
+      projectId: params.projectId,
+      pages: params.pages,
+      selectedPage: params.selectedPage,
+      appViewSchema: {
+        ...this.appState.appViewSchema,
+        layers: newLayers,
+        layersMap: this.layersEditor.updateLayersMap(newLayers, {}),
+      },
+    };
+
+    this.updateState(newState);
+    this._hasUnsavedChanges.set(false);
   }
 
   highlightLayer(layer: Layer | null) {
