@@ -42,6 +42,12 @@ repo — check an existing file in the same folder before inventing a new conven
 - Bind classes/styles with `[class.x]`/`[style.x]` or the `NgClass`/`class` object form already
   used in this repo (see `application-project-editor.html`), not string concatenation in the
   component.
+- **In `layer.html`, every `@case` must render its class via `layer().layerPropertyModel |
+  layerAttributeTransform: buildLayerTailwindClasses`**, never via
+  `layer().widgetReference.defaultWidgetPropertyModel.class` alone — that's the static
+  widget-definition default and ignores per-layer edits/hydrated state. `image`/`icon` had this
+  bug until 2026-08-14 (see `.claude/context.md`); copy `heading` or `text` as the reference
+  case for any new widget type.
 
 ## Styling
 

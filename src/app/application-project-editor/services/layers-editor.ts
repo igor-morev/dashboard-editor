@@ -18,6 +18,7 @@ import { WidgetsState } from '../state/widgets-state';
 export class LayersEditor {
   private widgetsState = inject(WidgetsState);
   private widgetTypeRegistry: Record<string, Widget> | null = null;
+  private widgetIdRegistry: Record<string, Widget> | null = null;
 
   createLayerForWidget(widget: Widget, parentId: string | null, index = 0): Layer {
     const layerId = generateUniqueId();
@@ -230,11 +231,13 @@ export class LayersEditor {
       id: layer.id,
       isVisible: layer.isVisible,
       widgetReference: {
+        id: layer.widgetReference.id,
         widgetType: layer.widgetReference.widgetType,
       },
       layerPropertyModel: {
         defaultClass: layer.layerPropertyModel.defaultClass,
         class: layer.layerPropertyModel.class,
+        layout: layer.layerPropertyModel.layout,
         content: layer.layerPropertyModel.content,
 
         label: 'label' in layer.layerPropertyModel ? layer.layerPropertyModel.label : undefined,
@@ -263,14 +266,19 @@ export class LayersEditor {
   }
 
   /**
-   * Reconstructs the in-memory layer tree from the saved wire format. The `widgetReference`
-   * on a `LayerDto` only carries a `widgetType` string, so each node is re-attached to a
-   * representative `Widget` definition from the widget library, looked up by that type —
-   * the saved `layerPropertyModel` (not the widget's defaults) is what drives its actual content/styling.
+   * Reconstructs the in-memory layer tree from the saved wire format. Each node is re-attached
+   * to a `Widget` definition from the widget library, looked up **by id** (`widgetReference.id`)
+   * — that identifies the *specific* widget definition, e.g. `hero-widget` vs `features-widget`,
+   * which otherwise share `widgetType: 'section'` and would be indistinguishable by type alone.
+   * Falls back to a type-based lookup only if the id isn't found (older saved data, or the
+   * widget library changed) — the saved `layerPropertyModel` (not the widget's defaults) is
+   * what drives actual content/styling either way.
    */
   toLayer(dtos: LayerDto[], parentId: string | null): Layer[] {
     return dtos.map((dto, index) => {
-      const widget = this.getWidgetByType(dto.widgetReference.widgetType);
+      const widget =
+        this.getWidgetById(dto.widgetReference.id) ??
+        this.getWidgetByType(dto.widgetReference.widgetType);
 
       const layer: Layer = {
         id: dto.id,
@@ -283,6 +291,7 @@ export class LayersEditor {
         layerPropertyModel: {
           defaultClass: dto.layerPropertyModel.defaultClass,
           class: dto.layerPropertyModel.class,
+          layout: dto.layerPropertyModel.layout,
           content: dto.layerPropertyModel.content,
           label: dto.layerPropertyModel.label,
           placeholder: dto.layerPropertyModel.placeholder,
@@ -307,22 +316,64 @@ export class LayersEditor {
     });
   }
 
-  private getWidgetByType(widgetType: string): Widget {
-    if (!this.widgetTypeRegistry) {
-      this.widgetTypeRegistry = {};
-      const flatten = (widgets: Widget[]) => {
-        widgets.forEach((widget) => {
-          if (!this.widgetTypeRegistry![widget.widgetType]) {
-            this.widgetTypeRegistry![widget.widgetType] = widget;
-          }
-          if (widget.children) {
-            flatten(widget.children);
-          }
-        });
-      };
-      flatten(this.widgetsState.widgets);
+  private buildWidgetRegistries(): void {
+    if (this.widgetTypeRegistry && this.widgetIdRegistry) {
+      return;
     }
 
-    return this.widgetTypeRegistry[widgetType] ?? this.widgetsState.widgets[0];
+    this.widgetTypeRegistry = {};
+    this.widgetIdRegistry = {};
+
+    const flatten = (widgets: Widget[]) => {
+      widgets.forEach((widget) => {
+        if (!this.widgetTypeRegistry![widget.widgetType]) {
+          this.widgetTypeRegistry![widget.widgetType] = widget;
+        }
+        if (!this.widgetIdRegistry![widget.id]) {
+          this.widgetIdRegistry![widget.id] = widget;
+        }
+        if (widget.children) {
+          flatten(widget.children);
+        }
+      });
+    };
+    flatten(this.widgetsState.widgets);
+  }
+
+  /**
+   * Looks up the *specific* widget definition a layer was created from (e.g. `hero-widget`
+   * distinctly from `section-widget`, even though both share `widgetType: 'section'`). Returns
+   * `null` (not the unknown-widget placeholder) when there's no id to look up or no match, so
+   * callers can fall back to `getWidgetByType` instead.
+   */
+  private getWidgetById(sourceWidgetId: string | undefined): Widget | null {
+    if (!sourceWidgetId) {
+      return null;
+    }
+
+    this.buildWidgetRegistries();
+    return this.widgetIdRegistry![sourceWidgetId] ?? null;
+  }
+
+  private getWidgetByType(widgetType: string): Widget {
+    this.buildWidgetRegistries();
+
+    const match = this.widgetTypeRegistry![widgetType];
+    if (match) {
+      return match;
+    }
+
+    console.warn(
+      `LayersEditor.getWidgetByType: no widget registered for widgetType "${widgetType}" — ` +
+        `rendering a visible placeholder instead of silently substituting an unrelated widget.`,
+    );
+    return {
+      id: `unknown-widget-${widgetType}`,
+      widgetName: `Unknown widget (${widgetType})`,
+      widgetType: 'section',
+      defaultWidgetPropertyModel: {
+        content: `⚠ Unknown widget type: ${widgetType}`,
+      },
+    } as Widget;
   }
 }

@@ -5,6 +5,7 @@ export type ProjectResponseDto = typeof AI_SYSTEM_JSON_RESPONSE;
 export interface WidgetPropertyModel {
   defaultClass?: string;
   class?: string;
+  layout?: string;
   content?: string | Record<string, any>;
   label?: string;
   name?: string;
@@ -32,6 +33,7 @@ export interface WidgetPropertyModel {
 }
 
 export interface WidgetReference {
+  id: string;
   widgetType: string;
 }
 

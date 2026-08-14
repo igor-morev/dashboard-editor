@@ -78,7 +78,7 @@ export class DataAccess {
           projectId,
           pages: this.appState.pages,
           selectedPage: page,
-          layers: this.layersEditor.toLayer(pageDto.layers, null),
+          layers: this.layersEditor.toLayer(pageDto.layers, 'scaffold'),
         });
       }),
       map(() => void 0),
@@ -93,7 +93,12 @@ export class DataAccess {
       return of(void 0);
     }
 
-    const layers = this.layersEditor.toLayerDto(this.appState.appViewSchema.layers);
+    // appViewSchema.layers is always [scaffoldLayer(content)] — a single synthetic root
+    // wrapping the real content in its `children`. Serialize the unwrapped content, not the
+    // scaffold wrapper itself, or loadFromServer()/toLayer() re-wraps it on the next load and
+    // the tree grows an extra "scaffold" nesting level each save/load cycle.
+    const content = this.appState.appViewSchema.layers[0]?.children ?? [];
+    const layers = this.layersEditor.toLayerDto(content);
     const theme = this.themeManager.currentTheme();
 
     return forkJoin([

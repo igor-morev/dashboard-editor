@@ -156,7 +156,7 @@ export class WidgetsState {
           title: 'Ready to Dive In?',
           description: 'Explore thousands of AI games and assets. Your next adventure awaits!',
           buttonText: 'Browse Marketplace',
-          imageSrc: 'https://loremflickr.com/1200/400/ai,gaming,marketplace',
+          imageSrc: 'https://loremflickr.com/1200/800/cat,grooming,salon',
           badge: 'EXPLORE',
         }),
         footerWidget(),

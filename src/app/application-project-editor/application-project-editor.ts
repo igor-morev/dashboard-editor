@@ -142,6 +142,8 @@ export class ApplicationProjectEditor {
           this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id], {
             replaceUrl: true,
           });
+
+          this.cdr.markForCheck();
         });
     }
 
@@ -646,11 +648,15 @@ export class ApplicationProjectEditor {
   }
 
   exportProject() {
+    // appViewSchema.layers is always [scaffoldLayer(content)] — export the unwrapped content,
+    // not the synthetic scaffold wrapper (see DataAccess.save() for the same fix/rationale).
+    const content = this.appState.appViewSchema.layers[0]?.children ?? [];
+
     this.api
       .exportByJson({
         projectName: this.appState.selectedPage.pageName,
         theme: this.themeManager.currentTheme(),
-        layers: this.layersEditor.toLayerDto(this.appState.appViewSchema.layers),
+        layers: this.layersEditor.toLayerDto(content),
       })
       .subscribe((response) => {
         const url = window.URL.createObjectURL(response);

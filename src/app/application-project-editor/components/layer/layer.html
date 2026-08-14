@@ -42,6 +42,7 @@
     <div deLayerContent class="inline-flex">
       <img
         [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
         [src]="imageLayerPropertyModel.src || imageLayerPropertyModel.content"
       />
     </div>
@@ -152,9 +153,11 @@
 
   @case ('icon') {
     <div deLayerContent class="inline-flex">
-      <mat-icon [class]="layer().widgetReference.defaultWidgetPropertyModel.class">{{
-        layer().layerPropertyModel.content
-      }}</mat-icon>
+      <mat-icon
+        [class]="layer().widgetReference.defaultWidgetPropertyModel.class"
+        [class]="layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses"
+        >{{ layer().layerPropertyModel.content }}</mat-icon
+      >
     </div>
   }
 

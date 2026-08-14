@@ -31,12 +31,35 @@ so there's one place to check, not two drifting ones.
   column, container, heading, icon, icon-button, image, link, link-button, list, list-item,
   row, section, text, plus composite `sections/` — header/hero/features/testimonials/faq/
   footer/contact).
-- Persistence is lossy on one specific point by design: `LayersEditor.toLayer()` rebuilds a
-  saved layer's `widgetReference` from a type registry (a representative widget of that
-  `widgetType`), not the exact original widget instance, since only `widgetType` is persisted
-  over the wire. Content/styling round-trip fine; anything depending on widget-specific
-  metadata beyond `widgetType` would not. This is an architectural property of the DTO shape,
-  not a bug to fix incidentally.
+- The wire-format `WidgetReference` (`LayerDto.widgetReference` in `api/types/project.ts`) is
+  deliberately minimal — `{ id, widgetType }`, nothing else. `LayersEditor.toLayer()` uses `id`
+  as the **primary** lookup key into the widget library (`getWidgetById`), falling back to a
+  `widgetType`-based registry lookup (`getWidgetByType`) only if that id isn't found (older
+  saved data, or the widget library changed). `id` matters because many distinct composite
+  widgets share one `widgetType` — e.g. `hero-widget` and `features-widget` are both
+  `widgetType: 'section'`, same as the bare `section-widget` — so a type-only lookup can't tell
+  them apart and silently substitutes the wrong widget (wrong `layoutTransformer`/
+  `propertyConfig`, wrong display name). Don't add other fields back into `WidgetReference`
+  (e.g. a separate persisted `widgetName`) to patch a symptom — if the *right* widget is
+  attached via `id`, its own `widgetName`/`propertyConfig`/`layoutTransformer` are already
+  correct, so there's nothing else worth sending. Content/styling round-trip correctly
+  regardless of which widget object gets attached, since `layerPropertyModel` (not
+  `widgetReference`) is what rendering actually uses, per-layer, for every widget type (see
+  `layer.html`) — but layout switching and drag-drop validation for a reloaded layer depend on
+  `widgetReference` being the *right* widget, which is why the id-based lookup (fixed
+  2026-08-14) matters beyond just the label.
+- `layerPropertyModel.layout` (the selected layout variant for header/hero/features/etc.,
+  driving `LayerPropertyBuilder`'s layout dropdown and
+  `rebuildLayerByLayout()`) is persisted too, as of 2026-08-14 — it wasn't in the DTO's
+  `WidgetPropertyModel` before that, so a saved section's layout choice would silently revert on
+  reload even though its content/children were fine.
+- **Every widget case in `layer.html` must render its class via
+  `layer().layerPropertyModel | layerAttributeTransform: buildLayerTailwindClasses`**, not via
+  `layer().widgetReference.defaultWidgetPropertyModel.class` — the latter is the static
+  widget-definition default and never reflects per-layer edits or hydrated state. Fixed
+  2026-08-14 for `image`/`icon` (they were the two cases missing the pipe-based binding that
+  every other case already had); if a new widget case is added, copy the pattern from `heading`
+  or `text`, not from a case that predates this fix.
 
 ## AI generation
 
