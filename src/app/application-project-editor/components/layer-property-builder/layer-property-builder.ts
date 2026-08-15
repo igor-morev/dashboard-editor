@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LayersEditor } from '@app/application-project-editor/services/layers-editor';
@@ -19,23 +12,28 @@ import {
   ImageWidgetPropertyModel,
 } from '@app/application-project-editor/types/widget.type';
 import { ColorPalleteSelect } from '@app/application-project-editor/ui/color-pallete-select/color-pallete-select';
+import { ImageSourceInput } from '@app/application-project-editor/ui/image-source-input/image-source-input';
 import { auditTime } from 'rxjs';
 
 @Component({
   selector: 'de-layer-property-editor',
-  imports: [ReactiveFormsModule, ColorPalleteSelect],
+  imports: [ReactiveFormsModule, ColorPalleteSelect, ImageSourceInput],
   templateUrl: './layer-property-builder.html',
   styleUrl: './layer-property-builder.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerPropertyBuilder {
-  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private state = inject(ApplicationEditorState);
   private layersEditor = inject(LayersEditor);
 
   get appState() {
     return this.state.appState;
+  }
+
+  get hasStyleFields(): boolean {
+    const styles = this.selectedLayer().widgetReference.propertyConfig?.styles;
+    return !!(styles?.textAlign || styles?.backgroundColor || styles?.background || styles?.color);
   }
 
   get selectedLayer() {
@@ -89,75 +87,66 @@ export class LayerPropertyBuilder {
 
   constructor() {
     effect(() => {
-      const layerPropertyModel = this.selectedLayer().layerPropertyModel;
-      const widgetPropertyModel = this.selectedLayer().widgetReference.defaultWidgetPropertyModel;
+      const layer = this.selectedLayer();
+      const layerPropertyModel = layer.layerPropertyModel;
+      const widgetPropertyModel = layer.widgetReference.defaultWidgetPropertyModel;
+      const layerStyles = layerPropertyModel.styles;
+      const widgetStyles = widgetPropertyModel?.styles;
 
       this.formGroup.patchValue(
         {
           backgroundColor: {
-            name:
-              layerPropertyModel.styles?.backgroundColor?.name! ||
-              widgetPropertyModel?.styles?.backgroundColor?.name!,
-            range:
-              layerPropertyModel.styles?.backgroundColor?.range! ||
-              widgetPropertyModel?.styles?.backgroundColor?.range,
+            name: this.pick(layerStyles?.backgroundColor?.name, widgetStyles?.backgroundColor?.name),
+            range: this.pick(
+              layerStyles?.backgroundColor?.range,
+              widgetStyles?.backgroundColor?.range,
+            ),
           },
-          content: this.selectedLayer().layerPropertyModel.content,
-          layout: this.selectedLayer().layerPropertyModel.layout,
-          textAlign: this.selectedLayer().layerPropertyModel.styles?.textAlign,
+          content: layerPropertyModel.content,
+          layout: layerPropertyModel.layout,
+          textAlign: layerStyles?.textAlign,
           textColor: {
-            name:
-              layerPropertyModel.styles?.color?.name! || widgetPropertyModel?.styles?.color?.name!,
-            range:
-              layerPropertyModel.styles?.color?.range! || widgetPropertyModel?.styles?.color?.range,
+            name: this.pick(layerStyles?.color?.name, widgetStyles?.color?.name),
+            range: this.pick(layerStyles?.color?.range, widgetStyles?.color?.range),
           },
         },
-        {
-          emitEvent: false,
-        },
+        { emitEvent: false },
       );
 
       this.formGroup.get('background')!.patchValue(
         {
           color: {
-            name:
-              layerPropertyModel.styles?.background?.color?.name! ||
-              widgetPropertyModel?.styles?.background?.color?.name!,
-            range:
-              layerPropertyModel.styles?.background?.color?.range! ||
-              widgetPropertyModel?.styles?.background?.color?.range,
+            name: this.pick(
+              layerStyles?.background?.color?.name,
+              widgetStyles?.background?.color?.name,
+            ),
+            range: this.pick(
+              layerStyles?.background?.color?.range,
+              widgetStyles?.background?.color?.range,
+            ),
           },
+          // Unlike the other fields, an explicitly-cleared image (empty string) should stick —
+          // only fall back to the widget default when the layer never set it at all.
           image:
-            layerPropertyModel.styles?.background?.image !== undefined
-              ? layerPropertyModel.styles?.background?.image
-              : widgetPropertyModel?.styles?.background?.image,
-          position:
-            layerPropertyModel.styles?.background?.position ||
-            widgetPropertyModel?.styles?.background?.position,
-          repeat:
-            layerPropertyModel.styles?.background?.repeat ||
-            widgetPropertyModel?.styles?.background?.repeat,
-          size:
-            layerPropertyModel.styles?.background?.size ||
-            widgetPropertyModel?.styles?.background?.size,
+            layerStyles?.background?.image !== undefined
+              ? layerStyles?.background?.image
+              : widgetStyles?.background?.image,
+          position: this.pick(layerStyles?.background?.position, widgetStyles?.background?.position),
+          repeat: this.pick(layerStyles?.background?.repeat, widgetStyles?.background?.repeat),
+          size: this.pick(layerStyles?.background?.size, widgetStyles?.background?.size),
         },
-        {
-          emitEvent: false,
-        },
+        { emitEvent: false },
       );
+
+      const linkLayerModel = layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'];
+      const linkWidgetModel = widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'];
 
       this.formGroup.get('link')!.patchValue(
         {
-          url:
-            (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href ||
-            (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.href,
-          openInNewTab:
-            (layerPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank' ||
-            (widgetPropertyModel as LinkWidget['defaultWidgetPropertyModel'])?.target === '_blank',
+          url: this.pick(linkLayerModel?.href, linkWidgetModel?.href),
+          openInNewTab: linkLayerModel?.target === '_blank' || linkWidgetModel?.target === '_blank',
         },
-        {
-          emitEvent: false,
-        },
+        { emitEvent: false },
       );
     });
 
@@ -196,6 +185,11 @@ export class LayerPropertyBuilder {
       });
   }
 
+  /** Falls back to the widget's default value when the layer hasn't overridden it. */
+  private pick<T>(layerValue: T | undefined, widgetValue: T | undefined): T {
+    return (layerValue || widgetValue) as T;
+  }
+
   private updateLayerPropertyModel(
     layerId: string,
     newPropertyModel: WidgetPropertyModel | LinkWidgetPropertyModel | ImageWidgetPropertyModel,
@@ -210,9 +204,7 @@ export class LayerPropertyBuilder {
         },
       } as Layer);
 
-      console.log('Updated Layer:', updatedLayer);
-
-      const updatedLayersTree = this.updateLayerInTree(
+      const updatedLayersTree = this.layersEditor.updateLayerInTree(
         this.appState.appViewSchema.layers,
         layerId,
         updatedLayer,
@@ -223,60 +215,21 @@ export class LayerPropertyBuilder {
         appViewSchema: {
           ...this.appState.appViewSchema,
           layers: updatedLayersTree,
-          layersMap: this.updateLayersMap(updatedLayersTree, {}),
+          layersMap: this.layersEditor.updateLayersMap(updatedLayersTree, {}),
         },
       });
     }
   }
 
   postprocessLayer(layer: Layer): Layer {
-    layer.widgetReference.defaultWidgetPropertyModel?.onUpdate
-      ? layer.widgetReference.defaultWidgetPropertyModel.onUpdate(
-          layer.layerPropertyModel.content as string,
-        )
-      : null;
+    if (layer.widgetReference.defaultWidgetPropertyModel?.onUpdate) {
+      layer.widgetReference.defaultWidgetPropertyModel.onUpdate(layer.layerPropertyModel.content as string);
+    }
 
     if (!layer.widgetReference.layoutTransformer) {
       return layer;
     }
 
     return this.layersEditor.rebuildLayerByLayout(layer, this.formGroup.value.layout!);
-  }
-
-  updateLayerInTree(layers: Layer[], layerId: string, updatedLayer: Layer): Layer[] {
-    return layers.map((layer) => {
-      if (layer.id === layerId) {
-        return {
-          ...layer,
-          layerPropertyModel: {
-            ...layer.layerPropertyModel,
-            ...updatedLayer.layerPropertyModel,
-          },
-          children: updatedLayer.children,
-        };
-      } else if (layer.children.length > 0) {
-        return {
-          ...layer,
-          children: this.updateLayerInTree(layer.children, layerId, updatedLayer),
-        };
-      } else {
-        return layer;
-      }
-    });
-  }
-
-  private updateLayersMap(
-    layers: Layer[],
-    layersMap: Record<string, Layer>,
-  ): Record<string, Layer> {
-    layers.forEach((layer) => {
-      layersMap[layer.id] = layer;
-
-      if (layer.children.length > 0) {
-        this.updateLayersMap(layer.children, layersMap);
-      }
-    });
-
-    return layersMap;
   }
 }
