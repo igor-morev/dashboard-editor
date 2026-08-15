@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ProjectEditorApi } from '@app/api/services/project-editor-api';
 import { ApplicationEditorState } from '../state/application-editor-state';
-import { Layer } from '../types/project.type';
 import { Widget } from '../types/widget.type';
 import { scaffoldLayer } from '../utils/editor';
 import { LayersEditor } from './layers-editor';
@@ -61,6 +60,16 @@ export class DataAccess {
     );
   }
 
+  /** Like loadProject(), but loads a specific page instead of always the first one — for
+   * routes (e.g. the preview route) that need a given project+page loaded from a cold start,
+   * such as after a hard refresh where no in-memory state exists yet. */
+  loadProjectAndPage(projectId: string, pageId: string): Observable<void> {
+    return this.api.getProject(projectId).pipe(
+      tap((project) => this.loadProjectData(project)),
+      switchMap(() => this.loadPage(pageId)),
+    );
+  }
+
   loadPage(pageId: string): Observable<void> {
     const projectId = this.appState.projectId;
     if (!projectId) {
@@ -108,6 +117,17 @@ export class DataAccess {
       tap(() => this.state.markSaved()),
       map(() => void 0),
     );
+  }
+
+  getPreviewHtml(): Observable<string> {
+    // Same scaffold-unwrap as save() — appViewSchema.layers is always [scaffoldLayer(content)].
+    const content = this.appState.appViewSchema.layers[0]?.children ?? [];
+
+    return this.api.previewProject({
+      projectName: this.appState.selectedPage.pageName,
+      theme: this.themeManager.currentTheme(),
+      layers: this.layersEditor.toLayerDto(content),
+    });
   }
 
   private loadProjectData(project: ProjectDto) {

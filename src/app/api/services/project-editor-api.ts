@@ -69,6 +69,12 @@ export class ProjectEditorApi {
     return this.http.post(`${environment.apiUrl}/project/export`, payload, { responseType: 'blob' });
   }
 
+  previewProject(payload: ExportPayloadDto): Observable<string> {
+    return this.http.post(`${environment.apiUrl}/project/preview`, payload, {
+      responseType: 'text',
+    });
+  }
+
   createProject(dto: CreateProjectDto): Observable<ProjectDto> {
     return this.http.post<ProjectDto>(`${environment.apiUrl}/project/create`, dto);
   }

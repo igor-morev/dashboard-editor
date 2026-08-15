@@ -647,6 +647,14 @@ export class ApplicationProjectEditor {
     this.tab.set(tab);
   }
 
+  openPreview() {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return;
+    }
+    this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id, 'preview']);
+  }
+
   exportProject() {
     // appViewSchema.layers is always [scaffoldLayer(content)] — export the unwrapped content,
     // not the synthetic scaffold wrapper (see DataAccess.save() for the same fix/rationale).

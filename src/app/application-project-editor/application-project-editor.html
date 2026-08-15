@@ -160,6 +160,9 @@
         <button matIconButton (click)="save()" [disabled]="!hasUnsavedChanges()" title="Save">
           <mat-icon>save</mat-icon>
         </button>
+        <button matIconButton (click)="openPreview()" title="Preview">
+          <mat-icon>visibility</mat-icon>
+        </button>
         <button matIconButton (click)="exportProject()" title="Export Project">
           <mat-icon>arrow_downward</mat-icon>
         </button>
