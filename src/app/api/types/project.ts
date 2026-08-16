@@ -102,3 +102,7 @@ export interface PageDto {
   pageName: string;
   layers: LayerDto[];
 }
+
+export interface CreatePageDto {
+  pageName: string;
+}

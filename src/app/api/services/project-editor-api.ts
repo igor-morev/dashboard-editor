@@ -6,6 +6,7 @@ import { AuthResponse } from "../types/auth";
 import { UserDto } from "../types/user";
 import { AIGenerationPayload } from "../types/ai";
 import {
+  CreatePageDto,
   CreateProjectDto,
   ExportPayloadDto,
   LayerDto,
@@ -104,6 +105,14 @@ export class ProjectEditorApi {
 
   getLayers(projectId: string, pageId: string): Observable<LayerDto[]> {
     return this.http.get<LayerDto[]>(`${environment.apiUrl}/project/${projectId}/page/${pageId}/layers`);
+  }
+
+  createPage(projectId: string, dto: CreatePageDto): Observable<PageDto> {
+    return this.http.post<PageDto>(`${environment.apiUrl}/project/${projectId}/page`, dto);
+  }
+
+  deletePage(projectId: string, pageId: string): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/project/${projectId}/page/${pageId}`);
   }
 
 }

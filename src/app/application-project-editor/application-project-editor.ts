@@ -16,13 +16,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, skip } from 'rxjs';
 import { EditorContextMenu } from './ui/context-menu/context-menu';
 import { ApplicationEditorState } from './state/application-editor-state';
-import {
-  RouterOutlet,
-  RouterLink,
-  RouterLinkActive,
-  Router,
-  ActivatedRoute,
-} from '@angular/router';
+import { RouterOutlet, RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { LayerPropertyBuilder } from './components/layer-property-builder/layer-property-builder';
 import { WidgetsState } from './state/widgets-state';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,7 +52,6 @@ interface WidgetsTab {
     NgClass,
     RouterOutlet,
     RouterLink,
-    RouterLinkActive,
     LayerPropertyBuilder,
     MatButtonModule,
     MatIconModule,
@@ -93,6 +86,10 @@ export class ApplicationProjectEditor {
   highlightedLayer = this.state.highlightedLayer;
   hasUnsavedChanges = this.state.hasUnsavedChanges;
   lastSavedAt = this.state.lastSavedAt;
+
+  isCreatingPage = signal(false);
+  newPageName = signal('');
+  pendingDeletePageId = signal<string | null>(null);
 
   dragMovedEvent = new Subject<CdkDragMove<Layer>>();
   dragDroppedEvent = new Subject<CdkDragDrop<Layer[]>>();
@@ -525,13 +522,72 @@ export class ApplicationProjectEditor {
       return;
     }
 
-    if (this.appState.projectId) {
-      this.dataAccess.loadPage(page.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    const projectId = this.appState.projectId;
+
+    if (projectId) {
+      this.dataAccess
+        .loadPage(page.id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.router.navigate(['/project', projectId, 'page', page.id]);
+        });
     } else {
       this.state.updateAppState({
         selectedPage: page,
       });
     }
+  }
+
+  startCreatingPage() {
+    this.newPageName.set('');
+    this.isCreatingPage.set(true);
+  }
+
+  cancelCreatingPage() {
+    this.isCreatingPage.set(false);
+  }
+
+  confirmCreatePage() {
+    const pageName = this.newPageName().trim();
+    if (!pageName) {
+      return;
+    }
+
+    this.dataAccess
+      .createPage(pageName)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isCreatingPage.set(false);
+
+        const projectId = this.appState.projectId;
+        if (projectId) {
+          this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id]);
+        }
+      });
+  }
+
+  startDeletePage(event: Event, pageId: string) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.pendingDeletePageId.set(pageId);
+  }
+
+  cancelDeletePage() {
+    this.pendingDeletePageId.set(null);
+  }
+
+  confirmDeletePage(pageId: string) {
+    this.dataAccess
+      .deletePage(pageId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.pendingDeletePageId.set(null);
+
+        const projectId = this.appState.projectId;
+        if (projectId) {
+          this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id]);
+        }
+      });
   }
 
   @HostListener('document:keydown', ['$event'])

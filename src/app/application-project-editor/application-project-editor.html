@@ -16,7 +16,7 @@
               class="py-2 px-4 tab"
               (click)="selectTab(item)"
               type="button"
-              [class.tab-active]="tab() === item"
+              [class.tab-active]="tab().value === item.value"
             >
               {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
             </button>
@@ -53,24 +53,100 @@
         </div>
       </div>
       <div class="flex flex-col">
-        <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
-          Pages
+        <div
+          class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white flex items-center justify-between"
+        >
+          <span>Pages</span>
+          <button
+            type="button"
+            class="text-gray-400 hover:text-gray-700"
+            title="New page"
+            (click)="startCreatingPage()"
+          >
+            <mat-icon class="!text-base !w-4 !h-4">add</mat-icon>
+          </button>
         </div>
         <div class="py-2 px-4 overflow-auto h-0 grow">
           <ul>
             @for (page of pages; track page.id) {
-              <li>
-                <a
-                  [routerLink]="['page', page.id]"
-                  routerLinkActive="text-blue-500"
-                  [routerLinkActiveOptions]="{ exact: false }"
-                  class="pl-1 hover:bg-blue-300/50 block whitespace-nowrap overflow-hidden text-ellipsis"
-                  [title]="page.pageName"
-                  >{{ page.pageName }}</a
-                >
+              <li class="group">
+                @if (pendingDeletePageId() === page.id) {
+                  <div class="flex items-center justify-between gap-1 py-1 text-xs">
+                    <span class="text-gray-500 truncate">Delete "{{ page.pageName }}"?</span>
+                    <div class="flex items-center gap-2 flex-none">
+                      <button
+                        type="button"
+                        class="text-rose-600 hover:text-rose-700 font-medium"
+                        (click)="confirmDeletePage(page.id)"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        type="button"
+                        class="text-gray-400 hover:text-gray-600"
+                        (click)="cancelDeletePage()"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div
+                    class="flex items-center justify-between gap-1 cursor-pointer hover:bg-blue-300/50"
+                    [class.text-blue-500]="page.id === appState.selectedPage.id"
+                    (click)="selectPage(page)"
+                  >
+                    <span
+                      class="pl-1 whitespace-nowrap overflow-hidden text-ellipsis"
+                      [title]="page.pageName"
+                      >{{ page.pageName }}</span
+                    >
+                    @if (pages.length > 1) {
+                      <button
+                        type="button"
+                        class="pr-1 text-gray-300 hover:text-rose-600 opacity-0 group-hover:opacity-100 flex-none"
+                        title="Delete page"
+                        (click)="startDeletePage($event, page.id)"
+                      >
+                        <mat-icon class="!text-base !w-4 !h-4">delete</mat-icon>
+                      </button>
+                    }
+                  </div>
+                }
               </li>
             }
           </ul>
+
+          @if (isCreatingPage()) {
+            <div class="flex items-center gap-1 mt-2">
+              <input
+                class="de-input text-xs"
+                type="text"
+                placeholder="Page name"
+                [ngModel]="newPageName()"
+                (ngModelChange)="newPageName.set($event)"
+                (keydown.enter)="confirmCreatePage()"
+                (keydown.escape)="cancelCreatingPage()"
+                deAutofocus
+              />
+              <button
+                type="button"
+                class="text-blue-500 hover:text-blue-700 flex-none"
+                title="Add"
+                (click)="confirmCreatePage()"
+              >
+                <mat-icon class="!text-base !w-4 !h-4">check</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-gray-600 flex-none"
+                title="Cancel"
+                (click)="cancelCreatingPage()"
+              >
+                <mat-icon class="!text-base !w-4 !h-4">close</mat-icon>
+              </button>
+            </div>
+          }
         </div>
       </div>
       <div class="flex flex-col">

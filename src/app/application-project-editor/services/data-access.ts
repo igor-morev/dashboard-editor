@@ -130,6 +130,62 @@ export class DataAccess {
     });
   }
 
+  createPage(pageName: string): Observable<void> {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    return this.api.createPage(projectId, { pageName }).pipe(
+      tap((page) => {
+        const pages = [...this.appState.pages, { id: page.id, pageName: page.pageName }];
+        this.state.loadFromServer({
+          projectId,
+          pages,
+          selectedPage: { id: page.id, pageName: page.pageName },
+          layers: [],
+        });
+      }),
+      map(() => void 0),
+    );
+  }
+
+  deletePage(pageId: string): Observable<void> {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    return this.api.deletePage(projectId, pageId).pipe(
+      switchMap(() => {
+        const remainingPages = this.appState.pages.filter((p) => p.id !== pageId);
+        const wasSelected = this.appState.selectedPage.id === pageId;
+
+        if (wasSelected && remainingPages[0]) {
+          const nextPage = remainingPages[0];
+          // Update the pages list first so loadPage() (which looks the target page up in
+          // appState.pages) can find it, then load its real content.
+          this.state.loadFromServer({
+            projectId,
+            pages: remainingPages,
+            selectedPage: nextPage,
+            layers: [],
+          });
+          return this.loadPage(nextPage.id);
+        }
+
+        // Deleted a page that wasn't selected — just drop it from the list, keep the canvas as-is.
+        this.state.loadFromServer({
+          projectId,
+          pages: remainingPages,
+          selectedPage: this.appState.selectedPage,
+          layers: this.appState.appViewSchema.layers[0]?.children ?? [],
+        });
+        return of(void 0);
+      }),
+    );
+  }
+
   private loadProjectData(project: ProjectDto) {
     this.themeManager.setTheme(project.theme ?? {});
 
