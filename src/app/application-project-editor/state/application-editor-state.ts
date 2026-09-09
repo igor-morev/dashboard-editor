@@ -52,9 +52,20 @@ export class ApplicationEditorState {
   private _lastSavedAt = signal<Date | null>(null);
   lastSavedAt = this._lastSavedAt.asReadonly();
 
+  private _status = signal<'draft' | 'published'>('draft');
+  status = this._status.asReadonly();
+
+  private _publishedAt = signal<string | null>(null);
+  publishedAt = this._publishedAt.asReadonly();
+
   markSaved() {
     this._hasUnsavedChanges.set(false);
     this._lastSavedAt.set(new Date());
+  }
+
+  setPublishStatus(status: 'draft' | 'published', publishedAt: string | null) {
+    this._status.set(status);
+    this._publishedAt.set(publishedAt);
   }
 
   setProjectId(projectId: string) {

@@ -230,9 +230,25 @@
         }
       </div>
 
+      @if (status() === 'published') {
+        <div class="flex items-center gap-x-2 text-xs">
+          <span class="flex items-center gap-x-1 text-emerald-600">
+            <mat-icon class="!text-base !w-4 !h-4">public</mat-icon>
+            Published
+          </span>
+          <button
+            type="button"
+            class="text-blue-500 hover:text-blue-700 hover:underline"
+            (click)="copyPublicLink()"
+          >
+            {{ linkCopied() ? 'Copied!' : 'Copy link' }}
+          </button>
+        </div>
+      }
+
       <div class="grow"></div>
 
-      <div>
+      <div class="flex items-center">
         <button matIconButton (click)="save()" [disabled]="!hasUnsavedChanges()" title="Save">
           <mat-icon>save</mat-icon>
         </button>
@@ -242,6 +258,15 @@
         <button matIconButton (click)="exportProject()" title="Export Project">
           <mat-icon>arrow_downward</mat-icon>
         </button>
+        @if (status() === 'published') {
+          <button matButton (click)="unpublishProject()" [disabled]="isPublishing()">
+            Unpublish
+          </button>
+        } @else {
+          <button matButton="filled" (click)="publishProject()" [disabled]="isPublishing()">
+            {{ isPublishing() ? 'Publishing…' : 'Publish' }}
+          </button>
+        }
       </div>
     </div>
     <div

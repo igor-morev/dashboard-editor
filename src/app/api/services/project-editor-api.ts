@@ -115,4 +115,12 @@ export class ProjectEditorApi {
     return this.http.delete<void>(`${environment.apiUrl}/project/${projectId}/page/${pageId}`);
   }
 
+  publishProject(projectId: string): Observable<ProjectDto> {
+    return this.http.post<ProjectDto>(`${environment.apiUrl}/project/${projectId}/publish`, {});
+  }
+
+  unpublishProject(projectId: string): Observable<ProjectDto> {
+    return this.http.post<ProjectDto>(`${environment.apiUrl}/project/${projectId}/unpublish`, {});
+  }
+
 }

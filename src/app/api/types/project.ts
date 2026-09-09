@@ -74,6 +74,7 @@ export interface ProjectSummaryDto {
   industry?: string;
   status: 'draft' | 'published';
   updatedAt?: string;
+  publishedAt?: string;
 }
 
 export interface ProjectPageSummaryDto {

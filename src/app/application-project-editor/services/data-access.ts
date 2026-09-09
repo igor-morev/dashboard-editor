@@ -186,8 +186,40 @@ export class DataAccess {
     );
   }
 
+  /**
+   * Freezes the current draft into the published snapshot and makes it publicly reachable.
+   * Saves first — publish() on the backend only copies whatever's already persisted, so this
+   * guarantees the snapshot reflects the latest edits (and that theme/layers actually exist:
+   * a project published before its first save would otherwise have an empty snapshot).
+   */
+  publish(): Observable<void> {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    return this.save().pipe(
+      switchMap(() => this.api.publishProject(projectId)),
+      tap((project) => this.state.setPublishStatus(project.status, project.publishedAt ?? null)),
+      map(() => void 0),
+    );
+  }
+
+  unpublish(): Observable<void> {
+    const projectId = this.appState.projectId;
+    if (!projectId) {
+      return of(void 0);
+    }
+
+    return this.api.unpublishProject(projectId).pipe(
+      tap((project) => this.state.setPublishStatus(project.status, project.publishedAt ?? null)),
+      map(() => void 0),
+    );
+  }
+
   private loadProjectData(project: ProjectDto) {
     this.themeManager.setTheme(project.theme ?? {});
+    this.state.setPublishStatus(project.status, project.publishedAt ?? null);
 
     const selectedPage = project.pages[0];
 

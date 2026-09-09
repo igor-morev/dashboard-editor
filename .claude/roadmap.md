@@ -1,6 +1,6 @@
 # Roadmap & status
 
-**Last updated: 2026-08-13.** This file is the *only* place phase/progress status lives for
+**Last updated: 2026-08-26.** This file is the *only* place phase/progress status lives for
 this project — `.claude/context.md` intentionally has none, to keep that file stable. Update
 this file's status markers directly when a phase's state changes; don't let it silently rot,
 and don't re-add status prose to `context.md` instead of here. For exact "what changed and
@@ -68,6 +68,47 @@ UX walkthrough of all five planned screens: https://claude.ai/code/artifact/b9d0
   history snapshots.
 - [ ] **Phase 4** — Turn the existing `DesignTokens`/`ThemeManager` plumbing into a visible
   one-click restyle panel.
+- [x] **Layer property panel cleanup** (2026-08-15/16, off-roadmap but worth recording) —
+  `layer-property-builder.ts` de-duplicated (delegates tree updates to `LayersEditor` instead of
+  reimplementing them), restyled with proper section grouping, and gained a real
+  `de-image-source-input` control (URL or file-upload-to-base64) for image widgets, replacing the
+  generic text field. See `.claude/skills/angular-senior-dev/SKILL.md` for the Tailwind
+  `@apply`-needs-`@use 'tailwindcss'` gotcha this surfaced.
+- [x] **Live preview route** (2026-08-16) — `page/:pageId/preview`, sibling to the editor route
+  (not nested, so it renders full-viewport with no editor chrome). Reuses the existing
+  `POST /project/preview` backend endpoint (no backend changes needed) and renders the response
+  in an iframe via a blob URL (`DomSanitizer.bypassSecurityTrustResourceUrl`) rather than
+  `[srcdoc]`, since `[srcdoc]` sanitization strips the `<script>` tags the generated HTML depends
+  on (Tailwind CDN + mobile-menu toggle). Self-loads project+page from route params if
+  `ApplicationEditorState` doesn't already match the URL (handles a hard refresh landing directly
+  on the preview route, which skips the editor's own `ngOnInit`). Real publish (frozen snapshot +
+  public URL) was deferred at the time — **now done, see below.**
+- [x] **Multi-page CRUD** (2026-08-16) — add/switch/delete pages, all previously missing or
+  broken: the Pages list was `routerLink`-only and never actually loaded a page's content on
+  click (fixed — now calls the pre-existing but unused `selectPage()`, which now also navigates);
+  added `POST`/`DELETE` page wiring end-to-end (backend already had `createPage`, added
+  `deletePage` with a guard against deleting a project's last page); inline add/delete-confirm UI
+  in the Pages panel, matching the existing inline-create pattern from `application-projects.ts`
+  (no modal library in this app).
+- [x] **Real publish** (2026-08-26) — `Project.status` finally gets set by something.
+  `publish()` freezes the current draft into new snapshot columns (`Project.publishedAt`/
+  `publishedTheme`, `Page.publishedLayers`) rather than serving the live draft; `unpublish()`
+  flips status back to draft without clearing the snapshot, so republishing is instant. A new
+  public, unauthenticated `SiteController` (`GET /site/:projectId[/:pageId]`, separate
+  `@Controller('site')` so it can't collide with or be confused for the authenticated `/project`
+  API) serves the snapshot through the same `ExportService.generateFullHtml()` preview/export
+  already use. Frontend: Publish button in the toolbar calls `save()` *then* `publish()` —
+  guarantees the snapshot reflects the latest edits and sidesteps a real edge case (a project
+  published before its first save would have `theme: undefined`, which crashes
+  `generateFullHtml`); when published, shows a status indicator + "Copy link" for
+  `{origin}/api/site/{projectId}` (works today via the dev proxy; not a real public domain until
+  there's deployed hosting) + Unpublish.
+  - ⚠️ **Migration generated but not run** — `nest-api/src/migrations/1787790767163-AddPublishSnapshotColumns.ts`.
+    `migration:generate`'s raw output also churned unrelated FK/index constraint renames on the
+    same tables (see the nestjs-senior-dev skill for why); hand-trimmed to just the 3 new
+    columns. Confirm before running `npm run migration:run`.
+  - Backend: 3 new `ProjectService` methods + `SiteController`, 14 new tests (service +
+    controller + new `site.controller.spec.ts`), all passing.
 
 ## Original MVP scope — current coverage
 
@@ -92,5 +133,8 @@ Mapping of the team's original (Russian) MVP checklist from `application-project
 
 ## Next up
 
-Migration and Phase 2 smoke test are both done. Next is Phase 3 or 4, depending on priority —
-nothing blocking either.
+Publish is built but its migration hasn't been run yet — do that first (see the ⚠️ under Real
+publish above), then smoke-test it against the real app the same way Phase 2 was verified
+(publish, curl the public URL, edit the draft and confirm the public URL doesn't change,
+unpublish and confirm it 404s). After that, Phase 3 or 4, depending on priority — nothing
+blocking either.

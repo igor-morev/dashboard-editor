@@ -26,6 +26,7 @@ import { LayersEditor } from './services/layers-editor';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
 import { Subject } from 'rxjs';
 import { ThemeManager } from './services/theme-manager';
+import { environment } from '../../environments/environment.development';
 import { Layer, EditorCommand } from './types/project.type';
 import { Widget } from './types/widget.type';
 import { Template } from './types/template.type';
@@ -86,6 +87,10 @@ export class ApplicationProjectEditor {
   highlightedLayer = this.state.highlightedLayer;
   hasUnsavedChanges = this.state.hasUnsavedChanges;
   lastSavedAt = this.state.lastSavedAt;
+  status = this.state.status;
+
+  isPublishing = signal(false);
+  linkCopied = signal(false);
 
   isCreatingPage = signal(false);
   newPageName = signal('');
@@ -709,6 +714,33 @@ export class ApplicationProjectEditor {
       return;
     }
     this.router.navigate(['/project', projectId, 'page', this.appState.selectedPage.id, 'preview']);
+  }
+
+  get publicUrl(): string {
+    const projectId = this.appState.projectId;
+    return projectId ? `${location.origin}/${environment.apiUrl}/site/${projectId}` : '';
+  }
+
+  publishProject() {
+    this.isPublishing.set(true);
+    this.dataAccess
+      .publish()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.isPublishing.set(false),
+        error: () => this.isPublishing.set(false),
+      });
+  }
+
+  unpublishProject() {
+    this.dataAccess.unpublish().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  copyPublicLink() {
+    navigator.clipboard.writeText(this.publicUrl).then(() => {
+      this.linkCopied.set(true);
+      setTimeout(() => this.linkCopied.set(false), 2000);
+    });
   }
 
   exportProject() {
