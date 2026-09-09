@@ -1,0 +1,148 @@
+import { Widget } from '@app/application-project-editor/types/widget.type';
+import { columnWidget } from '../column';
+import { containerWidget } from '../container';
+import { headingWidget } from '../heading';
+import { imageWidget } from '../image';
+import { linkButtonWidget } from '../link-button';
+import { rowWidget } from '../row';
+import { textWidget } from '../text';
+
+export interface HeroContent {
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  imageSrc?: string; // Для лейаутов со сплитом
+  videoUrl?: string; // Опционально
+}
+
+export type HeroLayout =
+  | 'centered-overlay'
+  | 'split-right'
+  | 'split-left'
+  | 'bottom-aligned'
+  | 'minimal-box';
+
+export function heroWidget(layout: HeroLayout = 'centered-overlay', content?: HeroContent): Widget {
+  const layoutTransformer = (currentLayout: HeroLayout, data: HeroContent) => {
+    const heading = headingWidget({
+      content: data.title,
+      class: 'text-project-h1 mb-4',
+    });
+    const text = textWidget({
+      content: data.subtitle,
+      class: 'text-lg mb-4',
+    });
+    const button = linkButtonWidget({
+      content: data.ctaText,
+    });
+
+    const contentStack = [heading, text, button];
+
+    const layouts: Record<HeroLayout, Widget[]> = {
+      // 1. Контент по центру поверх фона
+      'centered-overlay': [
+        containerWidget(contentStack, {
+          class: 'py-40 text-center',
+        }),
+      ],
+
+      // 2. Сплит: Текст слева, Картина справа (актуально, если фон пустой)
+      'split-right': [
+        containerWidget(
+          [
+            rowWidget([
+              columnWidget(contentStack, { class: 'w-full text-left' }),
+              columnWidget(
+                [imageWidget({ src: data.imageSrc, class: 'rounded-theme shadow-2xl' })],
+                {
+                  class: 'w-full',
+                },
+              ),
+            ]),
+          ],
+          { class: 'py-40' },
+        ),
+      ],
+
+      // 3. Сплит: Картина слева, Текст справа
+      'split-left': [
+        containerWidget(
+          [
+            rowWidget([
+              columnWidget(
+                [imageWidget({ src: data.imageSrc, class: 'rounded-theme shadow-2xl' })],
+                {
+                  class: 'w-full',
+                },
+              ),
+              columnWidget(contentStack, { class: 'w-full text-left' }),
+            ]),
+          ],
+          { class: 'py-40' },
+        ),
+      ],
+
+      // 4. Прижатый к низу контент (эффект кино)
+      'bottom-aligned': [
+        containerWidget([rowWidget([columnWidget(contentStack, { class: 'text-left mt-auto' })])], {
+          class: 'min-h-[70vh] pt-20 pb-8 flex',
+        }),
+      ],
+
+      // 5. Контент в "коробке" (Glassmorphism / Card)
+      'minimal-box': [
+        containerWidget(
+          [
+            rowWidget([
+              columnWidget(contentStack, {
+                class: 'bg-white/10 backdrop-blur-md rounded-theme border border-white/20 p-4',
+              }),
+            ]),
+          ],
+          { class: 'py-40' },
+        ),
+      ],
+    };
+
+    return layouts[currentLayout];
+  };
+
+  const defaultContent: HeroContent = content || {
+    title: 'Discover Your Inner Peace with Our Meditation App',
+    subtitle: 'Welcome to our website! We are glad to have you here.',
+    ctaText: 'Get Started',
+    imageSrc:
+      'https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  };
+
+  return {
+    id: 'hero-widget',
+    widgetName: 'Hero',
+    widgetType: 'section',
+    canNotBeAddedInside: (widget) => {
+      return widget.widgetType === 'section';
+    },
+    propertyConfig: {
+      layout: {
+        options: ['centered-overlay', 'split-right', 'split-left', 'bottom-aligned', 'minimal-box'],
+      },
+      // ... твои стили фона и текста
+    },
+    defaultWidgetPropertyModel: {
+      layout,
+      class: 'relative',
+      styles: {
+        background: {
+          image: defaultContent.imageSrc,
+          size: 'cover',
+          position: 'center',
+        },
+        color: { name: 'white', range: null },
+        textAlign: layout.includes('centered') ? 'center' : 'left',
+      },
+      content: defaultContent as Record<string, any>, // Сохраняем весь контент в модели для удобства
+    },
+    layoutTransformer,
+    children: layoutTransformer(layout, defaultContent),
+  } as Widget;
+}

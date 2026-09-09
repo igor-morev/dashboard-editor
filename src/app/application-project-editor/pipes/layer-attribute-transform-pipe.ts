@@ -1,0 +1,13 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { WidgetPropertyModel } from '@app/application-project-editor/types/widget.type';
+
+@Pipe({
+  name: 'layerAttributeTransform',
+})
+export class LayerAttributeTransformPipe implements PipeTransform {
+  transform(value: WidgetPropertyModel, transformFn: (...args: any[]) => string): string {
+    const result = Object.entries(value).reduce(transformFn, '');
+
+    return result;
+  }
+}

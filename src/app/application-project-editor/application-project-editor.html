@@ -1,0 +1,383 @@
+<div class="h-full w-full flex">
+  <div class="flex flex-col w-80 bg-white border-0 border-r border-gray-300 border-solid">
+    <div
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center min-h-12 h-12 gap-x-2"
+    >
+      <a matIconButton [routerLink]="['/project']">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      Project Name
+    </div>
+    <div class="grow grid grid-rows-[200px_100px_2fr]">
+      <div class="flex flex-col">
+        <div class="border-0 border-b border-gray-300 border-solid bg-white">
+          @for (item of widgetTabs; track item.value) {
+            <button
+              class="py-2 px-4 tab"
+              (click)="selectTab(item)"
+              type="button"
+              [class.tab-active]="tab().value === item.value"
+            >
+              {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
+            </button>
+          }
+        </div>
+        <div class="py-2 px-4 overflow-auto h-0 grow">
+          @if (tab().value === 'widgets') {
+            @for (widget of widgets; track widget.id) {
+              <button
+                (click)="moveWidgetOnScaffold($event, widget)"
+                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                [title]="widget.widgetName"
+              >
+                {{ widget.widgetName }}
+              </button>
+            }
+          }
+
+          @if (tab().value === 'predefined' || tab().value === 'ai-generated') {
+            @if (tab().value === 'ai-generated') {
+              <a [routerLink]="['page', 1, 'generate']"><b>Generate Template</b></a>
+            }
+
+            @for (template of templates() | filter: tab().value : 'source'; track template.id) {
+              <button
+                (click)="renderTemplateOnScaffold($event, template)"
+                class="pl-1 hover:bg-blue-300/50 cursor-pointer block w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                [title]="template.templateName"
+              >
+                {{ template.templateName }}
+              </button>
+            }
+          }
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div
+          class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white flex items-center justify-between"
+        >
+          <span>Pages</span>
+          <button
+            type="button"
+            class="text-gray-400 hover:text-gray-700"
+            title="New page"
+            (click)="startCreatingPage()"
+          >
+            <mat-icon class="!text-base !w-4 !h-4">add</mat-icon>
+          </button>
+        </div>
+        <div class="py-2 px-4 overflow-auto h-0 grow">
+          <ul>
+            @for (page of pages; track page.id) {
+              <li class="group">
+                @if (pendingDeletePageId() === page.id) {
+                  <div class="flex items-center justify-between gap-1 py-1 text-xs">
+                    <span class="text-gray-500 truncate">Delete "{{ page.pageName }}"?</span>
+                    <div class="flex items-center gap-2 flex-none">
+                      <button
+                        type="button"
+                        class="text-rose-600 hover:text-rose-700 font-medium"
+                        (click)="confirmDeletePage(page.id)"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        type="button"
+                        class="text-gray-400 hover:text-gray-600"
+                        (click)="cancelDeletePage()"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div
+                    class="flex items-center justify-between gap-1 cursor-pointer hover:bg-blue-300/50"
+                    [class.text-blue-500]="page.id === appState.selectedPage.id"
+                    (click)="selectPage(page)"
+                  >
+                    <span
+                      class="pl-1 whitespace-nowrap overflow-hidden text-ellipsis"
+                      [title]="page.pageName"
+                      >{{ page.pageName }}</span
+                    >
+                    @if (pages.length > 1) {
+                      <button
+                        type="button"
+                        class="pr-1 text-gray-300 hover:text-rose-600 opacity-0 group-hover:opacity-100 flex-none"
+                        title="Delete page"
+                        (click)="startDeletePage($event, page.id)"
+                      >
+                        <mat-icon class="!text-base !w-4 !h-4">delete</mat-icon>
+                      </button>
+                    }
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+
+          @if (isCreatingPage()) {
+            <div class="flex items-center gap-1 mt-2">
+              <input
+                class="de-input text-xs"
+                type="text"
+                placeholder="Page name"
+                [ngModel]="newPageName()"
+                (ngModelChange)="newPageName.set($event)"
+                (keydown.enter)="confirmCreatePage()"
+                (keydown.escape)="cancelCreatingPage()"
+                deAutofocus
+              />
+              <button
+                type="button"
+                class="text-blue-500 hover:text-blue-700 flex-none"
+                title="Add"
+                (click)="confirmCreatePage()"
+              >
+                <mat-icon class="!text-base !w-4 !h-4">check</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-gray-600 flex-none"
+                title="Cancel"
+                (click)="cancelCreatingPage()"
+              >
+                <mat-icon class="!text-base !w-4 !h-4">close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div class="py-2 px-4 border-0 border-t border-b border-gray-300 border-solid bg-white">
+          Layers
+        </div>
+        <div class="py-2 px-4 overflow-y-auto h-0 grow">
+          @if (layers.length > 0) {
+            <ng-container
+              *ngTemplateOutlet="
+                layersTreeTemplate;
+                context: {
+                  $implicit: layers,
+                }
+              "
+            ></ng-container>
+          }
+
+          <ng-template #layersTreeTemplate let-layerTree>
+            <ul
+              class="w-full list-inside"
+              cdkDropList
+              [cdkDropListData]="layerTree"
+              cdkDropListSortingDisabled
+              (cdkDropListDropped)="onLayerDragDrop($event)"
+              (mousemove)="mouseMoveOnTree($event)"
+              (mouseleave)="mouseLeaveOnTree()"
+              (contextmenu)="contextMenuOnLayer($event)"
+              (click)="clickOnLayerFromTree($event)"
+            >
+              @for (layer of layerTree; track layer.id) {
+                <li
+                  [attr.data-layer-id]="layer.id"
+                  cdkDrag
+                  [cdkDragData]="layer"
+                  (cdkDragMoved)="dragMoved($event)"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      layerTemplate;
+                      context: {
+                        $implicit: layer,
+                      }
+                    "
+                  ></ng-container>
+                </li>
+              }
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grow h-full flex flex-col">
+    <div
+      class="py-2 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12 gap-x-4"
+    >
+      <div class="flex items-center">
+        <button matIconButton (click)="undo()" [disabled]="!canUndo()" title="Undo (Cmd+Z)">
+          <mat-icon>undo</mat-icon>
+        </button>
+        <button matIconButton (click)="redo()" [disabled]="!canRedo()" title="Redo (Cmd+Shift+Z)">
+          <mat-icon>redo</mat-icon>
+        </button>
+      </div>
+      <div>
+        <select class="de-input" name="textAlign" id="" (change)="changeTheme($event)">
+          <option value="grooming">Grooming</option>
+          <option value="healthcare">Healthcare</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-x-1 text-xs text-gray-500">
+        @if (hasUnsavedChanges()) {
+          <mat-icon class="!text-base !w-4 !h-4 opacity-50">cloud_upload</mat-icon>
+          <span>Unsaved changes</span>
+        } @else if (lastSavedAt()) {
+          <mat-icon class="!text-base !w-4 !h-4 text-green-600">cloud_done</mat-icon>
+          <span>Saved {{ savedAtLabel() }}</span>
+        }
+      </div>
+
+      @if (status() === 'published') {
+        <div class="flex items-center gap-x-2 text-xs">
+          <span class="flex items-center gap-x-1 text-emerald-600">
+            <mat-icon class="!text-base !w-4 !h-4">public</mat-icon>
+            Published
+          </span>
+          <button
+            type="button"
+            class="text-blue-500 hover:text-blue-700 hover:underline"
+            (click)="copyPublicLink()"
+          >
+            {{ linkCopied() ? 'Copied!' : 'Copy link' }}
+          </button>
+        </div>
+      }
+
+      <div class="grow"></div>
+
+      <div class="flex items-center">
+        <button matIconButton (click)="save()" [disabled]="!hasUnsavedChanges()" title="Save">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button matIconButton (click)="openPreview()" title="Preview">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button matIconButton (click)="exportProject()" title="Export Project">
+          <mat-icon>arrow_downward</mat-icon>
+        </button>
+        @if (status() === 'published') {
+          <button matButton (click)="unpublishProject()" [disabled]="isPublishing()">
+            Unpublish
+          </button>
+        } @else {
+          <button matButton="filled" (click)="publishProject()" [disabled]="isPublishing()">
+            {{ isPublishing() ? 'Publishing…' : 'Publish' }}
+          </button>
+        }
+      </div>
+    </div>
+    <div
+      class="viewport grow h-full bg-gray-100 pt-10 pb-10 items-center overflow-auto"
+      (click)="clickOnLayerFromScaffold($event)"
+      (mousemove)="mouseMoveOnScaffold($event)"
+      (contextmenu)="contextMenuOnLayer($event)"
+    >
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+  <div
+    class="property-panel w-80 h-full flex flex-col bg-white border-0 border-l border-gray-300 border-solid"
+  >
+    <de-layer-property-editor />
+  </div>
+</div>
+
+<ng-template #layerTemplate let-layerItem>
+  @let position = dragPosition();
+
+  <div
+    class="flex items-center border border-transparent"
+    [ngClass]="{
+      inside: position && position.id === layerItem.id && position.position === 'inside',
+      before: position && position.id === layerItem.id && position.position === 'before',
+      after: position && position.id === layerItem.id && position.position === 'after',
+    }"
+  >
+    @let layerName =
+      layerItem.layerName ? layerItem.layerName : layerItem.widgetReference.widgetName;
+
+    <!-- Expand/Collapse toggle -->
+    @if (layerItem.children && layerItem.children.length > 0) {
+      <button
+        class="flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors"
+        [class.rotate-90]="isLayerExpanded(layerItem.id)"
+        (click)="toggleLayerExpanded(layerItem.id, $event)"
+      >
+        <mat-icon class="text-sm">chevron_right</mat-icon>
+      </button>
+    } @else {
+      <div class="w-5 h-5"></div>
+    }
+
+    @if (editingLayerId() !== layerItem.id) {
+      <span
+        class="pl-1 pr-1 flex items-center cursor-pointer justify-between grow h-full whitespace-nowrap overflow-hidden text-ellipsis"
+        [title]="layerName"
+        [ngClass]="{
+          'bg-blue-300/20': layerItem.id === highlightedLayer()?.id,
+          'text-blue-500': layerItem.id === selectedLayer.id,
+          'opacity-50': !!layerItem.isVisible === false,
+        }"
+        (dblclick)="startEditingLayer(layerItem)"
+      >
+        {{ layerName }}
+
+        @if (layerItem.parentId) {
+          <span class="flex items-center gap-x-1 h-full">
+            <button
+              matIconButton
+              class="icon-button-xs invisible"
+              (click)="toggleLayerLock($event, layerItem)"
+              [class.visible]="
+                (highlightedLayer()?.id === layerItem.id && !!layerItem.parentId) ||
+                layerItem.locked
+              "
+            >
+              <mat-icon>{{ layerItem.locked ? 'lock' : 'lock_open' }}</mat-icon>
+            </button>
+
+            <button
+              matIconButton
+              class="icon-button-xs invisible"
+              (click)="toggleLayerVisibility($event, layerItem)"
+              [class.visible]="
+                (highlightedLayer()?.id === layerItem.id && !!layerItem.parentId) ||
+                !layerItem.isVisible
+              "
+            >
+              <mat-icon>{{ layerItem.isVisible ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </span>
+        }
+      </span>
+    } @else {
+      <input
+        type="text"
+        class="pl-1 pr-1 w-full outline-blue-500"
+        [value]="layerName"
+        #editInput
+        (blur)="saveLayerName(layerItem, editInput.value)"
+        (keydown.enter)="saveLayerName(layerItem, editInput.value)"
+        (keydown.escape)="cancelEditingLayer()"
+        deAutofocus
+      />
+    }
+  </div>
+
+  @if (layerItem.children && layerItem.children.length > 0 && isLayerExpanded(layerItem.id)) {
+    <div class="w-full pl-2 mt-1 border-l-2 border-gray-200 pl-2">
+      <ng-container
+        *ngTemplateOutlet="
+          layersTreeTemplate;
+          context: {
+            $implicit: layerItem.children,
+          }
+        "
+      ></ng-container>
+    </div>
+  }
+</ng-template>

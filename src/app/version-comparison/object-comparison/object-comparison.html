@@ -1,0 +1,56 @@
+<div class="w-full">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <!-- Header -->
+    <div class="grid grid-cols-2 gap-0 bg-gradient-to-r from-blue-50 to-blue-25 border-b border-gray-200">
+      <div class="px-6 py-4 font-semibold text-gray-900 border-r border-gray-200">
+        Left Version
+      </div>
+      <div class="px-6 py-4 font-semibold text-gray-900">
+        Right Version
+      </div>
+    </div>
+
+    <!-- Comparison Rows -->
+    <div class="divide-y divide-gray-200">
+      <ng-container *ngFor="let field of getAllFlattedFields(); let last = last">
+        <div
+          [class.bg-amber-50]="config.highlightDifferences && field.isDifferent"
+          [class.bg-white]="!(config.highlightDifferences && field.isDifferent)"
+          class="grid grid-cols-3 gap-0 hover:bg-gray-50 transition-colors"
+        >
+          <!-- Field Label -->
+          <div class="px-6 py-4 bg-gray-50 border-r border-gray-200">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-gray-900">{{ field.label }}</span>
+              <span
+                *ngIf="field.isDifferent"
+                class="ml-auto text-xs font-semibold bg-amber-200 text-amber-800 px-2.5 py-0.5 rounded-full"
+              >
+                Changed
+              </span>
+            </div>
+          </div>
+
+          <!-- Left Value -->
+          <div class="px-6 py-4 border-r border-gray-200">
+            <div class="text-sm text-gray-700">
+              {{ renderValue(field.name, field.leftValue, leftObject) }}
+            </div>
+          </div>
+
+          <!-- Right Value -->
+          <div class="px-6 py-4">
+            <div class="text-sm text-gray-700">
+              {{ renderValue(field.name, field.rightValue, rightObject) }}
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Empty State -->
+      <div *ngIf="comparisonFields.length === 0" class="px-6 py-12 text-center">
+        <p class="text-gray-500">No fields to compare</p>
+      </div>
+    </div>
+  </div>
+</div>
