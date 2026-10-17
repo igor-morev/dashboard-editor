@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { environment } from "../../../environments/environment.development";
+import { environment } from "../../../environments/environment";
 import { AuthResponse } from "../types/auth";
 import { UserDto } from "../types/user";
 import { AIGenerationPayload } from "../types/ai";

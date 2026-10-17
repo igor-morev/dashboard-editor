@@ -26,7 +26,7 @@ import { LayersEditor } from './services/layers-editor';
 import { CdkDrag, CdkDragDrop, CdkDragMove, CdkDropList } from '@angular/cdk/drag-drop';
 import { Subject } from 'rxjs';
 import { ThemeManager } from './services/theme-manager';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { Layer, EditorCommand } from './types/project.type';
 import { Widget } from './types/widget.type';
 import { Template } from './types/template.type';
