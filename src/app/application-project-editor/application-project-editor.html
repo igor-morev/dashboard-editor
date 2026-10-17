@@ -97,10 +97,19 @@
                     (click)="selectPage(page)"
                   >
                     <span
-                      class="pl-1 whitespace-nowrap overflow-hidden text-ellipsis"
+                      class="pl-1 whitespace-nowrap overflow-hidden text-ellipsis flex items-center gap-1.5 min-w-0"
                       [title]="page.pageName"
-                      >{{ page.pageName }}</span
                     >
+                      <span class="whitespace-nowrap overflow-hidden text-ellipsis">{{
+                        page.pageName
+                      }}</span>
+                      @if (page.hasUnpublishedChanges) {
+                        <span
+                          class="w-1.5 h-1.5 rounded-full bg-amber-500 flex-none"
+                          title="Unpublished changes"
+                        ></span>
+                      }
+                    </span>
                     @if (pages.length > 1) {
                       <button
                         type="button"

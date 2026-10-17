@@ -68,6 +68,26 @@ export class ApplicationEditorState {
     this._publishedAt.set(publishedAt);
   }
 
+  /**
+   * Optimistic local update to a page's "unpublished changes" flag — the server only
+   * recomputes it when the project is fetched, not after every save()/publish() call, so
+   * DataAccess sets this directly instead of round-tripping. Routes through updateState() (like
+   * every other pages-list change) so the OnPush view actually re-renders — `pages` is a plain
+   * getter, not its own signal.
+   */
+  setPageChanged(pageId: string, changed: boolean) {
+    const pages = this._appState.pages.map((page) =>
+      page.id === pageId ? { ...page, hasUnpublishedChanges: changed } : page,
+    );
+    this.updateState({ ...this._appState, pages });
+  }
+
+  /** All pages are back in sync with what's live — call after a successful publish(). */
+  clearAllPageChanges() {
+    const pages = this._appState.pages.map((page) => ({ ...page, hasUnpublishedChanges: false }));
+    this.updateState({ ...this._appState, pages });
+  }
+
   setProjectId(projectId: string) {
     this._appState.projectId = projectId;
   }

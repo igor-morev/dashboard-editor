@@ -1,6 +1,6 @@
 # Roadmap & status
 
-**Last updated: 2026-08-26.** This file is the *only* place phase/progress status lives for
+**Last updated: 2026-09-09.** This file is the *only* place phase/progress status lives for
 this project — `.claude/context.md` intentionally has none, to keep that file stable. Update
 this file's status markers directly when a phase's state changes; don't let it silently rot,
 and don't re-add status prose to `context.md` instead of here. For exact "what changed and
@@ -103,12 +103,41 @@ UX walkthrough of all five planned screens: https://claude.ai/code/artifact/b9d0
   `generateFullHtml`); when published, shows a status indicator + "Copy link" for
   `{origin}/api/site/{projectId}` (works today via the dev proxy; not a real public domain until
   there's deployed hosting) + Unpublish.
-  - ⚠️ **Migration generated but not run** — `nest-api/src/migrations/1787790767163-AddPublishSnapshotColumns.ts`.
-    `migration:generate`'s raw output also churned unrelated FK/index constraint renames on the
-    same tables (see the nestjs-senior-dev skill for why); hand-trimmed to just the 3 new
-    columns. Confirm before running `npm run migration:run`.
+  - ✅ **Migration run 2026-08-27** against local Postgres. Smoke-tested end-to-end against the
+    real running app (register a user, save real content+theme, publish → public URL returns
+    real rendered HTML; edited the draft *without* republishing → public URL unchanged, confirms
+    it's a true snapshot; unpublish → public URL 404s; republish → public URL reflects the edit).
+    Along the way found (and fixed) two things unrelated to this feature: the TypeORM CLI's own
+    module resolution needed the same `tsconfig-paths` fix as before, and a *separate*,
+    still-unexplained pre-existing drift was noticed — `IDX_project_ownerId`/`IDX_page_projectId`
+    are missing and the FK constraint names got auto-generated at some point before this session;
+    not caused by this (hand-trimmed, column-only) migration; not yet fixed.
   - Backend: 3 new `ProjectService` methods + `SiteController`, 14 new tests (service +
     controller + new `site.controller.spec.ts`), all passing.
+  - Both repos committed 2026-08-27/28 (`c977a0a` dashboard-editor, `c32aeee` nest-api).
+- [x] **Phase 3, slice 1 — unpublished-changes indicator** (2026-09-09) — a small dot next to
+  any page in the Pages panel whose draft has drifted from what's currently live. No diff UI
+  yet, just the signal; reuses the Publish snapshot columns, no new data model. Backend:
+  `ProjectService.toProjectDto()` computes `hasUnpublishedChanges` per page (`layers` vs
+  `publishedLayers`, or project `theme` vs `publishedTheme` since a theme change affects every
+  page at once) — always `false` for a draft project, since the signal isn't meaningful before
+  anything's been published. Frontend: since the backend only recomputes this when the project
+  is *fetched*, not after every `save()`/`publish()` (whose responses can race — `save()` already
+  runs `savePage`+`saveProject` in parallel), `DataAccess` updates it **optimistically**:
+  `save()` marks the just-saved page changed (if published), `publish()` clears the flag on every
+  page at once. New `ApplicationEditorState.setPageChanged()`/`clearAllPageChanges()`.
+  8 new backend tests (44 total). This was picked as the first slice of Phase 3 over a full
+  diff-view — cheap (no new endpoint), and turns "which pages need republishing" from invisible
+  into a glance. The originally-scoped Phase 3 work (wiring the orphaned
+  `version-comparison`/`object-comparison` components into an actual diff view) is still not
+  done — worth knowing `ObjectComparison` treats arrays as opaque (`isComplexObject` explicitly
+  excludes them), so it can't diff a `Layer[]` tree as-is; would need a tree-diff-by-id step
+  first, reusing `ObjectComparison` only for per-layer field-level detail. Two other diff
+  triggers were discussed and *not* built yet: folding a diff into the Publish flow itself as a
+  confirm-before-you-go-live step (ranked highest-value of the three, since it's the one place
+  real unreviewed change reaches the public), and a diff-before-apply step for AI regeneration
+  (protects against the one genuinely destructive action in the app today — regenerating
+  silently wipes the canvas).
 
 ## Original MVP scope — current coverage
 
@@ -133,8 +162,9 @@ Mapping of the team's original (Russian) MVP checklist from `application-project
 
 ## Next up
 
-Publish is built but its migration hasn't been run yet — do that first (see the ⚠️ under Real
-publish above), then smoke-test it against the real app the same way Phase 2 was verified
-(publish, curl the public URL, edit the draft and confirm the public URL doesn't change,
-unpublish and confirm it 404s). After that, Phase 3 or 4, depending on priority — nothing
-blocking either.
+Publish is fully done, migrated, smoke-tested, and committed on both repos. The
+unpublished-changes dot (Phase 3, slice 1) is done too. Next: pick one of the two undone diff
+triggers discussed above (publish-time confirmation diff, or AI-regen diff-before-apply) — see
+the Phase 3 entry for the reasoning on which ranks higher — or move to Phase 4 (restyle panel),
+depending on priority. Also still open, low urgency: the missing `IDX_project_ownerId`/
+`IDX_page_projectId` indexes noted under Real publish.

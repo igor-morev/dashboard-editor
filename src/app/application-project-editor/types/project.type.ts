@@ -9,6 +9,7 @@ import {
 export interface Page {
   id: string;
   pageName: string;
+  hasUnpublishedChanges?: boolean;
 }
 
 export interface Layer {

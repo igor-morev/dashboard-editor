@@ -80,6 +80,7 @@ export interface ProjectSummaryDto {
 export interface ProjectPageSummaryDto {
   id: string;
   pageName: string;
+  hasUnpublishedChanges: boolean;
 }
 
 export interface ProjectDto extends ProjectSummaryDto {

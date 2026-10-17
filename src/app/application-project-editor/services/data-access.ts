@@ -114,7 +114,14 @@ export class DataAccess {
       this.api.savePage(projectId, pageId, layers),
       this.api.saveProject(projectId, { theme }),
     ]).pipe(
-      tap(() => this.state.markSaved()),
+      tap(() => {
+        this.state.markSaved();
+        // The server only recomputes hasUnpublishedChanges when the project is next fetched —
+        // update it optimistically here so the Pages panel doesn't wait for a reload.
+        if (this.state.status() === 'published') {
+          this.state.setPageChanged(pageId, true);
+        }
+      }),
       map(() => void 0),
     );
   }
@@ -200,7 +207,11 @@ export class DataAccess {
 
     return this.save().pipe(
       switchMap(() => this.api.publishProject(projectId)),
-      tap((project) => this.state.setPublishStatus(project.status, project.publishedAt ?? null)),
+      tap((project) => {
+        this.state.setPublishStatus(project.status, project.publishedAt ?? null);
+        // publish() snapshots every page at once — all pages are back in sync with what's live.
+        this.state.clearAllPageChanges();
+      }),
       map(() => void 0),
     );
   }
