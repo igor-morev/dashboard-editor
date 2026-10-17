@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: dashboard-editor
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist/dashboard-editor/browser
+    routes:
+      # SPA fallback — Angular's own router handles paths like /project/:id client-side; without
+      # this, refreshing on anything but the root path 404s at the host instead of loading the app.
+      - type: rewrite
+        source: /*
+        destination: /index.html
