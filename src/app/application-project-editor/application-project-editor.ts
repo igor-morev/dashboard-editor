@@ -719,7 +719,10 @@ export class ApplicationProjectEditor {
 
   get publicUrl(): string {
     const projectId = this.appState.projectId;
-    return projectId ? `${location.origin}/${environment.apiUrl}/site/${projectId}` : '';
+    // environment.apiUrl is already absolute in production (the backend's own origin, separate
+    // from the frontend's) — prefixing it with location.origin here used to work only because
+    // frontend and backend shared an origin locally; it produced a malformed URL once they didn't.
+    return projectId ? `${environment.apiUrl}/site/${projectId}` : '';
   }
 
   publishProject() {
