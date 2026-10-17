@@ -22,7 +22,12 @@
                 {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
               </button>
               @if (item.value === 'ai-generated') {
-                <a matIconButton [routerLink]="['page', 1, 'generate']" title="Generate template">
+                <a
+                  matIconButton
+                  [routerLink]="['page', 1, 'generate']"
+                  (click)="selectTab(item)"
+                  title="Generate template"
+                >
                   <mat-icon class="!flex !items-center !justify-center !text-base !w-4 !h-4">auto_awesome</mat-icon>
                 </a>
               }
