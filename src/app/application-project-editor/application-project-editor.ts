@@ -132,6 +132,11 @@ export class ApplicationProjectEditor {
     this.dragDroppedEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       this.handleDragDrop(event);
     });
+
+    // toObservable() needs an injection context — the constructor has one, ngOnInit doesn't.
+    toObservable(this.state.layers)
+      .pipe(skip(1), debounceTime(2000), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.save());
   }
 
   ngOnInit() {
@@ -162,10 +167,6 @@ export class ApplicationProjectEditor {
 
       this.widgetsState.addTemplate(template);
     });
-
-    toObservable(this.state.layers)
-      .pipe(skip(1), debounceTime(2000), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.save());
   }
 
   save() {
