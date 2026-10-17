@@ -10,16 +10,23 @@
     </div>
     <div class="grow grid grid-rows-[200px_100px_2fr]">
       <div class="flex flex-col">
-        <div class="border-0 border-b border-gray-300 border-solid bg-white">
+        <div class="border-0 border-b border-gray-300 border-solid bg-white flex items-center">
           @for (item of widgetTabs; track item.value) {
-            <button
-              class="py-2 px-4 tab"
-              (click)="selectTab(item)"
-              type="button"
-              [class.tab-active]="tab().value === item.value"
-            >
-              {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
-            </button>
+            <div class="flex items-center">
+              <button
+                class="py-2 px-4 tab"
+                (click)="selectTab(item)"
+                type="button"
+                [class.tab-active]="tab().value === item.value"
+              >
+                {{ item.value === 'ai-generated' ? '✨' : '' }} {{ item.label }}
+              </button>
+              @if (item.value === 'ai-generated') {
+                <a matIconButton [routerLink]="['page', 1, 'generate']" title="Generate template">
+                  <mat-icon class="!flex !items-center !justify-center !text-base !w-4 !h-4">auto_awesome</mat-icon>
+                </a>
+              }
+            </div>
           }
         </div>
         <div class="py-2 px-4 overflow-auto h-0 grow">
@@ -36,10 +43,6 @@
           }
 
           @if (tab().value === 'predefined' || tab().value === 'ai-generated') {
-            @if (tab().value === 'ai-generated') {
-              <a [routerLink]="['page', 1, 'generate']"><b>Generate Template</b></a>
-            }
-
             @for (template of templates() | filter: tab().value : 'source'; track template.id) {
               <button
                 (click)="renderTemplateOnScaffold($event, template)"
