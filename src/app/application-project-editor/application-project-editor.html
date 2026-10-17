@@ -231,10 +231,10 @@
 
       <div class="flex items-center gap-x-1 text-xs text-gray-500">
         @if (hasUnsavedChanges()) {
-          <mat-icon class="!text-base !w-4 !h-4 opacity-50">cloud_upload</mat-icon>
+          <mat-icon class="!flex !items-center !justify-center !text-base !w-4 !h-4 opacity-50">cloud_upload</mat-icon>
           <span>Unsaved changes</span>
         } @else if (lastSavedAt()) {
-          <mat-icon class="!text-base !w-4 !h-4 text-green-600">cloud_done</mat-icon>
+          <mat-icon class="!flex !items-center !justify-center !text-base !w-4 !h-4 text-green-600">cloud_done</mat-icon>
           <span>Saved {{ savedAtLabel() }}</span>
         }
       </div>
@@ -242,7 +242,7 @@
       @if (status() === 'published') {
         <div class="flex items-center gap-x-2 text-xs">
           <span class="flex items-center gap-x-1 text-emerald-600">
-            <mat-icon class="!text-base !w-4 !h-4">public</mat-icon>
+            <mat-icon class="!flex !items-center !justify-center !text-base !w-4 !h-4">public</mat-icon>
             Published
           </span>
           <button
