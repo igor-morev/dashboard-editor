@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { GenericWidget } from './widget';
 
-import { Widget } from './widget';
 
-describe('Widget', () => {
-  let component: Widget;
-  let fixture: ComponentFixture<Widget>;
+describe('GenericWidget', () => {
+  let component: GenericWidget;
+  let fixture: ComponentFixture<GenericWidget>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Widget]
+      imports: [GenericWidget]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Widget);
+    fixture = TestBed.createComponent(GenericWidget);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

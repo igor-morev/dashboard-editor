@@ -1,0 +1,92 @@
+<div class="px-4 pt-2 flex items-center justify-between">
+  <h1 class="text-xl">Projects</h1>
+
+  @if (!isCreating()) {
+    <button
+      class="text-sm font-medium bg-[#0C8CE9] text-white px-4 py-2 rounded-lg hover:bg-[#0a7ac9] transition-colors"
+      (click)="startCreating()"
+    >
+      + New project
+    </button>
+  } @else {
+    <div class="flex items-center gap-2">
+      <input
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#0C8CE9]"
+        placeholder="Project name"
+        [ngModel]="newProjectName()"
+        (ngModelChange)="newProjectName.set($event)"
+        (keydown.enter)="confirmCreate()"
+        (keydown.escape)="cancelCreating()"
+        autofocus
+      />
+      <button
+        class="text-sm font-medium bg-[#0C8CE9] text-white px-3 py-2 rounded-lg hover:bg-[#0a7ac9] transition-colors"
+        (click)="confirmCreate()"
+      >
+        Create
+      </button>
+      <button
+        class="text-sm text-gray-500 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        (click)="cancelCreating()"
+      >
+        Cancel
+      </button>
+    </div>
+  }
+</div>
+
+<main class="px-4 pt-6">
+  @if (isLoading()) {
+    <p class="text-sm text-gray-400">Loading projects…</p>
+  } @else if (projects().length === 0) {
+    <div class="flex flex-col items-center justify-center text-center py-24 border border-dashed border-gray-300 rounded-xl">
+      <p class="text-gray-500 text-sm mb-3">You don't have any projects yet.</p>
+      <button
+        class="text-sm font-medium bg-[#0C8CE9] text-white px-4 py-2 rounded-lg hover:bg-[#0a7ac9] transition-colors"
+        (click)="startCreating()"
+      >
+        + New project
+      </button>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      @for (project of projects(); track project.id) {
+        <a
+          class="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-[#0C8CE9] hover:shadow-md transition-all cursor-pointer"
+          (click)="openProject(project)"
+        >
+          <div class="aspect-[4/3] bg-[#E5E5E5] flex items-center justify-center relative overflow-hidden border-b border-gray-100 p-4">
+            <div class="w-[110px] h-[180px] bg-white rounded-2xl shadow-lg border border-gray-200 p-2 flex flex-col gap-1.5 overflow-hidden group-hover:scale-[1.04] transition-transform duration-300">
+              <div class="h-2 w-1/2 bg-gray-300 rounded-sm"></div>
+              <div class="h-8 w-full bg-gray-800 rounded-sm"></div>
+              <div class="h-2 w-3/4 bg-gray-300 rounded-sm"></div>
+              <div class="h-10 w-full bg-[#0C8CE9]/20 rounded-sm mt-1"></div>
+            </div>
+          </div>
+          <div class="p-4 flex flex-col flex-1 justify-between">
+            <div>
+              <h3 class="font-medium text-sm text-gray-900 truncate">{{ project.name }}</h3>
+              @if (project.industry) {
+                <p class="text-xs text-gray-400 mt-1 capitalize">{{ project.industry }}</p>
+              }
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
+              <span
+                class="text-[11px] px-2 py-0.5 rounded font-medium"
+                [class.bg-amber-50]="project.status === 'draft'"
+                [class.text-amber-700]="project.status === 'draft'"
+                [class.bg-emerald-50]="project.status === 'published'"
+                [class.text-emerald-700]="project.status === 'published'"
+              >
+                {{ project.status === 'published' ? 'Published' : 'Draft' }}
+              </span>
+              @if (project.updatedAt) {
+                <span class="text-[11px] text-gray-400">{{ project.updatedAt | date: 'MMM d' }}</span>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</main>

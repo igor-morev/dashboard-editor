@@ -1,0 +1,75 @@
+@use 'tailwindcss';
+
+:host {
+  @apply h-full w-full block;
+}
+// Layer tree styling
+::ng-deep {
+  // CDK Drag Drop styles
+  .cdk-drag-preview {
+    @apply opacity-50;
+  }
+
+  .cdk-drop-list-dragging {
+    @apply transition-colors duration-200;
+  }
+
+  .cdk-drag-animating {
+    @apply transition-transform duration-250;
+  }
+
+  // Layer tree container
+  .layer-tree {
+    @apply bg-gray-50 rounded-lg border border-gray-200;
+    max-height: 60vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      @apply w-2;
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-gray-100 rounded;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      @apply bg-gray-300 rounded hover:bg-gray-400;
+    }
+  }
+
+  // Layer item hover effects
+  li[data-layer-id] {
+    .group {
+      @apply transition-all duration-200;
+
+      &:hover {
+        @apply bg-gray-100;
+      }
+    }
+  }
+
+  // Disabled button state
+  button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+.after {
+  @apply border-dashed border-b-black;
+}
+
+.before {
+  @apply border-dashed border-t-black;
+}
+
+.inside {
+  @apply border-blue-300;
+}
+
+.tab {
+  @apply border-solid border-b-2 border-transparent capitalize;
+}
+
+.tab-active {
+  @apply border-solid border-b-blue-500;
+}

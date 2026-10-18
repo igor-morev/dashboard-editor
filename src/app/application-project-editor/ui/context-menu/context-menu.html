@@ -1,0 +1,6 @@
+<mat-action-list>
+  <button mat-list-item (click)="action('duplicate')">Duplicate</button>
+  <button mat-list-item (click)="action('delete')" [disabled]="layer.locked">Delete</button>
+  <!-- <button mat-list-item (click)="action('copy')">Copy</button>
+  <button mat-list-item (click)="action('paste')">Paste</button> -->
+</mat-action-list>

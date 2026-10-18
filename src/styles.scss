@@ -5,6 +5,56 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use 'tailwindcss';
+@use 'project-theme';
+
+@source inline("bg-white");
+@source inline("bg-black");
+
+@source inline("bg-blue-{100..900}");
+@source inline("bg-red-{100..900}");
+@source inline("bg-green-{100..900}");
+@source inline("bg-gray-{100..900}");
+@source inline("bg-cyan-{100..900}");
+@source inline("bg-indigo-{100..900}");
+@source inline("bg-yellow-{100..900}");
+@source inline("bg-purple-{100..900}");
+@source inline("bg-pink-{100..900}");
+@source inline("bg-teal-{100..900}");
+
+@source inline("bg-center");
+@source inline("bg-top");
+@source inline("bg-bottom");
+@source inline("bg-left");
+@source inline("bg-right");
+
+@source inline("bg-repeat");
+@source inline("bg-no-repeat");
+
+@source inline("bg-auto");
+@source inline("bg-cover");
+@source inline("bg-contain");
+
+@source inline("text-white");
+@source inline("text-white");
+
+@source inline("text-blue-{100..900}");
+@source inline("text-red-{100..900}");
+@source inline("text-green-{100..900}");
+@source inline("text-gray-{100..900}");
+@source inline("text-cyan-{100..900}");
+@source inline("text-indigo-{100..900}");
+@source inline("text-yellow-{100..900}");
+@source inline("text-purple-{100..900}");
+@source inline("text-pink-{100..900}");
+@source inline("text-teal-{100..900}");
+
+@source inline("text-left");
+@source inline("text-center");
+@source inline("text-right");
+@source inline("text-justify");
+
+@import '@angular/cdk/overlay-prebuilt.css';
 
 * {
   box-sizing: border-box;
@@ -17,8 +67,10 @@ html {
       tertiary: mat.$blue-palette,
     ),
     typography: Roboto,
-    density: 0,
+    density: -2,
   ));
+
+  // @include mat.all-component-themes(mat.$azure-palette);
 }
 
 body {
@@ -39,12 +91,44 @@ body {
   overflow: hidden;
 }
 
-img {
-  max-width: 70%;
-  max-height: 200px;
-  object-fit: cover;
+/* Базовые стили для плавных переходов при смене темы */
+@layer base {
+  *, *::before, *::after {
+    transition-property: color, background-color, border-color, border-radius;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
 }
 
-table {
-  margin-bottom: 1rem;
+.de-input {
+  @apply px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full;
+}
+
+.icon-button-xs {
+  // @include mat.button-density(-4);
+
+  /* Change the size of the icon inside the button */
+  --mat-icon-button-icon-size: 16px;
+
+  // // --mat-icon-button-icon-color: var(--mat-sys-primary);
+
+  // /* Optionally, change the overall button container size (default is 40px) */
+  --mat-icon-button-state-layer-size: var(--mat-icon-button-icon-size);
+
+  /* You may also need to adjust padding/dimensions for perfect centering */
+  // width: 50px;
+  // height: 50px;   
+  .mat-icon {
+    width: var(--mat-icon-button-icon-size);
+    height: var(--mat-icon-button-icon-size);
+    font-size: var(--mat-icon-button-icon-size);
+  }  
+}
+
+.overlay-panel {
+  @apply bg-white border border-gray-300 rounded z-50 py-2;
+}
+
+img {
+  display: inline-flex;
 }

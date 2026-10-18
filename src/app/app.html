@@ -1,1 +1,26 @@
-<router-outlet />
+<div class="flex flex-col h-full">
+  @if (isAuthenticated()) {
+    <nav class="flex gap-4 py-2 px-4 bg-white gap-x-4 justify-between h-[50px] border-b border-gray-300">
+      <ul class="flex w-full gap-x-4">
+  
+      </ul>
+      <ul class="flex gap-x-4">
+        <li routerLinkActive="bg-surface"  class="text-center">
+          <button matIconButton [matTooltip]="user()?.username">
+            <mat-icon>person</mat-icon>
+          </button>
+        </li>
+        <li routerLinkActive="bg-surface"  class="text-center">
+          <button matIconButton (click)="logout()">
+            <mat-icon>logout</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  }
+
+  <div class="grow app">
+    <router-outlet></router-outlet>
+  </div>
+  
+</div>

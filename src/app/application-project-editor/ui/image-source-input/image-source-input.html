@@ -1,0 +1,77 @@
+<div class="flex flex-col gap-2">
+  <div class="flex gap-1">
+    <button
+      type="button"
+      class="flex-1 text-xs py-1 rounded border transition-colors"
+      [class.bg-gray-900]="mode() === 'url'"
+      [class.text-white]="mode() === 'url'"
+      [class.border-gray-900]="mode() === 'url'"
+      [class.bg-white]="mode() !== 'url'"
+      [class.text-gray-600]="mode() !== 'url'"
+      [class.border-gray-300]="mode() !== 'url'"
+      [disabled]="disabled()"
+      (click)="setMode('url')"
+    >
+      URL
+    </button>
+    <button
+      type="button"
+      class="flex-1 text-xs py-1 rounded border transition-colors"
+      [class.bg-gray-900]="mode() === 'upload'"
+      [class.text-white]="mode() === 'upload'"
+      [class.border-gray-900]="mode() === 'upload'"
+      [class.bg-white]="mode() !== 'upload'"
+      [class.text-gray-600]="mode() !== 'upload'"
+      [class.border-gray-300]="mode() !== 'upload'"
+      [disabled]="disabled()"
+      (click)="setMode('upload')"
+    >
+      Upload
+    </button>
+  </div>
+
+  @if (mode() === 'url') {
+    <input
+      class="de-input"
+      type="text"
+      placeholder="https://…"
+      [value]="value()"
+      [disabled]="disabled()"
+      (input)="onUrlChange($any($event.target).value)"
+    />
+  } @else {
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      class="hidden"
+      [disabled]="disabled()"
+      (change)="onFileSelected($event)"
+    />
+    <button
+      type="button"
+      class="de-input text-left text-gray-500 hover:text-gray-700"
+      [disabled]="disabled()"
+      (click)="fileInput.click()"
+    >
+      Choose image…
+    </button>
+  }
+
+  @if (error()) {
+    <p class="text-xs text-rose-600">{{ error() }}</p>
+  }
+
+  @if (hasPreview()) {
+    <div class="flex items-center gap-2">
+      <img [src]="value()" class="w-10 h-10 rounded object-cover border border-gray-200" alt="" />
+      <button
+        type="button"
+        class="text-xs text-gray-400 hover:text-gray-600"
+        (click)="clear()"
+      >
+        Remove
+      </button>
+    </div>
+  }
+</div>

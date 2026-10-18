@@ -1,0 +1,130 @@
+@if (selectedLayer()) {
+  <div
+    class="py-3 px-4 border-0 border-b border-gray-300 border-solid bg-white flex items-center h-12 min-h-12 font-medium text-gray-800"
+  >
+    {{ selectedLayer().widgetReference.widgetName }}
+  </div>
+  <div class="px-4 grow overflow-y-auto overflow-x-hidden" [formGroup]="formGroup">
+    @let widget = selectedLayer().widgetReference;
+
+    @if (widget.propertyConfig?.hasContent) {
+      <div class="py-3">
+        <label for="prop-content" class="prop-label">Content</label>
+        @if (widget.widgetType === 'image') {
+          <de-image-source-input id="prop-content" formControlName="content" />
+        } @else {
+          <input id="prop-content" class="de-input" type="text" formControlName="content" />
+        }
+      </div>
+    }
+
+    @if (widget.propertyConfig?.layout) {
+      <div class="py-3 border-t border-gray-200">
+        <label for="prop-layout" class="prop-label">Layout</label>
+        <select id="prop-layout" class="de-input" formControlName="layout" required>
+          @for (option of widget.propertyConfig?.layout?.options; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    @if (hasStyleFields) {
+      <div class="py-3 border-t border-gray-200 flex flex-col gap-y-3">
+        <span class="prop-section-title">Style</span>
+
+        @if (widget.propertyConfig?.styles?.textAlign) {
+          <div>
+            <label for="prop-text-align" class="prop-label">Text Align</label>
+            <select id="prop-text-align" class="de-input" required formControlName="textAlign">
+              @for (option of widget.propertyConfig?.styles?.textAlign; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        @if (widget.propertyConfig?.styles?.backgroundColor) {
+          <div>
+            <label class="prop-label">Background Color</label>
+            <de-color-pallete-select
+              [colorNames]="widget.propertyConfig?.styles?.backgroundColor?.nameOptions || []"
+              [colorRanges]="widget.propertyConfig?.styles?.backgroundColor?.rangeOptions || []"
+              formControlName="backgroundColor"
+            />
+          </div>
+        }
+
+        @if (widget.propertyConfig?.styles?.color) {
+          <div>
+            <label class="prop-label">Text Color</label>
+            <de-color-pallete-select
+              [colorNames]="widget.propertyConfig?.styles?.color?.nameOptions || []"
+              [colorRanges]="widget.propertyConfig?.styles?.color?.rangeOptions || []"
+              formControlName="textColor"
+            />
+          </div>
+        }
+
+        @if (widget.propertyConfig?.styles?.background) {
+          <div formGroupName="background" class="flex flex-col gap-y-3">
+            <div>
+              <label class="prop-label">Background Image Color</label>
+              <de-color-pallete-select
+                [colorNames]="widget.propertyConfig?.styles?.background?.color?.name || []"
+                [colorRanges]="widget.propertyConfig?.styles?.background?.color?.range || []"
+                formControlName="color"
+              />
+            </div>
+            <div>
+              <label for="prop-bg-image" class="prop-label">Background Image URL</label>
+              <input id="prop-bg-image" class="de-input" type="text" formControlName="image" />
+            </div>
+            <div>
+              <label for="prop-bg-position" class="prop-label">Position</label>
+              <select id="prop-bg-position" class="de-input" required formControlName="position">
+                @for (option of widget.propertyConfig?.styles?.background?.position; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label for="prop-bg-repeat" class="prop-label">Repeat</label>
+              <select id="prop-bg-repeat" class="de-input" required formControlName="repeat">
+                @for (option of widget.propertyConfig?.styles?.background?.repeat; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label for="prop-bg-size" class="prop-label">Size</label>
+              <select id="prop-bg-size" class="de-input" required formControlName="size">
+                @for (option of widget.propertyConfig?.styles?.background?.size; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (widget.widgetType === 'link') {
+      <div class="py-3 border-t border-gray-200 flex flex-col gap-y-3" formGroupName="link">
+        <span class="prop-section-title">Link</span>
+        <div>
+          <label for="prop-link-url" class="prop-label">Url</label>
+          <input id="prop-link-url" class="de-input" type="text" formControlName="url" />
+        </div>
+        <label class="flex items-center justify-between cursor-pointer select-none">
+          <span class="prop-label !mb-0">Open in new tab</span>
+          <input
+            class="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            type="checkbox"
+            formControlName="openInNewTab"
+          />
+        </label>
+      </div>
+    }
+  </div>
+}
