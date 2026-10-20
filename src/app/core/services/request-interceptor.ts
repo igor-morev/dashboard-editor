@@ -2,10 +2,13 @@ import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from '@angular/common/h
 import { inject } from '@angular/core';
 
 import { Storage } from '../storage';
-import { catchError, of } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
+import { NotificationsService } from '@app/shared/notifications';
+import { serverErrorMessage } from '../utils/http-error.util';
 
 export function requestInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const storage = inject(Storage);
+  const notifications = inject(NotificationsService);
   const authToken = storage.getItem('access_token');
   // const authService = inject(AuthService);
 
@@ -24,7 +27,12 @@ export function requestInterceptor(req: HttpRequest<unknown>, next: HttpHandlerF
         storage.removeItem('access_token');
       }
 
-      return of(err);
+      notifications.error(serverErrorMessage(httpError));
+
+      // Was `return of(err)`, which emits the error as a *successful* value — every caller's
+      // `.subscribe({ error })` across the app silently never ran; e.g. a failed login would
+      // still hit `next()` and navigate as if it had succeeded.
+      return throwError(() => err);
     })
   );
 }

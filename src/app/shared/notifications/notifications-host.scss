@@ -1,0 +1,66 @@
+.de-notifications-host {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.de-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: de-notification-in 0.15s ease-out;
+}
+
+.de-notification--success {
+  background: #2e7d32;
+}
+
+.de-notification--error {
+  background: #c62828;
+}
+
+.de-notification--info {
+  background: #1565c0;
+}
+
+.de-notification__message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.de-notification__dismiss {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.8;
+}
+
+.de-notification__dismiss:hover {
+  opacity: 1;
+}
+
+@keyframes de-notification-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

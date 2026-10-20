@@ -12,7 +12,16 @@
     <input id="password" type="password" formControlName="password" required class="de-input"/>
   </div>
 
-  <button type="submit" [disabled]="authForm.invalid" class="de-primary-button mb-2">Login</button>
+  <button
+    type="submit"
+    [disabled]="authForm.invalid || isSubmitting()"
+    class="de-primary-button mb-2 flex items-center justify-center gap-x-2"
+  >
+    @if (isSubmitting()) {
+      <mat-spinner diameter="16"></mat-spinner>
+    }
+    {{ isLoginMode ? 'Sign in' : 'Sign up' }}
+  </button>
 
   @if (isLoginMode) {
     <p class=>

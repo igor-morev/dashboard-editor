@@ -5,11 +5,19 @@ import { isPlatformBrowser } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationsHost } from './shared/notifications';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatButtonModule, MatIconModule, RouterLinkActive, MatTooltipModule, RouterLinkActive],
+  imports: [
+    RouterOutlet,
+    MatButtonModule,
+    MatIconModule,
+    RouterLinkActive,
+    MatTooltipModule,
+    NotificationsHost,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
